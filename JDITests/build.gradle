@@ -1,0 +1,50 @@
+apply plugin: "java"
+
+// forces javac 1.7 
+// this could change but we should all use the same one
+sourceCompatibility = 1.7
+
+// compile with debugging symbols
+compileJava.options.debugOptions.debugLevel = "source,lines,vars"
+
+dependencies {
+  compile files("lib/tools.jar")
+}
+
+// builds trace utility (from sun) as a jar
+task trace(type: Jar) {
+  baseName = "trace" // what to call the jar
+  from(sourceSets.main.output) {
+     // where to find the source code
+      include "com/sun/tools/example/trace/**" 
+  }
+
+  // pulls in all dependencies (ie tools.jar) i think
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+  // sets main class of jar (entry point)
+  manifest.attributes("Main-Class": "com.sun.tools.example.trace.Trace")
+
+}
+
+task locals(type: Jar) {
+  baseName = "locals"
+  from(sourceSets.main.output) {
+      include "org/group/jdiTest/locals/**" 
+  }
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+  manifest.attributes("Main-Class": "org.group.jdiTest.locals.Locals")
+
+}
+
+task breakpoints(type: Jar) {
+  baseName = "breakpoints"
+  from(sourceSets.main.output) {
+      include "org/group/jdiTest/breakpoints/**" 
+  }
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+  manifest.attributes("Main-Class": "org.group.jdiTest.breakpoints.Breakpoints")
+
+}
