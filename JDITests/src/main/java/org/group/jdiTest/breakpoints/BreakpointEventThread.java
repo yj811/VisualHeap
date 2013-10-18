@@ -119,6 +119,7 @@ public class BreakpointEventThread extends Thread {
 	    	BreakpointRequest bpReq = vm.eventRequestManager()
 	    			.createBreakpointRequest(bpLoc);
 	    	bpReq.setSuspendPolicy(BreakpointRequest.SUSPEND_ALL);
+	    	bpReq.enable();
 		} else {
 			System.err.println("couldn't set breakpoint");
 			System.exit(1);
@@ -391,7 +392,7 @@ public class BreakpointEventThread extends Thread {
         ReferenceType refType = event.referenceType();
         if(refType.name().equals(className)) {
         	System.out.println("found " + className);
-       // 	setBreakpoint();
+        	setBreakpoint(refType);
         }
         
         vm.resume();
