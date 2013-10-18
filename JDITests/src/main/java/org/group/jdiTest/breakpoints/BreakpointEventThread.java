@@ -53,6 +53,7 @@ public class BreakpointEventThread extends Thread {
     private final PrintWriter writer;  // Where output goes
 
     static String nextBaseIndent = ""; // Starting indent for next thread
+    String className = "";
 
     private boolean connected = true;  // Connected to VM
     private boolean vmDied = true;     // VMDeath occurred
@@ -62,12 +63,13 @@ public class BreakpointEventThread extends Thread {
        new HashMap<ThreadReference, ThreadTrace>();
 	private Integer breakpointLine;
 
-    BreakpointEventThread(VirtualMachine vm, String[] excludes, PrintWriter writer, Integer breakpointLine) {
+    BreakpointEventThread(VirtualMachine vm, String[] excludes, PrintWriter writer, String className, Integer breakpointLine) {
         super("event-handler");
         this.vm = vm;
         this.excludes = excludes;
         this.writer = writer;
         this.breakpointLine = breakpointLine;
+        this.className = className;
     }
 
     /**
@@ -78,22 +80,6 @@ public class BreakpointEventThread extends Thread {
     @Override
     public void run() {
     	
-    	Location bpLoc = null;
-		try {
-			bpLoc = findBreakpointLocByLineNumber(breakpointLine);
-		} catch (AbsentInformationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		if(bpLoc != null) {
-	    	BreakpointRequest bpReq = vm.eventRequestManager()
-	    			.createBreakpointRequest(bpLoc);
-	    	bpReq.setSuspendPolicy(BreakpointRequest.SUSPEND_ALL);
-		} else {
-			System.err.println("couldn't set breakpoint");
-			System.exit(1);
-		}
     	
     	
         EventQueue queue = vm.eventQueue();
@@ -114,18 +100,31 @@ public class BreakpointEventThread extends Thread {
         }
     }
 
-	private Location findBreakpointLocByLineNumber(Integer breakpointLine)
-			throws AbsentInformationException {
-		// setup breakpoint
-    	for(ReferenceType refType : vm.allClasses()) {
-    		for(Location loc : refType.allLineLocations()) {
+	private void setBreakpoint(ReferenceType classType) {
+		Location bpLoc = null;
+		try {
+			for(Location loc : classType.allLineLocations()) {
+				
+    			System.out.println(classType.name() + " line number " + loc.lineNumber());
     			if(loc.lineNumber() == breakpointLine) {
-    				return loc;
+    				bpLoc = loc;
     			}
     		}
-    	}
-    	return null;
+		} catch (AbsentInformationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		if(bpLoc != null) {
+	    	BreakpointRequest bpReq = vm.eventRequestManager()
+	    			.createBreakpointRequest(bpLoc);
+	    	bpReq.setSuspendPolicy(BreakpointRequest.SUSPEND_ALL);
+		} else {
+			System.err.println("couldn't set breakpoint");
+			System.exit(1);
+		}
 	}
+
 
     /**
      * Create the desired event requests, and enable
@@ -162,14 +161,10 @@ public class BreakpointEventThread extends Thread {
         tdr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         tdr.enable();
 
-        if (watchFields) {
-            ClassPrepareRequest cpr = mgr.createClassPrepareRequest();
-            for (int i=0; i<excludes.length; ++i) {
-                cpr.addClassExclusionFilter(excludes[i]);
-            }
-            cpr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
-            cpr.enable();
-        }
+        ClassPrepareRequest cpr = mgr.createClassPrepareRequest();
+        cpr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+        cpr.enable();
+
     }
 
     /**
@@ -297,9 +292,7 @@ public class BreakpointEventThread extends Thread {
      */
     private void handleEvent(Event event) {
         if (event instanceof ExceptionEvent) {
-            exceptionEvent((ExceptionEvent)event);
-            
-            /*
+            exceptionEvent((ExceptionEvent)event);       
         } else if (event instanceof ModificationWatchpointEvent) {
             fieldWatchEvent((ModificationWatchpointEvent)event);
         } else if (event instanceof MethodEntryEvent) {
@@ -308,7 +301,6 @@ public class BreakpointEventThread extends Thread {
             methodExitEvent((MethodExitEvent)event);
         } else if (event instanceof StepEvent) {
             stepEvent((StepEvent)event);
-            */
         } else if (event instanceof ThreadDeathEvent) {
             threadDeathEvent((ThreadDeathEvent)event);
         } else if (event instanceof ClassPrepareEvent) {
@@ -395,6 +387,16 @@ public class BreakpointEventThread extends Thread {
      */
     private void classPrepareEvent(ClassPrepareEvent event)  {
         EventRequestManager mgr = vm.eventRequestManager();
+        
+        ReferenceType refType = event.referenceType();
+        if(refType.name().equals(className)) {
+        	System.out.println("found " + className);
+       // 	setBreakpoint();
+        }
+        
+        vm.resume();
+        
+        /*
         List<Field> fields = event.referenceType().visibleFields();
         for (Field field : fields) {
             ModificationWatchpointRequest req =
@@ -405,6 +407,7 @@ public class BreakpointEventThread extends Thread {
             req.setSuspendPolicy(EventRequest.SUSPEND_NONE);
             req.enable();
         }
+        */
     }
 
     private void exceptionEvent(ExceptionEvent event) {

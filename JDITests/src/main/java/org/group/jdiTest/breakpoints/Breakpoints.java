@@ -67,7 +67,7 @@ public class Breakpoints {
     private int debugTraceMode = 0;
 
     //  Do we want to watch assignments to fields
-    private boolean watchFields = false;
+    private boolean watchFields = true;
     
     private String innerClassPath = null;
 
@@ -76,6 +76,10 @@ public class Breakpoints {
                                  "com.sun.*"};
 
 	private Integer breakpointLine;
+
+	private String className;
+
+	private String mainArgs;
 
     /**
      * main
@@ -150,7 +154,13 @@ public class Breakpoints {
             sb.append(' ');
             sb.append(args[inx]);
         }
-        vm = launchTarget(sb.toString());
+        
+        mainArgs = sb.toString();
+        className = mainArgs.substring(mainArgs.lastIndexOf(" ") + 1);
+        System.out.println(mainArgs);
+        System.out.println(className);
+        
+        vm = launchTarget();
         generateTrace(writer);
     }
 
@@ -164,7 +174,7 @@ public class Breakpoints {
     void generateTrace(PrintWriter writer) {
     	System.out.println("tracing");
         vm.setDebugTraceMode(debugTraceMode);
-        BreakpointEventThread eventThread = new BreakpointEventThread(vm, excludes, writer, breakpointLine);
+        BreakpointEventThread eventThread = new BreakpointEventThread(vm, excludes, writer, className, breakpointLine);
         eventThread.setEventRequests(watchFields);
         eventThread.start();
         redirectOutput();
@@ -185,7 +195,7 @@ public class Breakpoints {
      * Launch target VM.
      * Forward target's output and error.
      */
-    VirtualMachine launchTarget(String mainArgs) {
+    VirtualMachine launchTarget() {
     	System.out.println("launching " + mainArgs);
         LaunchingConnector connector = findLaunchingConnector();
         Map<String, Connector.Argument> arguments =
