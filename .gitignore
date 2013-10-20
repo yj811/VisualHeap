@@ -1,3 +1,5 @@
-.aux
-.log
+# ignore latex artifacts
+
+*.aux
+*.log
 *.gz
