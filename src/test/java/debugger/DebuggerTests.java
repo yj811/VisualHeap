@@ -14,6 +14,10 @@ import com.sun.jdi.ObjectReference;
 public class DebuggerTests {
 	
 	
+	private static final long defaultTimeout = 1000;
+
+
+
 	private static String[] testCmd(String className, Integer breakpointLine) {
 		String[] cmd = {"-cp",  "build/classes/test", 
 				"-bp", breakpointLine.toString(), 
@@ -26,13 +30,13 @@ public class DebuggerTests {
 	
 	
 	
-	@Test(timeout = 20 * 1000)
+	@Test(timeout = defaultTimeout)
 	public void CanStartJVM() {
 		new Debugger(CLASSPATH, ARRAYCLASS, 12, new NullListener());
 	}
 	
 	
-	@Test(timeout = 20 * 1000)
+	@Test(timeout = defaultTimeout)
 	public void ArrayReachesBreakpoint() throws InterruptedException {
 		
 
@@ -44,7 +48,7 @@ public class DebuggerTests {
 		
 	}
 	
-	@Test(timeout = 20 * 1000)
+	@Test(timeout = defaultTimeout)
 	public void ArrayReachesBreakpointAt12() throws InterruptedException {
 		
 		LatchingDebugListener listener = new LatchingDebugListener();
@@ -56,7 +60,7 @@ public class DebuggerTests {
 		
 	}
 	
-	@Test(timeout = 20 * 1000)
+	@Test(timeout = defaultTimeout)
 	public void ArrayReachesBreakpointAt15() throws InterruptedException {
 		
 		LatchingDebugListener listener = new LatchingDebugListener();
@@ -67,7 +71,7 @@ public class DebuggerTests {
 		
 	}
 	
-	@Test(timeout = 20 * 1000)
+	@Test(timeout = defaultTimeout)
 	public void ArrayReachesBreakpointAt17() throws InterruptedException {
 		
 		LatchingDebugListener listener = new LatchingDebugListener();
