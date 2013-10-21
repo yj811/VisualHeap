@@ -61,11 +61,11 @@ public class DebuggerTests {
 	}
 	
 	@Test(timeout = defaultTimeout)
-	public void ArrayReachesBreakpointAt15() throws InterruptedException {
+	public void ArrayReachesBreakpointAt14() throws InterruptedException {
 		
 		LatchingDebugListener listener = new LatchingDebugListener();
 		
-		new Debugger(CLASSPATH, ARRAYCLASS, 15, listener);
+		new Debugger(CLASSPATH, ARRAYCLASS, 14, listener);
 		
 		assertEquals(2, listener.getResult());
 		
