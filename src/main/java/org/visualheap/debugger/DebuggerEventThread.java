@@ -115,7 +115,7 @@ public class DebuggerEventThread extends Thread {
 		if(bpLoc != null) {
 	    	BreakpointRequest bpReq = vm.eventRequestManager()
 	    			.createBreakpointRequest(bpLoc);
-	    	bpReq.setSuspendPolicy(BreakpointRequest.SUSPEND_ALL);
+	    	bpReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 	    	bpReq.enable();
 		} else {
 			System.err.println("couldn't set breakpoint");
@@ -172,12 +172,18 @@ public class DebuggerEventThread extends Thread {
             vmDisconnectEvent((VMDisconnectEvent)event);
         } else if (event instanceof BreakpointEvent) {
             breakpointEvent((BreakpointEvent)event);
+        } else if (event instanceof ThreadDeathEvent) {
+        	threadDeathEvent((ThreadDeathEvent)event);
         } else {
-            throw new Error("Unexpected event type");
+            throw new Error("Unexpected event type " + event.toString());
         }
     }
 
-    /***
+    private void threadDeathEvent(ThreadDeathEvent event) {
+	
+	}
+
+	/***
      * A VMDisconnectedException has happened while dealing with
      * another event. We need to flush the event queue, dealing only
      * with exit events (VMDeath, VMDisconnect) so that we terminate
@@ -209,7 +215,7 @@ public class DebuggerEventThread extends Thread {
     }
 
     private void breakpointEvent(BreakpointEvent event)  {
-    	vm.suspend(); // just to be safe
+    	//vm.suspend(); // just to be safe
     	ThreadReference thread = event.thread();
     	
     	try {
@@ -247,7 +253,6 @@ public class DebuggerEventThread extends Thread {
         	setBreakpoint(refType);
         }
         
-        vm.resume();
     
     }
 
