@@ -73,14 +73,30 @@ public class Debugger {
     public static void main(String[] args) {
         DebugListener debugListener = new TestDebugListener();
         
-        String classPath = args[1];
-        String className = args[2];
-        int breakpointLine = Integer.parseInt(args[3]);
+        if(args.length != 4) {
+        	usage(args[0]);
+        } else {
         
-		new Debugger(classPath, className, breakpointLine, debugListener);
+	        String classPath = args[1];
+	        String className = args[2];
+	        int breakpointLine;
+	        try {
+	        	breakpointLine = Integer.parseInt(args[3]);
+	        } catch(NumberFormatException e) {
+	        	usage(args[0]);
+	        	return;
+	        }
+	        	
+			new Debugger(classPath, className, breakpointLine, debugListener);
+        }
     }
 
-    /**
+    private static void usage(String arg0) {
+    	System.out.println("usage: java -jar " + arg0 
+    			+ " <classPath> <className> <breakpointLine>");
+	}
+
+	/**
      * Parse the command line arguments.
      * Launch target VM.
      * Generate the trace.
