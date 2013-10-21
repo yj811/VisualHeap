@@ -3,3 +3,11 @@
 *.aux
 *.log
 *.gz
+
+# gradle
+JDITests/.gradle
+
+JDITests/build
+*.class
+
+
