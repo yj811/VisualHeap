@@ -7,7 +7,12 @@ sourceCompatibility = 1.7
 // compile with debugging symbols
 compileJava.options.debugOptions.debugLevel = "source,lines,vars"
 
+repositories {
+  mavenCentral()
+}
+
 dependencies {
+  testCompile 'junit:junit:4.+'
   compile files("lib/tools.jar")
 }
 

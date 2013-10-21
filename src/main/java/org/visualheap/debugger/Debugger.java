@@ -97,7 +97,7 @@ public class Debugger {
      * Launch target VM.
      * Generate the trace.
      */
-    Debugger(String[] args, DebugListener listener) {
+    public Debugger(String[] args, DebugListener listener) {
     	
     	this.listener = listener;
     	
