@@ -124,7 +124,7 @@ public class Debugger {
     	System.out.println("tracing");
         String[] excludes = {};
 		DebuggerEventThread eventThread 
-        	= new DebuggerEventThread(vm, excludes, writer, className, 
+        	= new DebuggerEventThread(vm, className, 
         			breakpointLine, listener);
         eventThread.start();
         vm.resume();
