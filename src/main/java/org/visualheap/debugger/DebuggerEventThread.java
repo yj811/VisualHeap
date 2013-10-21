@@ -126,7 +126,7 @@ public class DebuggerEventThread extends Thread {
 	    	bpReq.enable();
 		} else {
 			System.err.println("couldn't set breakpoint");
-			System.exit(1);
+			throw new RuntimeException("couldn't set breakpoint");
 		}
 	}
 

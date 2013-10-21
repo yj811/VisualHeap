@@ -1,4 +1,4 @@
-package org.group.jdiTest;
+package debugger.testprogs;
 import java.util.LinkedList;
 import java.util.List;
 

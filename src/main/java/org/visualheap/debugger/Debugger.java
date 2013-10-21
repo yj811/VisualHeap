@@ -114,7 +114,7 @@ public class Debugger {
                 } catch (IOException exc) {
                     System.err.println("Cannot open output file: " + args[inx]
                                        + " - " +  exc);
-                    System.exit(1);
+                    throw new RuntimeException("cannot open output file");
                 }
             } else if (arg.equals("-all")) {
                 excludes = new String[0];
@@ -133,17 +133,17 @@ public class Debugger {
             } else {
                 System.err.println("No option: " + arg);
                 usage();
-                System.exit(1);
+                throw new RuntimeException("no option " + arg);
             }
         }
         if (inx >= args.length) {
             System.err.println("<class> missing");
             usage();
-            System.exit(1);
+            throw new RuntimeException("<class> missing");
         }
         if(breakpointLine == null) {
         	System.err.println("no breakpoint line specified");
-        	System.exit(1);
+        	throw new RuntimeException("<bp> missing");
         }
         
         StringBuffer sb = new StringBuffer();
@@ -188,6 +188,7 @@ public class Debugger {
         redirectOutput();
         vm.resume();
 
+        /*
         // Shutdown begins when event thread terminates
         try {
             eventThread.join();
@@ -196,6 +197,7 @@ public class Debugger {
         } catch (InterruptedException exc) {
             // we don't interrupt
         }
+        */
         writer.close();
     }
 

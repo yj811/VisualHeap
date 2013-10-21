@@ -118,7 +118,7 @@ public class BreakpointEventThread extends Thread {
 		if(bpLoc != null) {
 	    	BreakpointRequest bpReq = vm.eventRequestManager()
 	    			.createBreakpointRequest(bpLoc);
-	    	bpReq.setSuspendPolicy(BreakpointRequest.SUSPEND_ALL);
+	    	bpReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 	    	bpReq.enable();
 		} else {
 			System.err.println("couldn't set breakpoint");
@@ -198,13 +198,14 @@ public class BreakpointEventThread extends Thread {
         }
 
         private void printLocals() {
-        	vm.suspend();
+        //	vm.suspend();
         	for(ThreadReference thread : vm.allThreads()) {
         		println("thread : " + thread.name());
         		indent.append(" |");
         		try {
 					if(thread.frameCount() > 0) {
 						StackFrame sf = thread.frame(0);
+						println(sf.visibleVariables().size() + " variables");
 						for(LocalVariable lv : sf.visibleVariables()) {
 							println(lv.name() + " : " + sf.getValue(lv));
 						}
@@ -212,7 +213,7 @@ public class BreakpointEventThread extends Thread {
 						println("no frames");
 					}
 				} catch (IncompatibleThreadStateException e) {
-					// TODO Auto-generated catch block
+					System.out.println("thread " + thread.name() + " still running");
 					e.printStackTrace();
 				} catch (AbsentInformationException e) {
 					// TODO Auto-generated catch block
@@ -220,7 +221,6 @@ public class BreakpointEventThread extends Thread {
 				}
         		indent.setLength(indent.length() - 2);
         	}
-        	vm.resume();
 		}
 
 		void methodExitEvent(MethodExitEvent event)  {
@@ -250,6 +250,7 @@ public class BreakpointEventThread extends Thread {
         void breakpointEvent(BreakpointEvent event) {
         	println("breakpoint");
         	printLocals();
+        	vm.resume();
         }
 
         // Step to exception catch
