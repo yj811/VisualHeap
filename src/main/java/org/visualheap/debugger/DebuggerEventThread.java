@@ -74,6 +74,8 @@ public class DebuggerEventThread extends Thread {
         this.breakpointLine = breakpointLine;
         this.className = className;
         this.listener = listener;
+        
+        setEventRequests();
     }
 
     /**
@@ -137,7 +139,10 @@ public class DebuggerEventThread extends Thread {
      * @param excludes     Class patterns for which we don't want events
      * @param watchFields  Do we want to watch assignments to fields
      */
-    void setEventRequests(boolean watchFields) {
+    void setEventRequests() {
+    	
+    	System.out.println("setting event requests");
+    	
         EventRequestManager mgr = vm.eventRequestManager();
 
         // want all exceptions

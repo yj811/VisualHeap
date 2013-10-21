@@ -56,24 +56,8 @@ public class Debugger {
 
     // Running remote VM
     private final VirtualMachine vm;
-
-    // Thread transferring remote error stream to our error stream
-    private Thread errThread = null;
-
-    // Thread transferring remote output stream to our output stream
-    private Thread outThread = null;
-
-    // Mode for tracing the Trace program (default= 0 off)
-    private int debugTraceMode = 0;
-
-    //  Do we want to watch assignments to fields
-    private boolean watchFields = true;
     
     private String innerClassPath = null;
-
-    // Class patterns for which we don't want events
-    private String[] excludes = {"java.*", "javax.*", "sun.*",
-                                 "com.sun.*"};
 
 	private Integer breakpointLine;
 
@@ -87,9 +71,13 @@ public class Debugger {
      * main
      */
     public static void main(String[] args) {
-    	System.out.println("starting");
         DebugListener debugListener = new TestDebugListener();
-		new Debugger(args, debugListener);
+        
+        String classPath = args[1];
+        String className = args[2];
+        int breakpointLine = Integer.parseInt(args[3]);
+        
+		new Debugger(classPath, className, breakpointLine, debugListener);
     }
 
     /**
@@ -97,69 +85,24 @@ public class Debugger {
      * Launch target VM.
      * Generate the trace.
      */
-    public Debugger(String[] args, DebugListener listener) {
+    public Debugger(String classPath, String className,
+    		int breakpointLine, DebugListener listener) {
     	
     	this.listener = listener;
+    	this.innerClassPath = classPath;
+    	this.className = className;
+    	this.breakpointLine = breakpointLine;
     	
-        PrintWriter writer = new PrintWriter(System.out);
-        int inx;
-        for (inx = 0; inx < args.length; ++inx) {
-            String arg = args[inx];
-            if (arg.charAt(0) != '-') {
-                break;
-            }
-            if (arg.equals("-output")) {
-                try {
-                    writer = new PrintWriter(new FileWriter(args[++inx]));
-                } catch (IOException exc) {
-                    System.err.println("Cannot open output file: " + args[inx]
-                                       + " - " +  exc);
-                    throw new RuntimeException("cannot open output file");
-                }
-            } else if (arg.equals("-all")) {
-                excludes = new String[0];
-            } else if (arg.equals("-fields")) {
-                watchFields = true;
-            } else if (arg.equals("-dbgtrace")) {
-                debugTraceMode = Integer.parseInt(args[++inx]);
-            } else if (arg.equals("-cp")) {
-                innerClassPath = args[++inx];
-            	System.out.println("found inner classPath " + innerClassPath);
-            } else if (arg.equals("-bp")) {
-            	breakpointLine = Integer.parseInt(args[++inx]);
-            } else if (arg.equals("-help")) {
-                usage();
-                System.exit(0);
-            } else {
-                System.err.println("No option: " + arg);
-                usage();
-                throw new RuntimeException("no option " + arg);
-            }
-        }
-        if (inx >= args.length) {
-            System.err.println("<class> missing");
-            usage();
-            throw new RuntimeException("<class> missing");
-        }
-        if(breakpointLine == null) {
-        	System.err.println("no breakpoint line specified");
-        	throw new RuntimeException("<bp> missing");
-        }
+        
         
         StringBuffer sb = new StringBuffer();
         
-        if(innerClassPath != null) {
-        	sb.append("-cp");
-        	sb.append(" ");
-        	sb.append(innerClassPath);
-        	sb.append(" ");
-        }
-        	
-        sb.append(args[inx]);
-        for (++inx; inx < args.length; ++inx) {
-            sb.append(' ');
-            sb.append(args[inx]);
-        }
+    	sb.append("-cp");
+    	sb.append(" ");
+    	sb.append(innerClassPath);
+    	sb.append(" ");
+    	sb.append(className);
+    	
         
         mainArgs = sb.toString();
         className = mainArgs.substring(mainArgs.lastIndexOf(" ") + 1);
@@ -167,7 +110,7 @@ public class Debugger {
         System.out.println(className);
         
         vm = launchTarget();
-        generateTrace(writer);
+        generateTrace(new PrintWriter(System.out));
     }
 
 
@@ -179,13 +122,11 @@ public class Debugger {
      */
     void generateTrace(PrintWriter writer) {
     	System.out.println("tracing");
-        vm.setDebugTraceMode(debugTraceMode);
-        DebuggerEventThread eventThread 
+        String[] excludes = {};
+		DebuggerEventThread eventThread 
         	= new DebuggerEventThread(vm, excludes, writer, className, 
         			breakpointLine, listener);
-        eventThread.setEventRequests(watchFields);
         eventThread.start();
-        redirectOutput();
         vm.resume();
 
         /*
@@ -222,20 +163,6 @@ public class Debugger {
         }
     }
 
-    void redirectOutput() {
-        Process process = vm.process();
-
-        // Copy target's output and error to our output and error.
-        errThread = new StreamRedirectThread("error reader",
-                                             process.getErrorStream(),
-                                             System.err);
-        outThread = new StreamRedirectThread("output reader",
-                                             process.getInputStream(),
-                                             System.out);
-        errThread.start();
-        outThread.start();
-    }
-
     /**
      * Find a com.sun.jdi.CommandLineLaunch connector
      */
@@ -261,31 +188,6 @@ public class Debugger {
         }
         mainArg.setValue(mainArgs);
 
-        if (watchFields) {
-            // We need a VM that supports watchpoints
-            Connector.Argument optionArg =
-                (Connector.Argument)arguments.get("options");
-            if (optionArg == null) {
-                throw new Error("Bad launching connector");
-            }
-            optionArg.setValue("-classic");
-        }
         return arguments;
-    }
-
-    /**
-     * Print command line usage help
-     */
-    void usage() {
-        System.err.println("Usage: java Trace <options> <class> <args>");
-        System.err.println("<options> are:");
-        System.err.println(
-"  -output <filename>   Output trace to <filename>");
-        System.err.println(
-"  -all                 Include system classes in output");
-        System.err.println(
-"  -help                Print this help message");
-        System.err.println("<class> is the program to trace");
-        System.err.println("<args> are the arguments to <class>");
     }
 }

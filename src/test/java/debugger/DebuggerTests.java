@@ -21,11 +21,14 @@ public class DebuggerTests {
 		return cmd;
 	}
 	
+	private final String CLASSPATH = "build/classes/test";
+	private final String ARRAYCLASS = "debugger.testprogs.Array";
+	
 	
 	
 	@Test(timeout = 20 * 1000)
 	public void CanStartJVM() {
-		new Debugger(DebuggerTests.testCmd("Array", 17), new NullListener());
+		new Debugger(CLASSPATH, ARRAYCLASS, 12, new NullListener());
 	}
 	
 	
@@ -34,7 +37,7 @@ public class DebuggerTests {
 		
 
 		LatchingDebugListener listener = new LatchingDebugListener();
-		new Debugger(DebuggerTests.testCmd("Array", 15), listener);
+		new Debugger(CLASSPATH, ARRAYCLASS, 15, listener);
 		
 		listener.getResult();
 	
@@ -46,7 +49,7 @@ public class DebuggerTests {
 		
 		LatchingDebugListener listener = new LatchingDebugListener();
 		
-		new Debugger(DebuggerTests.testCmd("Array", 12), listener);
+		new Debugger(CLASSPATH, ARRAYCLASS, 12, listener);
 		
 		assertEquals(1, listener.getResult());
 		
@@ -58,7 +61,7 @@ public class DebuggerTests {
 		
 		LatchingDebugListener listener = new LatchingDebugListener();
 		
-		new Debugger(DebuggerTests.testCmd("Array", 15), listener);
+		new Debugger(CLASSPATH, ARRAYCLASS, 15, listener);
 		
 		assertEquals(2, listener.getResult());
 		
@@ -69,7 +72,7 @@ public class DebuggerTests {
 		
 		LatchingDebugListener listener = new LatchingDebugListener();
 		
-		new Debugger(DebuggerTests.testCmd("Array", 18), listener);
+		new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
 		
 		assertEquals(3, listener.getResult());
 		
