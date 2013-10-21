@@ -5,9 +5,9 @@
 *.gz
 
 # gradle
-JDITests/.gradle
+.gradle
 
-JDITests/build
+build
 *.class
 
 
