@@ -15,6 +15,7 @@ public class DebuggerTests {
 	
 	
 	private static final long defaultTimeout = 1000;
+	private static final String SIMPLEREFERENCE = null;
 
 
 
@@ -40,7 +41,7 @@ public class DebuggerTests {
 	public void ArrayReachesBreakpoint() throws InterruptedException {
 		
 
-		LatchingDebugListener listener = new LatchingDebugListener();
+		CountingDebugListener listener = new CountingDebugListener();
 		new Debugger(CLASSPATH, ARRAYCLASS, 15, listener);
 		
 		listener.getResult();
@@ -51,7 +52,7 @@ public class DebuggerTests {
 	@Test(timeout = defaultTimeout)
 	public void ArrayReachesBreakpointAt12() throws InterruptedException {
 		
-		LatchingDebugListener listener = new LatchingDebugListener();
+		CountingDebugListener listener = new CountingDebugListener();
 		
 		new Debugger(CLASSPATH, ARRAYCLASS, 12, listener);
 		
@@ -63,7 +64,7 @@ public class DebuggerTests {
 	@Test(timeout = defaultTimeout)
 	public void ArrayReachesBreakpointAt14() throws InterruptedException {
 		
-		LatchingDebugListener listener = new LatchingDebugListener();
+		CountingDebugListener listener = new CountingDebugListener();
 		
 		new Debugger(CLASSPATH, ARRAYCLASS, 14, listener);
 		
@@ -74,13 +75,38 @@ public class DebuggerTests {
 	@Test(timeout = defaultTimeout)
 	public void ArrayReachesBreakpointAt17() throws InterruptedException {
 		
-		LatchingDebugListener listener = new LatchingDebugListener();
+		CountingDebugListener listener = new CountingDebugListener();
 		
 		new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
 		
 		assertEquals(3, listener.getResult());
 		
 	}
+
+	@Test(timeout = defaultTimeout)
+	public void SimpleReferenceTestHasCorrectStructure() 
+			throws InterruptedException {
+		
+		LatchingDebugListener listener = new LatchingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, SIMPLEREFERENCE, 15, listener);
+		
+		List<ObjectReference> fromStackFrame = listener.getResult();
+		
+		assertEquals("two references should be visible", 2, fromStackFrame.size());
+		
+		ObjectReference simpleRef = fromStackFrame.get(1);
+		
+		for(int i = 0; i < 10; i++) {			
+			List<ObjectReference> references 
+				= debugger.getObjectReferences(simpleRef);
+			assertNotNull("getObjectReferences returned null", references);
+			assertEquals("SimpleRef should contain one reference", 1, references.size());
+			simpleRef = references.get(0);
+		}
+		
+	}
+	
 	
 	class NullListener implements DebugListener {
 
