@@ -84,10 +84,15 @@ public class DebuggerEventThread extends Thread {
             try {
                 EventSet eventSet = queue.remove();
                 EventIterator it = eventSet.eventIterator();
-                while (it.hasNext()) {
-                    handleEvent(it.nextEvent());
+                boolean shouldResume = true;
+				while (it.hasNext()) {
+                    shouldResume = shouldResume && handleEvent(it.nextEvent());
                 }
-                eventSet.resume();
+                
+                if(shouldResume) {
+                	eventSet.resume();
+                }
+                
             } catch (InterruptedException exc) {
                 // Ignore
             } catch (VMDisconnectedException discExc) {
@@ -159,7 +164,8 @@ public class DebuggerEventThread extends Thread {
     /**
      * Dispatch incoming events
      */
-    private void handleEvent(Event event) {
+    private boolean handleEvent(Event event) {
+    	boolean shouldResume = true;
         if (event instanceof ExceptionEvent) {
             exceptionEvent((ExceptionEvent)event);       
         } else if (event instanceof ClassPrepareEvent) {
@@ -171,12 +177,14 @@ public class DebuggerEventThread extends Thread {
         } else if (event instanceof VMDisconnectEvent) {
             vmDisconnectEvent((VMDisconnectEvent)event);
         } else if (event instanceof BreakpointEvent) {
+        	shouldResume = false;
             breakpointEvent((BreakpointEvent)event);
         } else if (event instanceof ThreadDeathEvent) {
         	threadDeathEvent((ThreadDeathEvent)event);
         } else {
             throw new Error("Unexpected event type " + event.toString());
         }
+        return shouldResume;
     }
 
     private void threadDeathEvent(ThreadDeathEvent event) {
