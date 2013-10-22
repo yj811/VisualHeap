@@ -34,6 +34,7 @@
 
 package org.visualheap.debugger;
 
+import com.sun.jdi.ObjectReference;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.Bootstrap;
 import com.sun.jdi.connect.*;
@@ -206,4 +207,9 @@ public class Debugger {
 
         return arguments;
     }
+
+	public List<ObjectReference> getObjectReferences(ObjectReference simpleRef) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
