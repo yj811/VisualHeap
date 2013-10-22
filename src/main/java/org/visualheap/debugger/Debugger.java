@@ -34,11 +34,15 @@
 
 package org.visualheap.debugger;
 
+import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.Bootstrap;
 import com.sun.jdi.connect.*;
+import com.sun.jdi.ReferenceType;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 
@@ -209,7 +213,22 @@ public class Debugger {
     }
 
 	public List<ObjectReference> getObjectReferences(ObjectReference simpleRef) {
-		// TODO Auto-generated method stub
-		return null;
+		// Return a List of references of the given object reference
+	    
+	    List<ObjectReference> resultList = new LinkedList<ObjectReference>();
+	    
+	    ReferenceType type = simpleRef.referenceType();
+	    List<Field> fields = type.fields();
+	    
+	    for (Field f : fields) {
+	        if (f.declaringType().equals(type)) {
+	          Value v = simpleRef.getValue(f);
+	          if (v instanceof ObjectReference) {
+	              resultList.add((ObjectReference)v);
+	          }
+	        }
+	    }
+	    
+		return resultList;
 	}
 }
