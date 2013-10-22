@@ -213,7 +213,7 @@ public class Debugger {
     }
 
 	public List<ObjectReference> getObjectReferences(ObjectReference simpleRef) {
-		// Return a List of references of the given object reference
+		// Return a list of objects referenced by the given object
 	    
 	    List<ObjectReference> resultList = new LinkedList<ObjectReference>();
 	    
@@ -221,11 +221,9 @@ public class Debugger {
 	    List<Field> fields = type.fields();
 	    
 	    for (Field f : fields) {
-	        if (f.declaringType().equals(type)) {
-	          Value v = simpleRef.getValue(f);
-	          if (v instanceof ObjectReference) {
-	              resultList.add((ObjectReference)v);
-	          }
+	        Value v = simpleRef.getValue(f);
+	        if (v instanceof ObjectReference) {
+	            resultList.add((ObjectReference)v);
 	        }
 	    }
 	    
