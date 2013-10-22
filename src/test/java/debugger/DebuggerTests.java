@@ -83,8 +83,20 @@ public class DebuggerTests {
 		assertEquals(3, listener.getResult());
 		
 	}
+	
+	@Test(timeout = 2*defaultTimeout)
+	public void SimpleReferenceTestCanRun()
+			throws InterruptedException {
+		
+		LatchingDebugListener listener = new LatchingDebugListener();
+		
+		new Debugger(CLASSPATH, SIMPLEREFERENCE, 15, listener);
+		
+		listener.getResult();
+		
+	}
 
-	@Test(timeout = defaultTimeout)
+	@Test(timeout = 2*defaultTimeout)
 	public void SimpleReferenceTestHasCorrectStructure() 
 			throws InterruptedException {
 		
@@ -109,6 +121,15 @@ public class DebuggerTests {
 	}
 	
 	@Test(timeout = defaultTimeout)
+	public void NoReferencesTestCanRun() 
+			throws InterruptedException {
+		
+		LatchingDebugListener listener = new LatchingDebugListener();
+		new Debugger(CLASSPATH, NOREFERENCES, 9, listener);
+		listener.getResult();
+	}
+	
+	@Test(timeout = defaultTimeout)
 	public void ObjectWithNoReferencesHasNoReferences() 
 			throws InterruptedException {
 		
@@ -128,6 +149,15 @@ public class DebuggerTests {
 		assertEquals(
 				"NoReferences object should have no references, " + emptyList.size() + " reported",
 				0, emptyList.size());
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void CyclicReferencesTestCanRun() 
+			throws InterruptedException {
+		
+		LatchingDebugListener listener = new LatchingDebugListener();
+		new Debugger(CLASSPATH, CYCLICREFERENCE, 18, listener);
+		listener.getResult();
 	}
 	
 	@Test(timeout = defaultTimeout)

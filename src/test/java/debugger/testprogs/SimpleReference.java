@@ -5,7 +5,7 @@ public class SimpleReference {
 	private SimpleReference ref;
 	
 	public SimpleReference(int i) {
-		ref = (i > 0) ? new SimpleReference(i--) : null;
+		ref = (i > 0) ? new SimpleReference(--i) : null;
 	}
 	
 	public static void main(String[] args) {
