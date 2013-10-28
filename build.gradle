@@ -18,6 +18,13 @@ dependencies {
   compile files("lib/tools.jar")
 }
 
+jar {
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+  manifest {
+    attributes 'Main-Class': 'org.visualheap.debugger.Debugger'
+  }
+}
+
 task locals(type: Jar) {
   baseName = "locals"
   from(sourceSets.main.output) {
