@@ -18,22 +18,6 @@ dependencies {
   compile files("lib/tools.jar")
 }
 
-// builds trace utility (from sun) as a jar
-task trace(type: Jar) {
-  baseName = "trace" // what to call the jar
-  from(sourceSets.main.output) {
-     // where to find the source code
-      include "com/sun/tools/example/trace/**" 
-  }
-
-  // pulls in all dependencies (ie tools.jar) i think
-  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-
-  // sets main class of jar (entry point)
-  manifest.attributes("Main-Class": "com.sun.tools.example.trace.Trace")
-
-}
-
 task locals(type: Jar) {
   baseName = "locals"
   from(sourceSets.main.output) {
@@ -68,7 +52,7 @@ task debugger(type: Jar) {
 }
 
 checkstyle {
-  configFile = new File("sun_checks.xml")
+  configFile = new File("config/checkstyle/sun_checks.xml")
   showViolations = false
   ignoreFailures = true
 //  sourceSets {
