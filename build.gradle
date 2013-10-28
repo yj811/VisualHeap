@@ -51,35 +51,27 @@ task debugger(type: Jar) {
 
 }
 
+
 checkstyle {
   configFile = new File("config/checkstyle/sun_checks.xml")
   showViolations = false
   ignoreFailures = true
-//  sourceSets {
-//    main { 
-//      java {
-//        exclude "**/com/sun/**"
-//        exclude "**/jdiTest/**"
-//      }
-//    }
-//    test { 
-//      java {
-//        exclude "**"
-//      }
-//    }
-//  }
+  sourceSets {
+    main { 
+      java {
+        exclude "**/jdiTest/**"
+      }
+    }
+  }
 }
 
-task checkstyleReport << {
-    ant.xslt(
-        in: "$buildDir/reports/checkstyle/main.xml",
-        style:"config/checkstyle/checkstyle-noframes.xsl",
-        out:"$buildDir/reports/checkstyle/checkstyle.html"
-    )
+checkstyleMain << {
+  ant.xslt(
+      in: "$buildDir/reports/checkstyle/main.xml",
+      style:"config/checkstyle/checkstyle-noframes.xsl",
+      out:"$buildDir/reports/checkstyle/checkstyle.html"
+  )
 }
-
-checkstyleReport.dependsOn checkstyleMain
-
 
 // findbugs {
 //   ignoreFailures = true
