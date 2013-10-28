@@ -1,4 +1,6 @@
 apply plugin: "java"
+apply plugin: "checkstyle"
+// apply plugin: "findbugs"
 
 // forces javac 1.7 
 // this could change but we should all use the same one
@@ -64,3 +66,44 @@ task debugger(type: Jar) {
   manifest.attributes("Main-Class": "org.visualheap.debugger.Debugger")
 
 }
+
+checkstyle {
+  configFile = new File("sun_checks.xml")
+  showViolations = false
+  ignoreFailures = true
+//  sourceSets {
+//    main { 
+//      java {
+//        exclude "**/com/sun/**"
+//        exclude "**/jdiTest/**"
+//      }
+//    }
+//    test { 
+//      java {
+//        exclude "**"
+//      }
+//    }
+//  }
+}
+
+task checkstyleReport << {
+    ant.xslt(
+        in: "$buildDir/reports/checkstyle/main.xml",
+        style:"config/checkstyle/checkstyle-noframes.xsl",
+        out:"$buildDir/reports/checkstyle/checkstyle.html"
+    )
+}
+
+checkstyleReport.dependsOn checkstyleMain
+
+
+// findbugs {
+//   ignoreFailures = true
+// }
+// 
+// tasks.withType(FindBugs) {
+//   reports {
+//     xml.enabled = false
+//     html.enabled = true
+//   }
+// }
