@@ -19,7 +19,7 @@
 
 An object-oriented software application creates complex structures on the heap during its lifetime. Debugging object-oriented software often involves thinking about how the heap evolves as a program runs. The aim of our group project is to design a tool which supports visualisation of the heap of a running Java program as a 3D scene which can be navigated by the software developer by moving around as if in a first person shooter game.
 
-This report aims to present the methods we have employed to assure the quality of the software we are building and the techniques we have applied in our development process to ensure we deliver software smoothly and reliably. 
+This report aims to present the methods we have employed to assure the quality of the software we are building and the techniques we have applied in our development process to ensure we deliver software smoothly and reliably. We will review each of our chosen methods and discuss how they will aid our overall goal of providing a better product to the customer and a better development process for ourselves. 
 
 \section{Development Practices}
 
@@ -64,13 +64,11 @@ At the start of each sprint, we will split into pairs to work on our tasks. At t
 
 This sections addresses the processes we have in place to ensure our product is always in a good working condition and maintaining consistent quality throughout.
 
-\subsection{Test-Driven Development (TDD)}
+\subsection{Automated TEsting and Test-Driven Development (TDD)}
 
 TDD combines test-first development and refactoring by writing an initial test case before writing and refactoring the code to pass it. Test-driven development is a key feature of extreme programming and has several advantages. Firstly, writing the tests first ensures that the developer focuses on fulfilling the requirements of the code. The unit tests can also be used as a detailed specification. Probably most importantly, TDD tells you immediately when your last change has broken previously working code. Furthermore, from a software design point of view, TDD helps create loosely coupled SOLID code. An argument against TDD is that it is hard to learn (a view of Mark Levison with which we sympathise\textsuperscript{\cite{mark}}) and can reduce productivity because of this, however, having practiced TDD previously we feel that this disadvantage is negated. 
 
-Programming in Java, we are using JUnit to implement TDD. We picked JUnit because it is familiar and straightforward. Furthermore, JUnit can easily be integrated with Gradle using it’s Java plugin to create a quick and intuitive way to run tests using the ‘test’ task. Gradle will not build the project if there are failing tests unless the ‘test’ task is manually excluded. After running tests, Gradle produces HTML formatted reports which make it very easy to get both a general overview of the results and look at particular tests.
-
-An example of our HTML Gradle report:
+Programming in Java, we are using JUnit to implement TDD. We picked JUnit because it is familiar and straightforward. Furthermore, JUnit can easily be integrated with Gradle using it’s Java plugin to create a quick and intuitive way to run tests using the ‘test’ task. Gradle will not build the project if there are failing tests unless the ‘test’ task is manually excluded. After running tests, Gradle produces HTML formatted reports which make it very easy to get both a general overview of the results and look at particular tests (see figure 1). In addition, in accordance with CI, we have scripted automatic regression tests to run at the end of each build.
 
 \begin{figure}[h]
 	\centering
@@ -98,7 +96,7 @@ The feedback from our supervisor regarding our development practices and quality
 
 \section{Conclusion}
 
-The development practices we have chosen to implement such as  continuous integration (CI) and test-driven development (TDD) integrate well with the iterations of agile development to provide high quality code and project flexibility. A CI culture ensures the efficient development of quality software, while TDD provides quick feedback. The Gradle automated build process further supports continuous integration by running tests to detect integration errors as quickly as possible. In addition, the use of version control using Git underpins CI culture by encouraging commits to be made little and often.
+The development practices we have chosen to implement, such as continuous integration (CI) and test-driven development (TDD), automated builds and testing, integrate well with the iterations of agile development to provide high quality code and project flexibility. These practices should help our team to work more efficiently, even when geographically distributed and working on a variety of machines. In conclusion, we feel that the most important practice here is continuous integration, which solves many of the early pitfalls encountered by agile teams. A CI culture ensures the efficient development of quality software, while TDD provides quick feedback. The Gradle automated build process further supports continuous integration by running tests to detect integration errors as quickly as possible. In addition, the use of version control using Git underpins CI culture by encouraging commits to be made little and often. Overall these practices should help is to provide a better product for the customer and a better development process for us. 
 
 \begin{thebibliography}{9}
 
