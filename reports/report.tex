@@ -11,7 +11,8 @@
 \begin{document}
 \title{Development Practice and Quality Assurance
 \\ 3D Heap Visualisation}
-\author{Aviv Beeri, Ying Jiang, Oliver Myerscough, Anna Thomas, Eleanor Vincent}
+\author{Aviv Beeri, Briony Goldsack, Ying Jiang, 
+\\ Oliver Myerscough, Anna Thomas, Eleanor Vincent}
 \maketitle
 
 \section{Introduction}
@@ -42,7 +43,7 @@ Since we don’t all have the same setup for developing code, we chose to use a 
 
 \subsection{Pair Programming}
 
-Pair programming is a technique some consider quite integral to the extreme programming agile methodology and a number of organisations use it as part of their development practices. It works on the principle of a “driver” and a “navigator”, where the driver has the job of focusing on the current piece of coding required, while the navigator is charged with having a view towards the larger goal of completing the assigned task of the pair, worrying about the overall design and program structure. There is evidence which suggests that this produces a higher quality of code as it has been checked and discussed between two people, resulting in better design and readability, as well as fewer errors\textsuperscript{\cite{pairprog1}}.
+Pair programming is a technique some consider quite integral to the extreme programming agile methodology and a number of organisations use it as part of their development practices. It works on the principle of a “driver” and a “navigator”, where the driver has the job of focusing on the current piece of coding required, while the navigator is charged with having a view towards the larger goal of completing the assigned task of the pair, worrying about the overall design and program structure. There is evidence which suggests that this produces a higher quality of code as it has been checked and discussed between two people, resulting in better design and readability, as well as fewer errors\textsuperscript{\cite{pairprog1a,pairprog1b,pairprog1c,pairprog1d}}.
 
 It is important to note that there is the opinion that pair programming is not a universal method that is suitable everywhere. It depends heavily on the programmers involved. Some people have better habits and are predisposed to working together, but the more solitary worker would not be well suited to a pair programming environment\textsuperscript{\cite{partswap}}.
 
@@ -53,7 +54,7 @@ At the start of each sprint, we will split into pairs to work on our tasks. At t
 
 \subsection{Continuous Integration}
 
-One option of reducing the integration problems is continuous integration(CI). The main idea is to “eliminate blind spots so you can build and deliver software more rapidly”.  Every ‘push’ made by the team is checked by an automated build(i.e. Gradle), preventing the team work on an obviously broken repository. The CI server will notify the team about the build results depending on the behaviour of CI server. When a build fails, the team should not make any new commits until current problem is solved. This is particularly important when the team members work at different locations. The member who commits a ‘broken’ build should take responsibilities for solving the problem before going back home. 
+One option of reducing the integration problems is continuous integration(CI)\textsuperscript{\cite{continuous1,continuous2}}. The main idea is to “eliminate blind spots so you can build and deliver software more rapidly”.  Every ‘push’ made by the team is checked by an automated build(i.e. Gradle), preventing the team work on an obviously broken repository. The CI server will notify the team about the build results depending on the behaviour of CI server. When a build fails, the team should not make any new commits until current problem is solved. This is particularly important when the team members work at different locations. The member who commits a ‘broken’ build should take responsibilities for solving the problem before going back home. 
 
 Continuous integration has many advantages including fast for catching  issues and hence repairing, more time for adding features rather than debugging, easy for everyone in the team to get latest version and  low risks of each release. On the other hand, It is possible for ‘broken code’ to pass a test suite and get committed  due to the limitations of testing.
 
@@ -102,6 +103,7 @@ The development practices we have chosen to implement such as  continuous integr
 \begin{thebibliography}{9}
 
 \bibitem{partswap}
+  Tim Ottinger, Jeff Langr,
   \emph{Partner swapping},
   \\http://agileinaflash.blogspot.co.uk/2009/02/pair-programming-smells.html
 
@@ -120,19 +122,38 @@ The development practices we have chosen to implement such as  continuous integr
   \emph{Coding Standards Are Overrated},
   \\http://java.dzone.com/articles/coding-standards-are-overrated
 
-\bibitem{continuous}
+\bibitem{continuous1}
+  ThoughtWorks, Inc.,
   \emph{Continuous Integration},
   \\http://www.thoughtworks.com/continuous-integration
+
+\bibitem{continuous2}
+  Mark van Lent,
+  \emph{Continuous Integration},
   \\http://www.vlent.nl/weblog/2012/10/12/travis-ci-easy-and-fun-ci-for-your-plone-packages-nejc-zupan/ 
 
-\bibitem{pairprog1}
+\bibitem{pairprog1a}
+  Don Wells,
   \emph{Pair Programming},
   \\http://www.extremeprogramming.org/rules/pair.html
+  
+\bibitem{pairprog1b}
+  Agile Alliance, Institut Agile.,
+  \emph{Pair Programming},
   \\http://guide.agilealliance.org/guide/pairing.html
+  
+\bibitem{pairprog1c}
+  John Griffin,
+  \emph{Pair Programming},
   \\http://www.johng.co.uk/2010/07/04/pair-programming-pros-and-cons/
+
+\bibitem{pairprog1d}
+  Jon Evans,
+  \emph{Pair Programming},
   \\http://techcrunch.com/2012/03/03/pair-programming-considered-harmful/ 
 
 \bibitem{pairprog2}
+  VersionOne, Inc.,
   \emph{Pair Programming},
   \\http://www.versionone.com/Agile101/Pair{\_}Programming.asp
 
