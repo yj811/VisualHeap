@@ -76,17 +76,17 @@ public class Debugger {
     public static void main(String[] args) {
         DebugListener debugListener = new TestDebugListener();
         
-        if(args.length != 4) {
-        	usage(args[0]);
+        if(args.length != 3) {
+        	usage();
         } else {
         
-	        String classPath = args[1];
-	        String className = args[2];
+	        String classPath = args[0];
+	        String className = args[1];
 	        int breakpointLine;
 	        try {
-	        	breakpointLine = Integer.parseInt(args[3]);
+	        	breakpointLine = Integer.parseInt(args[2]);
 	        } catch(NumberFormatException e) {
-	        	usage(args[0]);
+	        	usage();
 	        	return;
 	        }
 	        	
@@ -94,8 +94,8 @@ public class Debugger {
         }
     }
 
-    private static void usage(String arg0) {
-    	System.out.println("usage: java -jar " + arg0 
+    private static void usage() {
+    	System.out.println("usage: java -jar debugger.jar"
     			+ " <classPath> <className> <breakpointLine>");
 	}
 
