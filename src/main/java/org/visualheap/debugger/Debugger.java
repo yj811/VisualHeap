@@ -46,16 +46,14 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 
-import java.io.PrintWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * This program traces the execution of another program.
- * See "java Trace -help".
- * It is a simple example of the use of the Java Debug Interface.
  *
  * @author Robert Field
+ * @author oliver myerscough
+ * @author aviv beeri
  */
 public class Debugger {
 
@@ -102,7 +100,6 @@ public class Debugger {
 	}
 
 	/**
-     * Parse the command line arguments.
      * Launch target VM.
      * Generate the trace.
      */
@@ -131,44 +128,27 @@ public class Debugger {
         System.out.println(className);
         
         vm = launchTarget();
-        generateTrace(new PrintWriter(System.out));
+        startEventThread();
     }
 
 
     /**
-     * Generate the trace.
-     * Enable events, start thread to display events,
-     * start threads to forward remote error and output streams,
-     * resume the remote VM, wait for the final event, and shutdown.
+     * starts the event thread
+     * resumes VM
      */
-    void generateTrace(PrintWriter writer) {
-    	System.out.println("tracing");
-        String[] excludes = {};
+    private void startEventThread() {
 		DebuggerEventThread eventThread 
         	= new DebuggerEventThread(vm, className, 
         			breakpointLine, listener);
         eventThread.start();
         vm.resume();
 
-        /*
-        // Shutdown begins when event thread terminates
-        try {
-            eventThread.join();
-            errThread.join(); // Make sure output is forwarded
-            outThread.join(); // before we exit
-        } catch (InterruptedException exc) {
-            // we don't interrupt
-        }
-        */
-        writer.close();
     }
 
     /**
      * Launch target VM.
-     * Forward target's output and error.
      */
-    VirtualMachine launchTarget() {
-    	System.out.println("launching " + mainArgs);
+    private VirtualMachine launchTarget() {
         LaunchingConnector connector = findLaunchingConnector();
         Map<String, Connector.Argument> arguments =
            connectorArguments(connector, mainArgs);
@@ -187,7 +167,7 @@ public class Debugger {
     /**
      * Find a com.sun.jdi.CommandLineLaunch connector
      */
-    LaunchingConnector findLaunchingConnector() {
+    private LaunchingConnector findLaunchingConnector() {
         List<Connector> connectors = Bootstrap.virtualMachineManager().allConnectors();
         for (Connector connector : connectors) {
             if (connector.name().equals("com.sun.jdi.CommandLineLaunch")) {
@@ -200,7 +180,7 @@ public class Debugger {
     /**
      * Return the launching connector's arguments.
      */
-    Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, String mainArgs) {
+    private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, String mainArgs) {
         Map<String, Connector.Argument> arguments = connector.defaultArguments();
         Connector.Argument mainArg =
                            (Connector.Argument)arguments.get("main");
@@ -212,16 +192,20 @@ public class Debugger {
         return arguments;
     }
 
-	public List<ObjectReference> getObjectReferences(ObjectReference simpleRef) {
+    /**
+     * returns a list of objects referenced by the given object
+     * @param objRef object to get references for
+     */
+	public List<ObjectReference> getObjectReferences(ObjectReference objRef) {
 		// Return a list of objects referenced by the given object
 	    
 	    List<ObjectReference> resultList = new LinkedList<ObjectReference>();
 	    
-	    ReferenceType type = simpleRef.referenceType();
+	    ReferenceType type = objRef.referenceType();
 	    List<Field> fields = type.fields();
 	    
 	    for (Field f : fields) {
-	        Value v = simpleRef.getValue(f);
+	        Value v = objRef.getValue(f);
 	        if (v instanceof ObjectReference) {
 	            resultList.add((ObjectReference)v);
 	        }

@@ -45,12 +45,13 @@ import java.io.PrintWriter;
  * This class processes incoming JDI events and displays them
  *
  * @author Robert Field
+ * @author Oliver Myerscough
  */
-public class DebuggerEventThread extends Thread {
+class DebuggerEventThread extends Thread {
 
     private final VirtualMachine vm;   // Running VM
 
-    String className = "";
+    private String className = "";
 
     private boolean connected = true;  // Connected to VM
     private boolean vmDied = true;     // VMDeath occurred
@@ -58,6 +59,13 @@ public class DebuggerEventThread extends Thread {
 	private Integer breakpointLine;
 	private DebugListener listener;
 
+	/**
+	 * construct an event thread, with preset breakpoint.
+	 * @param vm virtual machine to observe
+	 * @param className classname (qualified by package) to break in
+	 * @param breakpointLine 
+	 * @param listener DebugListener instance to call back to
+	 */
     DebuggerEventThread(VirtualMachine vm, String className, 
     		Integer breakpointLine,	DebugListener listener) {
         super("event-handler");
@@ -132,12 +140,8 @@ public class DebuggerEventThread extends Thread {
     /**
      * Create the desired event requests, and enable
      * them so that we will get events.
-     * @param excludes     Class patterns for which we don't want events
-     * @param watchFields  Do we want to watch assignments to fields
      */
-    void setEventRequests() {
-    	
-    	System.out.println("setting event requests");
+    private void setEventRequests() {
     	
         EventRequestManager mgr = vm.eventRequestManager();
 
@@ -154,6 +158,8 @@ public class DebuggerEventThread extends Thread {
         tdr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         tdr.enable();
 
+        // stop on class prepare so we can check if the loaded class is one
+        // we want to set a breakpoint in
         ClassPrepareRequest cpr = mgr.createClassPrepareRequest();
         cpr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         cpr.enable();
@@ -197,7 +203,7 @@ public class DebuggerEventThread extends Thread {
      * with exit events (VMDeath, VMDisconnect) so that we terminate
      * correctly.
      */
-    synchronized void handleDisconnectedException() {
+    private synchronized void handleDisconnectedException() {
         EventQueue queue = vm.eventQueue();
         while (connected) {
             try {
