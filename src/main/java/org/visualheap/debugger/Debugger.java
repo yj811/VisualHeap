@@ -222,8 +222,10 @@ public class Debugger {
 		return resultList;
 	}
 
-
+	/**
+	 * resume the VM
+	 */
 	public void resume() {
-    vm.resume();
+		vm.resume();
 	}
 }
