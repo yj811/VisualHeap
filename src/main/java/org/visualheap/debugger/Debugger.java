@@ -69,12 +69,20 @@ public class Debugger {
 	private String mainArgs;
 
 	private DebugListener listener;
+	private static Debugger debugger;
 
     /**
      * main
      */
     public static void main(String[] args) {
-        DebugListener debugListener = new TestDebugListener();
+        DebugListener debugListener = new TestDebugListener() {
+          @Override
+					public void onBreakpoint(List<ObjectReference> fromStackFrame) {
+            super.onBreakpoint(fromStackFrame);
+						debugger.resume();
+					}
+  
+				};
         
         if(args.length != 4) {
         	usage(args[0]);
@@ -90,7 +98,7 @@ public class Debugger {
 	        	return;
 	        }
 	        	
-			new Debugger(classPath, className, breakpointLine, debugListener);
+			debugger = new Debugger(classPath, className, breakpointLine, debugListener);
         }
     }
 
@@ -212,5 +220,10 @@ public class Debugger {
 	    }
 	    
 		return resultList;
+	}
+
+
+	public void resume() {
+    vm.resume();
 	}
 }
