@@ -6,8 +6,16 @@ import com.sun.jdi.ObjectReference;
 
 public interface DebugListener {
 	
-	// implement this to receive events from the debugger
+	/**
+	 * implement this interface to recieve messages from the debugger
+	 * @see Debugger
+	 */
 	
-	public void onBreakpoint(List<ObjectReference> fromStackFrame);
+	/**
+	 * called when the {@link Debugger} reaches a breakpoint.
+	 * @param fromStackFrame list visible objects on the stack at this breakpoint
+	 */
+	
+	void onBreakpoint(List<ObjectReference> fromStackFrame);
 
 }

@@ -46,7 +46,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -56,6 +55,13 @@ import java.io.IOException;
  * @author aviv beeri
  */
 public class Debugger {
+	
+	/**
+	 * run a class in the jvm with a breakpoint set
+	 * when the breakpoint is reached the onBreakpoint method of the
+	 * given DebugListener will be called
+	 * @see DebugListener
+	 */
 
     // Running remote VM
     private final VirtualMachine vm;
@@ -108,8 +114,13 @@ public class Debugger {
 	}
 
 	/**
-     * Launch target VM.
-     * Generate the trace.
+     * Launch target VM with specified breakpoint
+     * @param classPath classpath to class to invoke
+     * @param className the class to invoke, qualified by package name etc
+     * @param breakpointLine source line number to set a breakpoint at
+     * @param listener DebugListener to call back to when the breakpoint 
+     * is reached
+     * @see DebugListener
      */
     public Debugger(String classPath, String className,
     		int breakpointLine, DebugListener listener) {
@@ -201,12 +212,13 @@ public class Debugger {
     }
 
     /**
-     * returns a list of objects referenced by the given object
+     * returns a list of objects referenced by the given object.
      * @param objRef object to get references for
+     * @return list of objects referenced by given object reference
+     * @see ObjectReference
      */
-	public List<ObjectReference> getObjectReferences(ObjectReference objRef) {
-		// Return a list of objects referenced by the given object
-	    
+	public final List<ObjectReference> getObjectReferences(ObjectReference objRef) {
+	
 	    List<ObjectReference> resultList = new LinkedList<ObjectReference>();
 	    
 	    ReferenceType type = objRef.referenceType();
@@ -215,17 +227,17 @@ public class Debugger {
 	    for (Field f : fields) {
 	        Value v = objRef.getValue(f);
 	        if (v instanceof ObjectReference) {
-	            resultList.add((ObjectReference)v);
+	            resultList.add((ObjectReference) v);
 	        }
 	    }
-	    
+
 		return resultList;
 	}
 
 	/**
-	 * resume the VM
+	 * resume the VM.
 	 */
-	public void resume() {
+	public final void resume() {
 		vm.resume();
 	}
 }
