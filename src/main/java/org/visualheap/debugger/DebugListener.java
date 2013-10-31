@@ -7,7 +7,7 @@ import com.sun.jdi.ObjectReference;
 public interface DebugListener {
 	
 	/**
-	 * implement this interface to recieve messages from the debugger
+	 * implement this interface to receive messages from the debugger
 	 * @see Debugger
 	 */
 	

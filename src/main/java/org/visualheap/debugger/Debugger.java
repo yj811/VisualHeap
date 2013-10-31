@@ -55,7 +55,6 @@ import java.io.IOException;
  * @author aviv beeri
  */
 public class Debugger {
-	
 	/**
 	 * run a class in the jvm with a breakpoint set
 	 * when the breakpoint is reached the onBreakpoint method of the
@@ -65,15 +64,10 @@ public class Debugger {
 
     // Running remote VM
     private final VirtualMachine vm;
-    
     private String innerClassPath = null;
-
 	private Integer breakpointLine;
-
 	private String className;
-
 	private String mainArgs;
-
 	private DebugListener listener;
 	private static Debugger debugger;
 
@@ -82,13 +76,12 @@ public class Debugger {
      */
     public static void main(String[] args) {
         DebugListener debugListener = new TestDebugListener() {
-          @Override
-					public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-            super.onBreakpoint(fromStackFrame);
-						debugger.resume();
-					}
-  
-				};
+            @Override
+			public void onBreakpoint(List<ObjectReference> fromStackFrame) {
+                super.onBreakpoint(fromStackFrame);
+				debugger.resume();
+			}
+        };
         
         if(args.length != 3) {
         	usage();
