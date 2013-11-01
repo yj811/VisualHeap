@@ -16,3 +16,10 @@ out
 .idea
 *.iml
 
+# eclipse stuff
+.project
+.classpath
+bin
+
+# gradle I think?
+files
