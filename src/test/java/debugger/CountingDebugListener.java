@@ -2,15 +2,12 @@ package debugger;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-import org.visualheap.debugger.DebugListener;
+import org.visualheap.debugger.NullListener;
 
 import com.sun.jdi.ObjectReference;
 
 
-public class CountingDebugListener implements DebugListener {
+public class CountingDebugListener extends NullListener {
 
 	private CountDownLatch latch;
 	private int count;
@@ -30,6 +27,17 @@ public class CountingDebugListener implements DebugListener {
 	public int getResult() throws InterruptedException {
 		latch.await();
 		return count;
+	}
+
+	public void reset() {
+		latch = new CountDownLatch(1);
+	}
+
+	@Override
+	public void onStep(List<ObjectReference> fromStackFrame) {
+		System.out.println("step performed");
+		count = fromStackFrame.size();
+		latch.countDown();
 	}
 
 }

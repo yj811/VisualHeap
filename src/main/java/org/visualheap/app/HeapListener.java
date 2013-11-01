@@ -12,7 +12,7 @@ import java.util.List;
  * Time: 15:24
  * To change this template use File | Settings | File Templates.
  */
-public class HeapListener implements DebugListener {
+public class HeapListener extends NullListener {
     @Override
     public void onBreakpoint(List<ObjectReference> fromStackFrame) {
         System.out.println("breakpoint, got "
@@ -22,4 +22,10 @@ public class HeapListener implements DebugListener {
             System.out.println(object.uniqueID());
         }
     }
+
+	@Override
+	public void onStep(List<ObjectReference> fromStackFrame) {
+		// TODO Auto-generated method stub
+		
+	}
 }

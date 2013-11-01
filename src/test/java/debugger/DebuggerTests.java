@@ -4,9 +4,10 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
+import org.visualheap.debugger.NullListener;
 
 import com.sun.jdi.ObjectReference;
 
@@ -81,6 +82,111 @@ public class DebuggerTests {
 		new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
 		
 		assertEquals(3, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void CanAddSecondBreakpoint() throws InterruptedException {
+		
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
+		debugger.addBreakpoint(ARRAYCLASS, 14);
+		
+		assertEquals(2, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void CanReachTwoBreakpoints() throws InterruptedException {
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
+		debugger.addBreakpoint(ARRAYCLASS, 14);
+		
+		// first breakpoint
+		assertEquals(2, listener.getResult());
+		listener.reset(); // reset the latch
+		
+		debugger.resume();
+		
+		// second breakpoint
+		assertEquals(3, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void CanStep() throws InterruptedException {
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
+		debugger.addBreakpoint(ARRAYCLASS, 14);
+		
+		// first breakpoint
+		assertEquals(2, listener.getResult());
+		listener.reset();
+		
+		debugger.step();
+		//debugger.resume(); // we shouldn't have to do this
+		
+		assertEquals(3, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void CanStepWithNoChangeInNumberOfObjects() 
+			throws InterruptedException {
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 15, listener);
+		
+		// first breakpoint
+		assertEquals(3, listener.getResult());
+		listener.reset();
+		
+		debugger.step();
+		//debugger.resume();
+		
+		assertEquals(3, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void recieveVMStartEvent() throws InterruptedException {
+		
+		final CountDownLatch latch = new CountDownLatch(1);
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 15, 
+				new NullListener() {
+			
+			@Override 
+			public void vmStart() {
+				latch.countDown();
+			}
+			
+		});
+		
+		latch.await();
+		
+	}
+	
+	@Ignore
+	@Test(timeout = defaultTimeout)
+	public void recieveVMDeathEvent() throws InterruptedException {
+		
+		final CountDownLatch latch = new CountDownLatch(1);
+		
+		Debugger debugger = new Debugger(CLASSPATH, SIMPLEREFERENCE, 15, 
+				new NullListener() {
+			
+			@Override 
+			public void vmDeath() {
+				latch.countDown();
+			}
+			
+		});
+		
+		latch.await();
 		
 	}
 	
@@ -195,32 +301,4 @@ public class DebuggerTests {
 				firstObject.uniqueID(), returnToFirst.uniqueID());
 	}
 	
-	
-	class NullListener implements DebugListener {
-
-		@Override
-		public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-			// do nothing
-		}
-		
-	}
-	
-	class WaitingListener implements DebugListener {
-		
-		private CountDownLatch latch = new CountDownLatch(1);
-
-		@Override
-		public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-			latch.countDown();
-		}
-		
-		public void complete() throws InterruptedException {
-			latch.await();
-		}
-		
-		
-	}
-	
-
-
 }

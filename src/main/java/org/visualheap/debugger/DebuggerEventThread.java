@@ -51,13 +51,14 @@ class DebuggerEventThread extends Thread {
 
     private final VirtualMachine vm;   // Running VM
 
-    private String className = "";
-
     private boolean connected = true;  // Connected to VM
     private boolean vmDied = true;     // VMDeath occurred
 
-	private Integer breakpointLine;
 	private DebugListener listener;
+	
+	private List<Breakpoint> breakpointsToAdd = new Vector<Breakpoint>();
+
+	private ThreadReference lastBreakpointedThread;
 
 	/**
 	 * construct an event thread, with preset breakpoint.
@@ -70,8 +71,7 @@ class DebuggerEventThread extends Thread {
     		Integer breakpointLine,	DebugListener listener) {
         super("event-handler");
         this.vm = vm;
-        this.breakpointLine = breakpointLine;
-        this.className = className;
+        breakpointsToAdd.add(new Breakpoint(className, breakpointLine));
         this.listener = listener;
         
         setEventRequests();
@@ -107,13 +107,13 @@ class DebuggerEventThread extends Thread {
         }
     }
 
-	private void setBreakpoint(ReferenceType classType) {
+	private void setBreakpoint(ReferenceType classType, Breakpoint bp) {
 		Location bpLoc = null;
 		try {
 			for(Location loc : classType.allLineLocations()) {
 				
     			System.out.println(classType.name() + " line number " + loc.lineNumber());
-    			if(loc.lineNumber() == breakpointLine) {
+    			if(loc.lineNumber() == bp.getLine()) {
     				bpLoc = loc;
     			}
     		}
@@ -181,6 +181,9 @@ class DebuggerEventThread extends Thread {
         } else if (event instanceof BreakpointEvent) {
         	shouldResume = false;
             breakpointEvent((BreakpointEvent)event);
+        } else if (event instanceof StepEvent) {
+        	shouldResume = false;
+        	stepEvent((StepEvent) event);
         } else if (event instanceof ThreadDeathEvent) {
         	threadDeathEvent((ThreadDeathEvent)event);
         } else {
@@ -221,15 +224,23 @@ class DebuggerEventThread extends Thread {
     }
 
     private void vmStartEvent(VMStartEvent event)  {
-    	
+    	listener.vmStart();
     }
 
     private void breakpointEvent(BreakpointEvent event)  {
     	//vm.suspend(); // just to be safe
     	ThreadReference thread = event.thread();
-    	
-    	try {
-    		List<ObjectReference> objRefs = new ArrayList<ObjectReference>();
+    	lastBreakpointedThread = event.thread();
+    	List<ObjectReference> objRefs = getObjectReferencesOnThreadStack(thread);
+    	listener.onBreakpoint(objRefs);
+    	        	
+    }
+
+	private List<ObjectReference> getObjectReferencesOnThreadStack(
+			ThreadReference thread) {
+		List<ObjectReference> objRefs = Collections.emptyList();
+		try {
+    		objRefs = new ArrayList<ObjectReference>();
 			StackFrame sf = thread.frame(0);
 			for(LocalVariable lv : sf.visibleVariables()) {
 				Value val = sf.getValue(lv);
@@ -238,7 +249,6 @@ class DebuggerEventThread extends Thread {
 					objRefs.add(objRef);
 				}
 			}
-			listener.onBreakpoint(objRefs);
 		} catch (IncompatibleThreadStateException e) {
 			// means the thread was not suspended, but obviously it will be
 			e.printStackTrace();
@@ -246,7 +256,21 @@ class DebuggerEventThread extends Thread {
 			// if the invoked program was not compiled with full debug info,
 			// this might happen
 			e.printStackTrace();
-        }
+		}
+		return objRefs;
+	}
+    
+    /**
+     * handles a step event
+     * @param event the step event
+     */
+    private void stepEvent(StepEvent event) {
+    	
+    	System.out.println("step event");
+    	
+    	List<ObjectReference> fromStackFrame 
+    		= getObjectReferencesOnThreadStack(lastBreakpointedThread);
+    	listener.onStep(fromStackFrame);
     }
 
     /**
@@ -257,9 +281,11 @@ class DebuggerEventThread extends Thread {
         EventRequestManager mgr = vm.eventRequestManager();
         
         ReferenceType refType = event.referenceType();
-        if(refType.name().equals(className)) {
-        	System.out.println("found " + className);
-        	setBreakpoint(refType);
+        for(Breakpoint bp : breakpointsToAdd) {
+	        if(refType.name().equals(bp.getClassName())) {
+	        	System.out.println("found " + bp.getClassName());
+	        	setBreakpoint(refType, bp);
+	        }
         }
         
     
@@ -271,9 +297,65 @@ class DebuggerEventThread extends Thread {
 
     public void vmDeathEvent(VMDeathEvent event) {
         vmDied = true;
+        listener.vmDeath();
     }
 
     public void vmDisconnectEvent(VMDisconnectEvent event) {
         connected = false;
+        listener.vmDeath();
     }
+
+	public void addBreakpoint(String className, int breakpointLine) {
+		
+		Breakpoint bp = new Breakpoint(className, breakpointLine);
+		
+		// TODO search already loaded classes
+		breakpointsToAdd.add(bp);
+		
+		
+	}
+
+	private class Breakpoint {
+		private int line;
+	
+		private String className;
+		
+		public Breakpoint(String className, int line) {
+			this.line = line;
+			this.className = className;
+		}
+		
+		public int getLine() {
+			return line;
+		}
+
+		public String getClassName() {
+			return className;
+		}
+
+	}
+
+	/**
+	 * step the VM.
+	 * as we create breakpoints with SUSPEND_ALL, only one breakpoint
+	 * can be reached at a time. So the thread to step is the last
+	 * breakpointed thread.
+	 */
+	public void step() {
+		
+		System.out.println("step eventthread");
+		
+		ThreadReference threadToStep = lastBreakpointedThread;
+		
+		// TODO step_over, step_out etc
+		StepRequest stepRequest = vm.eventRequestManager()
+				.createStepRequest(threadToStep, 
+						StepRequest.STEP_LINE, StepRequest.STEP_OVER);
+		stepRequest.setSuspendPolicy(EventRequest.SUSPEND_ALL);
+		stepRequest.addCountFilter(1);
+		stepRequest.enable();
+		
+		vm.resume();
+	}
+	
 }

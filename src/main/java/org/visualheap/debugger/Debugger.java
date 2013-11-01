@@ -36,10 +36,12 @@ package org.visualheap.debugger;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.Bootstrap;
 import com.sun.jdi.connect.*;
+import com.sun.jdi.request.StepRequest;
 import com.sun.jdi.ReferenceType;
 
 import java.util.LinkedList;
@@ -70,6 +72,7 @@ public class Debugger {
 	private String className;
 	private String mainArgs;
 	private DebugListener listener;
+	private DebuggerEventThread eventThread;
 
 	/**
      * Launch target VM with specified breakpoint
@@ -110,9 +113,8 @@ public class Debugger {
      * resumes VM
      */
     private void startEventThread() {
-		DebuggerEventThread eventThread 
-        	= new DebuggerEventThread(vm, className, 
-        			breakpointLine, listener);
+		eventThread = new DebuggerEventThread(vm, className, 
+				breakpointLine, listener);
         eventThread.start();
         vm.resume();
     }
@@ -191,8 +193,28 @@ public class Debugger {
 	public final void resume() {
 		vm.resume();
 	}
-
+	
 	public final InputStream getOutput() {
-        return vm.process().getInputStream();
+		return vm.process().getInputStream();
+	}
+	
+	/**
+	 * add a breakpoint at the specified line
+	 * @param className name of class to break in (qualified by package)
+	 * @param breakpointLine line to add a breakpoint to
+	 */
+	public void addBreakpoint(String className, int breakpointLine) {
+		eventThread.addBreakpoint(className, breakpointLine);
+	}
+
+	/**
+	 * step the connected vm.
+	 * vm must be suspended.
+	 */
+	public void step() {
+		
+		System.out.println("debugger step");
+		
+		eventThread.step();
 	}
 }

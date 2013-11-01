@@ -3,12 +3,12 @@ package debugger;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.visualheap.debugger.DebugListener;
+import org.visualheap.debugger.NullListener;
 
 import com.sun.jdi.ObjectReference;
 
 
-public class LatchingDebugListener implements DebugListener {
+public class LatchingDebugListener extends NullListener {
 
 
 	private CountDownLatch latch;
@@ -27,6 +27,12 @@ public class LatchingDebugListener implements DebugListener {
 	public List<ObjectReference> getResult() throws InterruptedException {
 		latch.await();
 		return fromStackFrame;
+	}
+
+	@Override
+	public void onStep(List<ObjectReference> fromStackFrame) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
