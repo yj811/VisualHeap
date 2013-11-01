@@ -182,35 +182,16 @@ public class DebuggerTests {
 		
 		final CountDownLatch latch = new CountDownLatch(1);
 		
-		DebugListener listener = new DebugListener() {
+		DebugListener listener = new NullListener() {
 			
 			@Override 
 			public void vmDeath() {
-				System.out.println("actual vmdeath implementation");
 				latch.countDown();
-			}
-
-			@Override
-			public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onStep(List<ObjectReference> fromStackFrame) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void vmStart() {
-				// TODO Auto-generated method stub
-				
 			}
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, SIMPLEREFERENCE, 15, listener);
+		Debugger debugger = new Debugger(CLASSPATH, SIMPLEREFERENCE, listener);
 		
 		latch.await();
 		
