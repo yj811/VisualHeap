@@ -48,8 +48,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  *
@@ -69,7 +71,7 @@ public class Debugger {
     private final VirtualMachine vm;
     private String innerClassPath = null;
 	private Integer breakpointLine;
-	private String className;
+	private String mainClass;
 	private String mainArgs;
 	private DebugListener listener;
 	private static Debugger debugger;
@@ -124,37 +126,48 @@ public class Debugger {
     	
     	this.listener = listener;
     	this.innerClassPath = classPath;
-    	this.className = className;
+    	this.mainClass = className;
     	this.breakpointLine = breakpointLine;
-    	
         
+        mainArgs = constructMainArguments(className);
         
-        StringBuffer sb = new StringBuffer();
+        vm = launchTarget();
+        startEventThread();
+        
+        eventThread.addBreakpoint(className, breakpointLine);
+    }
+
+	private String constructMainArguments(String className) {
+		StringBuffer sb = new StringBuffer();
         
     	sb.append("-cp");
     	sb.append(" ");
     	sb.append(innerClassPath);
     	sb.append(" ");
     	sb.append(className);
+		return sb.toString();
+	}
+
+
+    public Debugger(String classPath, String mainName, DebugListener listener) {
     	
-        
-        mainArgs = sb.toString();
-        className = mainArgs.substring(mainArgs.lastIndexOf(" ") + 1);
-        System.out.println(mainArgs);
-        System.out.println(className);
+    	this.listener = listener;
+      	this.innerClassPath = classPath;
+    	this.mainClass = mainName;
+    	 
+        mainArgs = constructMainArguments(mainClass);
         
         vm = launchTarget();
         startEventThread();
-    }
+	
+	}
 
-
-    /**
+	/**
      * starts the event thread
      * resumes VM
      */
     private void startEventThread() {
-		eventThread = new DebuggerEventThread(vm, className, 
-				breakpointLine, listener);
+		eventThread = new DebuggerEventThread(vm, listener);
         eventThread.start();
         vm.resume();
 
@@ -260,5 +273,14 @@ public class Debugger {
 		
 		eventThread.step();
 		
+	}
+
+	public void await() {
+		try {
+			vm.process().waitFor();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
