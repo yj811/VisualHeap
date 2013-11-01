@@ -46,6 +46,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 
+import java.io.InputStream;
 import java.io.IOException;
 
 /**
@@ -239,5 +240,8 @@ public class Debugger {
 	 */
 	public final void resume() {
 		vm.resume();
+	}
+	public final InputStream getOutput() {
+    return vm.process().getInputStream();
 	}
 }

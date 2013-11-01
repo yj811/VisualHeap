@@ -58,6 +58,16 @@ task debugger(type: Jar) {
 
 }
 
+task gui(type: Jar) {
+  baseName = "gui"
+  from(sourceSets.main.output) {
+      include "org/visualheap/debugger/**" 
+  }
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+
+  manifest.attributes("Main-Class": "org.visualheap.debugger.MainApplication")
+
+}
 
 checkstyle {
   configFile = new File("config/checkstyle/sun_checks.xml")
