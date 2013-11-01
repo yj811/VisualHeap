@@ -1,8 +1,7 @@
-package org.visualheap.debugger;
+package org.visualheap.app;
 
-import com.sun.jdi.ObjectReference;
-
-import java.util.List;
+import org.visualheap.debugger.DebugListener;
+import org.visualheap.debugger.Debugger;
 
 /**
  * Created with IntelliJ IDEA.

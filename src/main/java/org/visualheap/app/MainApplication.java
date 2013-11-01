@@ -1,4 +1,4 @@
-package org.visualheap.debugger;
+package org.visualheap.app;
 
 import java.awt.*;
 import java.awt.event.*;

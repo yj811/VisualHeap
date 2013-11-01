@@ -21,7 +21,7 @@ dependencies {
 jar {
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
   manifest {
-    attributes 'Main-Class': 'org.visualheap.debugger.Debugger'
+    attributes 'Main-Class': 'org.visualheap.app.VisualHeap'
   }
 }
 
@@ -33,7 +33,6 @@ task locals(type: Jar) {
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
   manifest.attributes("Main-Class": "org.group.jdiTest.locals.Locals")
-
 }
 
 task breakpoints(type: Jar) {
@@ -44,18 +43,6 @@ task breakpoints(type: Jar) {
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
   manifest.attributes("Main-Class": "org.group.jdiTest.breakpoints.Breakpoints")
-
-}
-
-task debugger(type: Jar) {
-  baseName = "debugger"
-  from(sourceSets.main.output) {
-      include "org/visualheap/debugger/**" 
-  }
-  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-
-  manifest.attributes("Main-Class": "org.visualheap.debugger.Debugger")
-
 }
 
 task gui(type: Jar) {
@@ -66,7 +53,6 @@ task gui(type: Jar) {
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
   manifest.attributes("Main-Class": "org.visualheap.debugger.MainApplication")
-
 }
 
 checkstyle {
