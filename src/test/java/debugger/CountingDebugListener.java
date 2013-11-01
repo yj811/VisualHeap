@@ -36,4 +36,11 @@ public class CountingDebugListener implements DebugListener {
 		latch = new CountDownLatch(1);
 	}
 
+	@Override
+	public void onStep(List<ObjectReference> fromStackFrame) {
+		System.out.println("step performed");
+		count = fromStackFrame.size();
+		latch.countDown();
+	}
+
 }

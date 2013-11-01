@@ -29,5 +29,11 @@ public class LatchingDebugListener implements DebugListener {
 		return fromStackFrame;
 	}
 
+	@Override
+	public void onStep(List<ObjectReference> fromStackFrame) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

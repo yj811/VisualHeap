@@ -25,4 +25,10 @@ public class HeapListener implements DebugListener {
         // TODO Auto-generated method stub
 
     }
+
+	@Override
+	public void onStep(List<ObjectReference> fromStackFrame) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -12,12 +12,10 @@ public class TestDebugListener implements DebugListener {
 				+ fromStackFrame.size() + " object references");
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	@Override
+	public void onStep(List<ObjectReference> fromStackFrame) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

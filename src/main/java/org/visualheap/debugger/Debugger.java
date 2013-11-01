@@ -36,10 +36,12 @@ package org.visualheap.debugger;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.Bootstrap;
 import com.sun.jdi.connect.*;
+import com.sun.jdi.request.StepRequest;
 import com.sun.jdi.ReferenceType;
 
 import java.util.LinkedList;
@@ -247,5 +249,17 @@ public class Debugger {
 	 */
 	public void addBreakpoint(String className, int breakpointLine) {
 		eventThread.addBreakpoint(className, breakpointLine);
+	}
+
+	/**
+	 * step the connected vm.
+	 * vm must be suspended.
+	 */
+	public void step() {
+		
+		System.out.println("debugger step");
+		
+		eventThread.step();
+		
 	}
 }

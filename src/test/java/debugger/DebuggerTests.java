@@ -34,7 +34,19 @@ public class DebuggerTests {
 	
 	@Test(timeout = defaultTimeout)
 	public void CanStartJVM() {
-		new Debugger(CLASSPATH, ARRAYCLASS, 12, new NullListener());
+		new Debugger(CLASSPATH, ARRAYCLASS, 12, new DebugListener() {
+
+			@Override
+			public void onBreakpoint(List<ObjectReference> fromStackFrame) {
+			
+			}
+
+			@Override
+			public void onStep(List<ObjectReference> fromStackFrame) {
+			
+			}
+			
+		});
 	}
 	
 	
@@ -110,6 +122,42 @@ public class DebuggerTests {
 		debugger.resume();
 		
 		// second breakpoint
+		assertEquals(3, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void CanStep() throws InterruptedException {
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
+		debugger.addBreakpoint(ARRAYCLASS, 14);
+		
+		// first breakpoint
+		assertEquals(2, listener.getResult());
+		listener.reset();
+		
+		debugger.step();
+		//debugger.resume(); // we shouldn't have to do this
+		
+		assertEquals(3, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void CanStepWithNoChangeInNumberOfObjects() 
+			throws InterruptedException {
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 15, listener);
+		
+		// first breakpoint
+		assertEquals(3, listener.getResult());
+		listener.reset();
+		
+		debugger.step();
+		//debugger.resume();
+		
 		assertEquals(3, listener.getResult());
 		
 	}
@@ -227,32 +275,4 @@ public class DebuggerTests {
 				firstObject.uniqueID(), returnToFirst.uniqueID());
 	}
 	
-	
-	class NullListener implements DebugListener {
-
-		@Override
-		public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-			// do nothing
-		}
-		
-	}
-	
-	class WaitingListener implements DebugListener {
-		
-		private CountDownLatch latch = new CountDownLatch(1);
-
-		@Override
-		public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-			latch.countDown();
-		}
-		
-		public void complete() throws InterruptedException {
-			latch.await();
-		}
-		
-		
-	}
-	
-
-
 }
