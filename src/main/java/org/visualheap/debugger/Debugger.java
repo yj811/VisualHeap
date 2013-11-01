@@ -240,7 +240,6 @@ public class Debugger {
 	public final InputStream getOutput() {
 		return vm.process().getInputStream();
 	}
-
 	
 	/**
 	 * add a breakpoint at the specified line

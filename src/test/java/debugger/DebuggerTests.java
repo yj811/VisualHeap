@@ -162,8 +162,6 @@ public class DebuggerTests {
 		
 	}
 	
-	
-	
 	@Test(timeout = 2*defaultTimeout)
 	public void SimpleReferenceTestCanRun()
 			throws InterruptedException {
