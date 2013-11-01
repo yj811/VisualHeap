@@ -51,13 +51,12 @@ class DebuggerEventThread extends Thread {
 
     private final VirtualMachine vm;   // Running VM
 
-    private String className = "";
-
     private boolean connected = true;  // Connected to VM
     private boolean vmDied = true;     // VMDeath occurred
 
-	private Integer breakpointLine;
 	private DebugListener listener;
+	
+	private List<Breakpoint> breakpointsToAdd = new Vector<Breakpoint>();
 
 	/**
 	 * construct an event thread, with preset breakpoint.
@@ -70,8 +69,7 @@ class DebuggerEventThread extends Thread {
     		Integer breakpointLine,	DebugListener listener) {
         super("event-handler");
         this.vm = vm;
-        this.breakpointLine = breakpointLine;
-        this.className = className;
+        breakpointsToAdd.add(new Breakpoint(className, breakpointLine));
         this.listener = listener;
         
         setEventRequests();
@@ -110,13 +108,13 @@ class DebuggerEventThread extends Thread {
         }
     }
 
-	private void setBreakpoint(ReferenceType classType) {
+	private void setBreakpoint(ReferenceType classType, Breakpoint bp) {
 		Location bpLoc = null;
 		try {
 			for(Location loc : classType.allLineLocations()) {
 				
     			System.out.println(classType.name() + " line number " + loc.lineNumber());
-    			if(loc.lineNumber() == breakpointLine) {
+    			if(loc.lineNumber() == bp.getLine()) {
     				bpLoc = loc;
     			}
     		}
@@ -262,9 +260,11 @@ class DebuggerEventThread extends Thread {
         EventRequestManager mgr = vm.eventRequestManager();
         
         ReferenceType refType = event.referenceType();
-        if(refType.name().equals(className)) {
-        	System.out.println("found " + className);
-        	setBreakpoint(refType);
+        for(Breakpoint bp : breakpointsToAdd) {
+	        if(refType.name().equals(bp.getClassName())) {
+	        	System.out.println("found " + bp.getClassName());
+	        	setBreakpoint(refType, bp);
+	        }
         }
         
     
@@ -281,4 +281,35 @@ class DebuggerEventThread extends Thread {
     public void vmDisconnectEvent(VMDisconnectEvent event) {
         connected = false;
     }
+
+	public void addBreakpoint(String className, int breakpointLine) {
+		
+		Breakpoint bp = new Breakpoint(className, breakpointLine);
+		
+		// TODO search already loaded classes
+		breakpointsToAdd.add(bp);
+		
+		
+	}
+
+	private class Breakpoint {
+		private int line;
+	
+		private String className;
+		
+		public Breakpoint(String className, int line) {
+			this.line = line;
+			this.className = className;
+		}
+		
+		public int getLine() {
+			return line;
+		}
+
+		public String getClassName() {
+			return className;
+		}
+
+	}
+	
 }
