@@ -4,9 +4,10 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import org.junit.Ignore;
 import org.junit.Test;
-import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
+import org.visualheap.debugger.NullListener;
 
 import com.sun.jdi.ObjectReference;
 
@@ -34,19 +35,7 @@ public class DebuggerTests {
 	
 	@Test(timeout = defaultTimeout)
 	public void CanStartJVM() {
-		new Debugger(CLASSPATH, ARRAYCLASS, 12, new DebugListener() {
-
-			@Override
-			public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-			
-			}
-
-			@Override
-			public void onStep(List<ObjectReference> fromStackFrame) {
-			
-			}
-			
-		});
+		new Debugger(CLASSPATH, ARRAYCLASS, 12, new NullListener());
 	}
 	
 	
@@ -159,6 +148,45 @@ public class DebuggerTests {
 		//debugger.resume();
 		
 		assertEquals(3, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void recieveVMStartEvent() throws InterruptedException {
+		
+		final CountDownLatch latch = new CountDownLatch(1);
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 15, 
+				new NullListener() {
+			
+			@Override 
+			public void vmStart() {
+				latch.countDown();
+			}
+			
+		});
+		
+		latch.await();
+		
+	}
+	
+	@Ignore
+	@Test(timeout = defaultTimeout)
+	public void recieveVMDeathEvent() throws InterruptedException {
+		
+		final CountDownLatch latch = new CountDownLatch(1);
+		
+		Debugger debugger = new Debugger(CLASSPATH, SIMPLEREFERENCE, 15, 
+				new NullListener() {
+			
+			@Override 
+			public void vmDeath() {
+				latch.countDown();
+			}
+			
+		});
+		
+		latch.await();
 		
 	}
 	

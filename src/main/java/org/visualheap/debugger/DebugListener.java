@@ -19,5 +19,9 @@ public interface DebugListener {
 	void onBreakpoint(List<ObjectReference> fromStackFrame);
 	
 	void onStep(List<ObjectReference> fromStackFrame);
+	
+	void vmStart();
+	
+	void vmDeath();
 
 }

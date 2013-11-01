@@ -2,14 +2,15 @@ package org.visualheap.debugger;
 
 import java.util.List;
 
+
 import com.sun.jdi.ObjectReference;
 
-public class TestDebugListener extends NullListener {
+public class NullListener implements DebugListener {
 
 	@Override
 	public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-		System.out.println("breakpoint, got " 
-				+ fromStackFrame.size() + " object references");
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -29,5 +30,5 @@ public class TestDebugListener extends NullListener {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 }

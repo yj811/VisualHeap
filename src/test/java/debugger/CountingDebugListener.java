@@ -2,15 +2,12 @@ package debugger;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
-import org.visualheap.debugger.DebugListener;
+import org.visualheap.debugger.NullListener;
 
 import com.sun.jdi.ObjectReference;
 
 
-public class CountingDebugListener implements DebugListener {
+public class CountingDebugListener extends NullListener {
 
 	private CountDownLatch latch;
 	private int count;

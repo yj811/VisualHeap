@@ -228,7 +228,7 @@ class DebuggerEventThread extends Thread {
     }
 
     private void vmStartEvent(VMStartEvent event)  {
-    	
+    	listener.vmStart();
     }
 
     private void breakpointEvent(BreakpointEvent event)  {
@@ -301,10 +301,12 @@ class DebuggerEventThread extends Thread {
 
     public void vmDeathEvent(VMDeathEvent event) {
         vmDied = true;
+        listener.vmDeath();
     }
 
     public void vmDisconnectEvent(VMDisconnectEvent event) {
         connected = false;
+        listener.vmDeath();
     }
 
 	public void addBreakpoint(String className, int breakpointLine) {
