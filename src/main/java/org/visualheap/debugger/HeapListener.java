@@ -16,13 +16,9 @@ public class HeapListener implements DebugListener {
     public void onBreakpoint(List<ObjectReference> fromStackFrame) {
         System.out.println("breakpoint, got "
                 + fromStackFrame.size() + " object references");
-    }
 
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
+        for(ObjectReference object : fromStackFrame) {
+            System.out.println(object.uniqueID());
+        }
     }
 }

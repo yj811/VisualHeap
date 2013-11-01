@@ -84,9 +84,6 @@ class DebuggerEventThread extends Thread {
      */
     @Override
     public void run() {
-    	
-    	
-    	
         EventQueue queue = vm.eventQueue();
         while (connected) {
             try {
@@ -142,7 +139,6 @@ class DebuggerEventThread extends Thread {
      * them so that we will get events.
      */
     private void setEventRequests() {
-    	
         EventRequestManager mgr = vm.eventRequestManager();
 
         // want all exceptions
@@ -250,13 +246,12 @@ class DebuggerEventThread extends Thread {
 			// if the invoked program was not compiled with full debug info,
 			// this might happen
 			e.printStackTrace();
-		}
-    	        	
+        }
     }
 
     /**
      * A new class has been loaded.
-     * Set watchpoints on each of its fields
+     * Set watchpoint on each of its fields
      */
     private void classPrepareEvent(ClassPrepareEvent event)  {
         EventRequestManager mgr = vm.eventRequestManager();

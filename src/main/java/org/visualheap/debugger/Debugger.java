@@ -59,7 +59,7 @@ public class Debugger {
 	/**
 	 * run a class in the jvm with a breakpoint set
 	 * when the breakpoint is reached the onBreakpoint method of the
-	 * given DebugListener will be called
+	 * given DebugListener will be called {see DebuggerEventThread class}
 	 * @see DebugListener
 	 */
 
@@ -70,42 +70,6 @@ public class Debugger {
 	private String className;
 	private String mainArgs;
 	private DebugListener listener;
-	private static Debugger debugger;
-
-    /**
-     * main
-     */
-    public static void main(String[] args) {
-        DebugListener debugListener = new TestDebugListener() {
-            @Override
-			public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-                super.onBreakpoint(fromStackFrame);
-				debugger.resume();
-			}
-        };
-        
-        if(args.length != 3) {
-        	usage();
-        } else {
-        
-	        String classPath = args[0];
-	        String className = args[1];
-	        int breakpointLine;
-	        try {
-	        	breakpointLine = Integer.parseInt(args[2]);
-	        } catch(NumberFormatException e) {
-	        	usage();
-	        	return;
-	        }
-	        	
-			debugger = new Debugger(classPath, className, breakpointLine, debugListener);
-        }
-    }
-
-    private static void usage() {
-    	System.out.println("usage: java -jar debugger.jar"
-    			+ " <classPath> <className> <breakpointLine>");
-	}
 
 	/**
      * Launch target VM with specified breakpoint
@@ -123,9 +87,7 @@ public class Debugger {
     	this.innerClassPath = classPath;
     	this.className = className;
     	this.breakpointLine = breakpointLine;
-    	
-        
-        
+
         StringBuffer sb = new StringBuffer();
         
     	sb.append("-cp");
@@ -133,8 +95,7 @@ public class Debugger {
     	sb.append(innerClassPath);
     	sb.append(" ");
     	sb.append(className);
-    	
-        
+
         mainArgs = sb.toString();
         className = mainArgs.substring(mainArgs.lastIndexOf(" ") + 1);
         System.out.println(mainArgs);
@@ -143,7 +104,6 @@ public class Debugger {
         vm = launchTarget();
         startEventThread();
     }
-
 
     /**
      * starts the event thread
@@ -155,7 +115,6 @@ public class Debugger {
         			breakpointLine, listener);
         eventThread.start();
         vm.resume();
-
     }
 
     /**
@@ -212,9 +171,7 @@ public class Debugger {
      * @see ObjectReference
      */
 	public final List<ObjectReference> getObjectReferences(ObjectReference objRef) {
-	
 	    List<ObjectReference> resultList = new LinkedList<ObjectReference>();
-	    
 	    ReferenceType type = objRef.referenceType();
 	    List<Field> fields = type.fields();
 	    
@@ -234,7 +191,8 @@ public class Debugger {
 	public final void resume() {
 		vm.resume();
 	}
+
 	public final InputStream getOutput() {
-    return vm.process().getInputStream();
+        return vm.process().getInputStream();
 	}
 }
