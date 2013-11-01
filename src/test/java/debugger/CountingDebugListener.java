@@ -32,4 +32,8 @@ public class CountingDebugListener implements DebugListener {
 		return count;
 	}
 
+	public void reset() {
+		latch = new CountDownLatch(1);
+	}
+
 }

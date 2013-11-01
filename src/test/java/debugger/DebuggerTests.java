@@ -84,6 +84,38 @@ public class DebuggerTests {
 		
 	}
 	
+	@Test(timeout = defaultTimeout)
+	public void CanAddSecondBreakpoint() throws InterruptedException {
+		
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
+		debugger.addBreakpoint(ARRAYCLASS, 14);
+		
+		assertEquals(2, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
+	public void CanReachTwoBreakpoints() throws InterruptedException {
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
+		debugger.addBreakpoint(ARRAYCLASS, 14);
+		
+		// first breakpoint
+		assertEquals(2, listener.getResult());
+		listener.reset(); // reset the latch
+		
+		debugger.resume();
+		
+		// second breakpoint
+		assertEquals(3, listener.getResult());
+		
+	}
+	
+	
+	
 	@Test(timeout = 2*defaultTimeout)
 	public void SimpleReferenceTestCanRun()
 			throws InterruptedException {

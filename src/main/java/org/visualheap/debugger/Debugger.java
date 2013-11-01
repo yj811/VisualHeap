@@ -71,6 +71,7 @@ public class Debugger {
 	private String mainArgs;
 	private DebugListener listener;
 	private static Debugger debugger;
+	private DebuggerEventThread eventThread;
 
     /**
      * main
@@ -150,9 +151,8 @@ public class Debugger {
      * resumes VM
      */
     private void startEventThread() {
-		DebuggerEventThread eventThread 
-        	= new DebuggerEventThread(vm, className, 
-        			breakpointLine, listener);
+		eventThread = new DebuggerEventThread(vm, className, 
+				breakpointLine, listener);
         eventThread.start();
         vm.resume();
 
@@ -234,7 +234,18 @@ public class Debugger {
 	public final void resume() {
 		vm.resume();
 	}
+	
 	public final InputStream getOutput() {
-    return vm.process().getInputStream();
+		return vm.process().getInputStream();
+	}
+
+	
+	/**
+	 * add a breakpoint at the specified line
+	 * @param className name of class to break in (qualified by package)
+	 * @param breakpointLine line to add a breakpoint to
+	 */
+	public void addBreakpoint(String className, int breakpointLine) {
+		eventThread.addBreakpoint(className, breakpointLine);
 	}
 }
