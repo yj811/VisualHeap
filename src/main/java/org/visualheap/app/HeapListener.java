@@ -1,7 +1,7 @@
 package org.visualheap.app;
 
 import com.sun.jdi.ObjectReference;
-import org.visualheap.debugger.DebugListener;
+import org.visualheap.debugger.NullListener;
 
 import java.util.List;
 
