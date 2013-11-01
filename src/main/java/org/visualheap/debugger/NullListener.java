@@ -9,26 +9,22 @@ public class NullListener implements DebugListener {
 
 	@Override
 	public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("NullListener: onBreakpoint");
 	}
 
 	@Override
 	public void onStep(List<ObjectReference> fromStackFrame) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("NullListener: onStep");
 	}
 
 	@Override
 	public void vmStart() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("NullListener: vmStart");
 	}
 
 	@Override
 	public void vmDeath() {
-		// TODO Auto-generated method stub
-		
+		System.out.println("NullListener: vmDeath");
 	}
 	
 }

@@ -63,15 +63,11 @@ class DebuggerEventThread extends Thread {
 	/**
 	 * construct an event thread, with preset breakpoint.
 	 * @param vm virtual machine to observe
-	 * @param className classname (qualified by package) to break in
-	 * @param breakpointLine 
 	 * @param listener DebugListener instance to call back to
 	 */
-    DebuggerEventThread(VirtualMachine vm, String className, 
-    		Integer breakpointLine,	DebugListener listener) {
+    DebuggerEventThread(VirtualMachine vm, DebugListener listener) {
         super("event-handler");
         this.vm = vm;
-        breakpointsToAdd.add(new Breakpoint(className, breakpointLine));
         this.listener = listener;
         
         setEventRequests();
@@ -153,6 +149,10 @@ class DebuggerEventThread extends Thread {
         // Make sure we sync on thread death
         tdr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         tdr.enable();
+        
+        VMDeathRequest vmdr = mgr.createVMDeathRequest();
+        vmdr.setSuspendPolicy(EventRequest.SUSPEND_ALL); // is this necessary?
+        vmdr.enable();
 
         // stop on class prepare so we can check if the loaded class is one
         // we want to set a breakpoint in
@@ -177,6 +177,7 @@ class DebuggerEventThread extends Thread {
         } else if (event instanceof VMDeathEvent) {
             vmDeathEvent((VMDeathEvent)event);
         } else if (event instanceof VMDisconnectEvent) {
+        	System.out.println("vm disconnect");
             vmDisconnectEvent((VMDisconnectEvent)event);
         } else if (event instanceof BreakpointEvent) {
         	shouldResume = false;
@@ -193,7 +194,7 @@ class DebuggerEventThread extends Thread {
     }
 
     private void threadDeathEvent(ThreadDeathEvent event) {
-	
+    	System.out.println("thread death");	
 	}
 
 	/***
@@ -301,8 +302,10 @@ class DebuggerEventThread extends Thread {
     }
 
     public void vmDisconnectEvent(VMDisconnectEvent event) {
-        connected = false;
+    	System.out.println("vm disconnect event");
         listener.vmDeath();
+        System.out.println("called vmDeath");
+        connected = false;
     }
 
 	public void addBreakpoint(String className, int breakpointLine) {
