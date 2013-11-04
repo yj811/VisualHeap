@@ -9,20 +9,35 @@ import java.util.List;
 
 import java.io.*;
 
-public class MainApplication {
+public class MainGUI {
 
   //Variables
-	private static Debugger debugger;
-  private static String classPath;
-	private static String className;
+	private Debugger debugger;
+  private String classPath;
+	private String className;
   
 	//GUI Components
-	private static final JTextArea taConsoleOutput = new JTextArea();
-  private static final JTextArea taDebuggerOutput = new JTextArea();
-  private static final JFileChooser fc = new JFileChooser();
+	private final JTextArea taConsoleOutput = new JTextArea();
+  private final JTextArea taDebuggerOutput = new JTextArea();
+  private final JFileChooser fc = new JFileChooser();
   
 
-  private static void buildGUI() {
+  public MainGUI(Debugger debugger) {
+		this.debugger = debugger;
+	}
+
+	public void show() {
+		//Schedule a job for the event-dispatching thread:
+		//creating and showing this application's GUI.
+		javax.swing.SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+		    buildGUI();
+		  }
+		});
+
+	}
+	
+	private void buildGUI() {
 
     //Generate the GUI root frame
 		JFrame frame = new JFrame("Visual Heap Analyser");
@@ -44,7 +59,7 @@ public class MainApplication {
 		constraints.weighty=0.5;
 		constraints.gridy=0;
 		constraints.gridx=0;
-    consolePane.add(debuggerScrollPane, constraints);
+   //consolePane.add(debuggerScrollPane, constraints);
 
     //This thread sets up the MainApplication's output and 
 		//error streams to the taDebuggerOutput.
@@ -102,13 +117,8 @@ public class MainApplication {
 		btnDebug.addActionListener(new ActionListener() {
  			public void actionPerformed(ActionEvent e) {
 				  className = edtClassName.getText();
-				  debugger = new Debugger(classPath, className, 12, new TestDebugListener() {
-					  public void onBreakpoint(List<ObjectReference> ref) {
-						  super.onBreakpoint(ref);
-							System.out.println("BREAKPOINT, resuming....");
-							debugger.resume();	
-						}
-					});			
+					debugger.setClassName(className);
+					debugger.setClassPath(classPath);
 		      Thread t = new Thread() {
 						public void run() {
 							try {
@@ -122,6 +132,7 @@ public class MainApplication {
 						}
 					};
 					t.start();
+					debugger.begin();
 				}
 		});
     frame.getContentPane().add(btnDebug, BorderLayout.PAGE_END);
@@ -129,17 +140,6 @@ public class MainApplication {
 
 		frame.pack();
 		frame.setVisible(true);
-	}
-
-
-	public static void main (String[] args) {
-		//Schedule a job for the event-dispatching thread:
-		//creating and showing this application's GUI.
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-		    buildGUI();
-		  }
-		});
 	}
 
 }
