@@ -127,8 +127,8 @@ public class MainGUI {
 		toolbarPane.add(btnSetBreak);
     btnSetBreak.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        debugger.addBreakpoiny(edtClassName.getText(), spinLine.getValue());
 				System.out.println("Added breakpoint at line " + spinLine.getValue());
+        debugger.addBreakpoint(edtClassName.getText(), (Integer) spinLine.getValue());
 			}
 		});
 		
