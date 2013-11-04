@@ -3,6 +3,10 @@ package org.visualheap.app;
 import com.sun.jdi.ObjectReference;
 import org.visualheap.debugger.NullListener;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -18,9 +22,37 @@ public class HeapListener extends NullListener {
         System.out.println("breakpoint, got "
                 + fromStackFrame.size() + " object references");
 
-        for(ObjectReference object : fromStackFrame) {
-            System.out.println(object.uniqueID());
+        try {
+            File file = new File("../out/heapdata.txt");
+            if(!file.exists()) {
+                file.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+
+            for(ObjectReference object : fromStackFrame) {
+                bw.write("Unique ID: " + object.uniqueID());
+                bw.newLine();
+                bw.write("Hashcode: " + object.hashCode());
+                bw.newLine();
+                bw.write("References: " + object.referringObjects(0));
+            }
+
+            bw.close();
+        } catch (IOException ex) {
+            System.out.println("Error with file creation. Exiting.");
+            ex.printStackTrace();
+            return;
         }
+
+        /*
+         * Iterate with for-each loop
+         * extract as much as possible that we can use
+         * output to file
+         *
+         * find some good graph algorithms
+         */
     }
 
 	@Override
@@ -28,4 +60,14 @@ public class HeapListener extends NullListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void vmStart() {
+        System.out.println("HeapListener: vmStart");
+    }
+
+    @Override
+    public void vmDeath() {
+        System.out.println("HeapListener: vmDeath");
+    }
 }
