@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import org.visualheap.debugger.*;
+import org.visualheap.app.InputStreamThread;
 import com.sun.jdi.*;
 import java.util.List;
 
@@ -20,6 +21,8 @@ public class MainGUI {
 	private final JTextArea taConsoleOutput = new JTextArea();
   private final JTextArea taDebuggerOutput = new JTextArea();
   private final JFileChooser fc = new JFileChooser();
+  private InputStreamThread istConsoleOutput;
+  private InputStreamThread istDebuggerOutput;
   
 
   public MainGUI(Debugger debugger) {
@@ -59,7 +62,7 @@ public class MainGUI {
 		constraints.weighty=0.5;
 		constraints.gridy=0;
 		constraints.gridx=0;
-   //consolePane.add(debuggerScrollPane, constraints);
+    consolePane.add(debuggerScrollPane, constraints);
 
     //This thread sets up the MainApplication's output and 
 		//error streams to the taDebuggerOutput.
@@ -116,23 +119,16 @@ public class MainGUI {
 		btnDebug.setPreferredSize(new Dimension(150, 40));
 		btnDebug.addActionListener(new ActionListener() {
  			public void actionPerformed(ActionEvent e) {
-				  className = edtClassName.getText();
+				  if (istConsoleOutput != null && !istConsoleOutput.finished()) {
+            istConsoleOutput.finish();
+					}
+		      istConsoleOutput = new InputStreamThread(taConsoleOutput);
+					className = edtClassName.getText();
 					debugger.setClassName(className);
 					debugger.setClassPath(classPath);
-		      Thread t = new Thread() {
-						public void run() {
-							try {
-								BufferedReader br = new BufferedReader(new InputStreamReader(debugger.getOutput()));
-								while (true) {
-									if (br.ready()) taConsoleOutput.append(br.readLine() + "\n");
-								}
-							} catch (IOException ex) {
-								ex.printStackTrace();
-							}
-						}
-					};
-					t.start();
 					debugger.begin();
+			    istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
+					istConsoleOutput.start();
 				}
 		});
     frame.getContentPane().add(btnDebug, BorderLayout.PAGE_END);

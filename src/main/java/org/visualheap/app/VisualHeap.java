@@ -2,6 +2,7 @@ package org.visualheap.app;
 
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
+import org.visualheap.app.MainGUI;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,9 +19,10 @@ public class VisualHeap {
      */
     public static void main(String[] args) {
         DebugListener debugListener = new HeapListener();
+        debugger = null;
+				if(args.length != 3) {
+            debugger = new Debugger(debugListener);
 
-        if(args.length != 3) {
-            usage();
         } else {
 
             String classPath = args[0];
@@ -34,8 +36,11 @@ public class VisualHeap {
             }
 
             debugger = new Debugger(classPath, className, breakpointLine, debugListener);
+
         }
-    }
+			  MainGUI gui = new MainGUI(debugger);
+        gui.show();
+		}
 
     private static void usage() {
         System.out.println("usage: java -jar debugger.jar"
