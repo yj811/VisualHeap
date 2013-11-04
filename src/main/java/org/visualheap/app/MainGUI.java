@@ -113,10 +113,38 @@ public class MainGUI {
 
     final JTextField edtClassName = new JTextField();
 		fileSelectPane.add(edtClassName);
-    
+		
+		final JPanel toolbarPane = new JPanel();
+		toolbarPane.setLayout(new BoxLayout(toolbarPane, BoxLayout.X_AXIS));
+		toolbarPane.setPreferredSize(new Dimension(40,40));
+		fileSelectPane.add(toolbarPane);
+   
+		final JSpinner spinLine = new JSpinner();
+		spinLine.setPreferredSize(new Dimension(40,40));
+		toolbarPane.add(spinLine);
+	  
+		final JButton btnSetBreak = new JButton ("Set Breakpoint");
+		toolbarPane.add(btnSetBreak);
+    btnSetBreak.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        debugger.addBreakpoiny(edtClassName.getText(), spinLine.getValue());
+				System.out.println("Added breakpoint at line " + spinLine.getValue());
+			}
+		});
+		
+		final JLabel lblLineNo = new JLabel("Line Number: ");
+		toolbarPane.add(lblLineNo);
+		final JButton btnStep = new JButton ("Step");
+		toolbarPane.add(btnStep);
+    btnStep.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        debugger.step();
+			}
+		});
+
 		
 		JButton btnDebug = new JButton("Debug");
-		btnDebug.setPreferredSize(new Dimension(150, 40));
+   	btnDebug.setPreferredSize(new Dimension(450, 40));
 		btnDebug.addActionListener(new ActionListener() {
  			public void actionPerformed(ActionEvent e) {
 				  if (istConsoleOutput != null && !istConsoleOutput.finished()) {
