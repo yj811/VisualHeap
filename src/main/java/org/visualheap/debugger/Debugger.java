@@ -68,7 +68,7 @@ public class Debugger {
 	 */
 
     // Running remote VM
-    private final VirtualMachine vm;
+    private VirtualMachine vm;
     private String innerClassPath = null;
 	private Integer breakpointLine;
 	private String mainClass;
@@ -93,13 +93,24 @@ public class Debugger {
     	this.mainClass = className;
     	this.breakpointLine = breakpointLine;
         
-        mainArgs = constructMainArguments(className);
         
-        vm = launchTarget();
-        startEventThread();
-        
-        eventThread.addBreakpoint(className, breakpointLine);
+				begin();
+        addBreakpoint(className, breakpointLine);
     }
+
+
+    public Debugger(String classPath, String mainName, DebugListener listener) {
+    	
+    	this.listener = listener;
+      	this.innerClassPath = classPath;
+    	this.mainClass = mainName;
+    	begin();    
+	
+	}
+
+	public Debugger(DebugListener listener) {
+    	this.listener = listener;
+	}
 
 	private String constructMainArguments(String className) {
 		StringBuffer sb = new StringBuffer();
@@ -108,22 +119,8 @@ public class Debugger {
     	sb.append(" ");
     	sb.append(innerClassPath);
     	sb.append(" ");
-    	sb.append(className);
+    	sb.append(mainClass);
 		return sb.toString();
-	}
-
-
-    public Debugger(String classPath, String mainName, DebugListener listener) {
-    	
-    	this.listener = listener;
-      	this.innerClassPath = classPath;
-    	this.mainClass = mainName;
-    	 
-        mainArgs = constructMainArguments(mainClass);
-        
-        vm = launchTarget();
-        startEventThread();
-	
 	}
 
 	/**
@@ -141,6 +138,7 @@ public class Debugger {
      * Launch target VM.
      */
     private VirtualMachine launchTarget() {
+        mainArgs = constructMainArguments(mainClass);
         LaunchingConnector connector = findLaunchingConnector();
         Map<String, Connector.Argument> arguments =
            connectorArguments(connector, mainArgs);
@@ -214,6 +212,29 @@ public class Debugger {
 	
 	public final InputStream getOutput() {
 		return vm.process().getInputStream();
+	}
+
+  /**
+  * Allows the debugger's target classpath can be configured, before execution.
+	*
+	*/
+	public void setClassPath(String classPath) {
+    this.innerClassPath = classPath;
+	}
+  
+	/**
+  * Allows the debugger's target classname and package can be configured, before execution.
+	*
+	*/
+
+	public void setClassName(String className) {
+    this.mainClass = className;
+	}
+
+	public void begin() {
+        vm = launchTarget();
+        startEventThread();
+
 	}
 	
 	/**
