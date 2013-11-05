@@ -14,6 +14,12 @@ public class AggregatingDebugListener implements DebugListener {
 	
 	private List<DebugListener> listeners = new Vector<DebugListener>();
 	
+	public AggregatingDebugListener(DebugListener... listeners) {
+		for(DebugListener listener : listeners) {
+			addListener(listener);
+		}
+	}
+	
 	/**
 	 * Add this listener to this aggregation set.
 	 * @param listener The listener to add.
