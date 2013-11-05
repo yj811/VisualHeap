@@ -35,11 +35,14 @@
 package org.visualheap.debugger;
 
 import com.sun.jdi.*;
-import com.sun.jdi.request.*;
 import com.sun.jdi.event.*;
+import com.sun.jdi.request.*;
+import org.visualheap.app.HeapListener;
 
-import java.util.*;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * This class processes incoming JDI events and displays them
@@ -234,12 +237,28 @@ class DebuggerEventThread extends Thread {
     	//vm.suspend(); // just to be safe
     	ThreadReference thread = event.thread();
     	lastBreakpointedThread = event.thread();
-    	List<ObjectReference> objRefs = getObjectReferencesOnThreadStack(thread);
-    	listener.onBreakpoint(objRefs);
-    	        	
+
+        if (listener instanceof HeapListener) {
+            StackFrame sf = getStackFrame(thread);
+            listener.newOnBreakpoint(sf);
+        } else {
+            List<ObjectReference> objRefs = getObjectReferencesOnThreadStack(thread);
+            listener.onBreakpoint(objRefs);
+        }
     }
 
-	private List<ObjectReference> getObjectReferencesOnThreadStack(
+    private StackFrame getStackFrame(ThreadReference thread) {
+        try {
+            StackFrame sf = thread.frame(0);
+            return sf;
+        } catch (IncompatibleThreadStateException e) {
+            // means the thread was not suspended, but obviously it will be
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private List<ObjectReference> getObjectReferencesOnThreadStack(
 			ThreadReference thread) {
 		List<ObjectReference> objRefs = Collections.emptyList();
 		try {
@@ -267,7 +286,7 @@ class DebuggerEventThread extends Thread {
      * handles a step event
      * removes the old {@link StepRequest} from the VM
      * @param event the step event
-     * @see DebuggerEventThread.step
+     * @see DebuggerEventThread . step
      */
     private void stepEvent(StepEvent event) {
     	

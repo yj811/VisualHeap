@@ -1,8 +1,9 @@
 package org.visualheap.debugger;
 
-import java.util.List;
-
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
+
+import java.util.List;
 
 public interface DebugListener {
 	
@@ -24,4 +25,5 @@ public interface DebugListener {
 	
 	void vmDeath();
 
+    void newOnBreakpoint(StackFrame sf);
 }

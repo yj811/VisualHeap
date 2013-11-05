@@ -1,17 +1,8 @@
 package org.visualheap.app;
 
-import com.sun.jdi.Field;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.Value;
+import com.sun.jdi.*;
 import org.visualheap.debugger.NullListener;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -21,6 +12,13 @@ import java.util.List;
  * Time: 15:24
  */
 public class HeapListener extends NullListener {
+    @Override
+    public void newOnBreakpoint(StackFrame sf) {
+        System.out.println("HeapListener breakpoint, got object references");
+
+
+    }
+
     @Override
     public void onBreakpoint(List<ObjectReference> fromStackFrame) {
         System.out.println("breakpoint, got "
