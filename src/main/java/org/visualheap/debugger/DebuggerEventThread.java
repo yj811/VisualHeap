@@ -370,17 +370,24 @@ class DebuggerEventThread extends Thread {
 	 * as we create breakpoints with SUSPEND_ALL, only one breakpoint
 	 * can be reached at a time. So the thread to step is the last
 	 * breakpointed thread.
+	 * @param depth STEP_IN, STEP_OUT, STEP_OVER. Default STEP_OVER.
 	 */
 	public void step() {
+		step(StepDepth.STEP_OVER);
+	}
+	
+	public void step(StepDepth depth) {
 		
 		System.out.println("step eventthread");
 		
 		ThreadReference threadToStep = lastBreakpointedThread;
 		
+		
+		
 		// TODO step_over, step_out etc
 		StepRequest stepRequest = vm.eventRequestManager()
 				.createStepRequest(threadToStep, 
-						StepRequest.STEP_LINE, StepRequest.STEP_OVER);
+						StepRequest.STEP_LINE, depth.toStepRequestDepth());
 		stepRequest.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 		stepRequest.addCountFilter(1);
 		stepRequest.enable();

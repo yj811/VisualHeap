@@ -184,12 +184,14 @@ public class Debugger {
 	/**
 	 * step the connected vm.
 	 * vm must be suspended.
+	 * @param depth StepDepth enum.
 	 */
 	public void step() {
-		
-		System.out.println("debugger step");
-		
 		eventThread.step();
+	}
+	
+	public void step(StepDepth depth) {
+		eventThread.step(depth);
 	}
 	
 	/**
