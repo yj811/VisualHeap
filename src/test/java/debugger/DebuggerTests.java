@@ -16,7 +16,7 @@ import com.sun.jdi.ObjectReference;
 public class DebuggerTests {
 	
 	
-	private static final long defaultTimeout = 1000;
+	private static final long defaultTimeout = 2000;
 
 
 	private static String[] testCmd(String className, Integer breakpointLine) {
@@ -42,6 +42,7 @@ public class DebuggerTests {
 	@Test(timeout = defaultTimeout)
 	public void JVMTerminates() {
 		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, new NullListener());
+		debugger.resume();
 		debugger.await();
 	}
 	
@@ -126,15 +127,16 @@ public class DebuggerTests {
 	public void CanStep() throws InterruptedException {
 		CountingDebugListener listener = new CountingDebugListener();
 		
-		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 17, listener);
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, listener);
+		debugger.addBreakpoint(ARRAYCLASS, 17);
 		debugger.addBreakpoint(ARRAYCLASS, 14);
-		
+	  debugger.resume();	
 		// first breakpoint
 		assertEquals(2, listener.getResult());
 		listener.reset();
 		
 		debugger.step();
-		//debugger.resume(); // we shouldn't have to do this
+		debugger.resume(); // we shouldn't have to do this
 		
 		assertEquals(3, listener.getResult());
 		
@@ -192,6 +194,7 @@ public class DebuggerTests {
 		};
 		
 		Debugger debugger = new Debugger(CLASSPATH, SIMPLEREFERENCE, listener);
+		debugger.resume();
 		
 		latch.await();
 		
