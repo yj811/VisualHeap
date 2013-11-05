@@ -324,12 +324,23 @@ class DebuggerEventThread extends Thread {
         connected = false;
     }
 
+    /**
+     * Add breakpoint.
+     * @param className The class to breakpoint.
+     * @param breakpointLine The line to break at.
+     */
 	public void addBreakpoint(String className, int breakpointLine) {
 		
 		Breakpoint bp = new Breakpoint(className, breakpointLine);
 		
-		// TODO search already loaded classes
-		breakpointsToAdd.add(bp);
+		List<ReferenceType> classes = vm.classesByName(className);
+		if(classes.isEmpty()) {	
+			// add this later
+			breakpointsToAdd.add(bp);
+		} else {
+			setBreakpoint(classes.get(0), bp);
+		}
+		
 		
 		
 	}
