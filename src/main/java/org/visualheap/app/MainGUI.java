@@ -119,9 +119,21 @@ public class MainGUI {
 		toolbarPane.setPreferredSize(new Dimension(40,40));
 		fileSelectPane.add(toolbarPane);
    
+		final JButton btnResume = new JButton ("Resume");
+		toolbarPane.add(btnResume);
+    btnResume.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+			  debugger.resume();
+			}
+		});
+		
+		toolbarPane.add(btnResume);
+
 		final JSpinner spinLine = new JSpinner();
 		spinLine.setPreferredSize(new Dimension(40,40));
 		toolbarPane.add(spinLine);
+
+
 	  
 		final JButton btnSetBreak = new JButton ("Set Breakpoint");
 		toolbarPane.add(btnSetBreak);
@@ -154,7 +166,7 @@ public class MainGUI {
 					className = edtClassName.getText();
 					debugger.setClassName(className);
 					debugger.setClassPath(classPath);
-					debugger.begin();
+					debugger.bootVM();
 			    istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
 					istConsoleOutput.start();
 				}
