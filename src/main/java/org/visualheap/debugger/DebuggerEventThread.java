@@ -225,7 +225,9 @@ class DebuggerEventThread extends Thread {
     }
 
     private void vmStartEvent(VMStartEvent event)  {
-    	listener.vmStart();
+    	vm.suspend();
+			//Wait for the user begin debugging
+			listener.vmStart();
     }
 
     private void breakpointEvent(BreakpointEvent event)  {

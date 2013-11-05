@@ -94,23 +94,125 @@ public class Debugger {
     	this.breakpointLine = breakpointLine;
         
         
-				begin();
+			  bootVM();
         addBreakpoint(className, breakpointLine);
-    }
+        resume();
+		}
 
 
     public Debugger(String classPath, String mainName, DebugListener listener) {
     	
     	this.listener = listener;
-      	this.innerClassPath = classPath;
+      this.innerClassPath = classPath;
     	this.mainClass = mainName;
-    	begin();    
-	
+    	bootVM();	
 	}
 
 	public Debugger(DebugListener listener) {
-    	this.listener = listener;
+			this.listener = listener;
 	}
+
+
+    /**
+     * returns a list of objects referenced by the given object.
+     * @param objRef object to get references for
+     * @return list of objects referenced by given object reference
+     * @see ObjectReference
+     */
+	public final List<ObjectReference> getObjectReferences(ObjectReference objRef) {
+	    List<ObjectReference> resultList = new LinkedList<ObjectReference>();
+	    ReferenceType type = objRef.referenceType();
+	    List<Field> fields = type.fields();
+	    
+	    for (Field f : fields) {
+	        Value v = objRef.getValue(f);
+	        if (v instanceof ObjectReference) {
+	            resultList.add((ObjectReference) v);
+	        }
+	    }
+
+		return resultList;
+	}
+
+	/**
+	 * resume the VM from a suspended state.
+	 */
+	public final void resume() {
+		vm.resume();
+	}
+
+	public final InputStream getOutput() {
+		return vm.process().getInputStream();
+	}
+
+  /**
+  * Allows the debugger's target classpath can be configured, before execution.
+	*
+	*/
+	public void setClassPath(String classPath) {
+    this.innerClassPath = classPath;
+	}
+  
+	/**
+  * Allows the debugger's target classname and package can be configured, before execution.
+	*
+	*/
+
+	public void setClassName(String className) {
+    this.mainClass = className;
+	}
+
+	/**
+		* starts the debugger's target program in a VM, and should result in the VM suspending at the VMStart event, ready for breakpoint adding.
+  */
+	
+	public void bootVM() {
+        vm = launchTarget();
+        startEventThread();
+
+	}
+	
+	/**
+	 * add a breakpoint at the specified line
+	 * @param className name of class to break in (qualified by package)
+	 * @param breakpointLine line to add a breakpoint to
+	 */
+	public void addBreakpoint(String className, int breakpointLine) {
+		eventThread.addBreakpoint(className, breakpointLine);
+	}
+
+	/**
+	 * step the connected vm.
+	 * vm must be suspended.
+	 */
+	public void step() {
+		
+		System.out.println("debugger step");
+		
+		eventThread.step();
+	}
+
+	public void await() {
+		try {
+			vm.process().waitFor();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//PRIVATE METHODS
+	
+	/**
+     * starts the event thread
+     * resumes VM
+     */
+    private void startEventThread() {
+		eventThread = new DebuggerEventThread(vm, listener);
+        eventThread.start();
+        //vm.resume();
+    }
+
 
 	private String constructMainArguments(String className) {
 		StringBuffer sb = new StringBuffer();
@@ -123,16 +225,6 @@ public class Debugger {
 		return sb.toString();
 	}
 
-	/**
->>>>>>> debugger
-     * starts the event thread
-     * resumes VM
-     */
-    private void startEventThread() {
-		eventThread = new DebuggerEventThread(vm, listener);
-        eventThread.start();
-        vm.resume();
-    }
 
     /**
      * Launch target VM.
@@ -181,88 +273,4 @@ public class Debugger {
 
         return arguments;
     }
-
-    /**
-     * returns a list of objects referenced by the given object.
-     * @param objRef object to get references for
-     * @return list of objects referenced by given object reference
-     * @see ObjectReference
-     */
-	public final List<ObjectReference> getObjectReferences(ObjectReference objRef) {
-	    List<ObjectReference> resultList = new LinkedList<ObjectReference>();
-	    ReferenceType type = objRef.referenceType();
-	    List<Field> fields = type.fields();
-	    
-	    for (Field f : fields) {
-	        Value v = objRef.getValue(f);
-	        if (v instanceof ObjectReference) {
-	            resultList.add((ObjectReference) v);
-	        }
-	    }
-
-		return resultList;
-	}
-
-	/**
-	 * resume the VM.
-	 */
-	public final void resume() {
-		vm.resume();
-	}
-	
-	public final InputStream getOutput() {
-		return vm.process().getInputStream();
-	}
-
-  /**
-  * Allows the debugger's target classpath can be configured, before execution.
-	*
-	*/
-	public void setClassPath(String classPath) {
-    this.innerClassPath = classPath;
-	}
-  
-	/**
-  * Allows the debugger's target classname and package can be configured, before execution.
-	*
-	*/
-
-	public void setClassName(String className) {
-    this.mainClass = className;
-	}
-
-	public void begin() {
-        vm = launchTarget();
-        startEventThread();
-
-	}
-	
-	/**
-	 * add a breakpoint at the specified line
-	 * @param className name of class to break in (qualified by package)
-	 * @param breakpointLine line to add a breakpoint to
-	 */
-	public void addBreakpoint(String className, int breakpointLine) {
-		eventThread.addBreakpoint(className, breakpointLine);
-	}
-
-	/**
-	 * step the connected vm.
-	 * vm must be suspended.
-	 */
-	public void step() {
-		
-		System.out.println("debugger step");
-		
-		eventThread.step();
-	}
-
-	public void await() {
-		try {
-			vm.process().waitFor();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }
