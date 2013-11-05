@@ -265,11 +265,15 @@ class DebuggerEventThread extends Thread {
     
     /**
      * handles a step event
+     * removes the old {@link StepRequest} from the VM
      * @param event the step event
+     * @see DebuggerEventThread.step
      */
     private void stepEvent(StepEvent event) {
     	
     	System.out.println("step event");
+    	
+    	event.request().disable();
     	
     	List<ObjectReference> fromStackFrame 
     		= getObjectReferencesOnThreadStack(lastBreakpointedThread);

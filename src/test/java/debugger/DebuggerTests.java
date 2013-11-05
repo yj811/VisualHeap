@@ -143,6 +143,29 @@ public class DebuggerTests {
 	}
 	
 	@Test(timeout = defaultTimeout)
+	public void CanStepTwice() throws InterruptedException {
+		CountingDebugListener listener = new CountingDebugListener();
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, listener);
+		debugger.addBreakpoint(ARRAYCLASS, 14);
+		debugger.resume();	
+		// first breakpoint
+		assertEquals(2, listener.getResult());
+		listener.reset();
+		
+		debugger.step();
+		//debugger.resume(); // we shouldn't have to do this
+		
+		assertEquals(3, listener.getResult());
+		
+		debugger.step();
+		//debugger.resume(); // we shouldn't have to do this
+		
+		assertEquals(3, listener.getResult());
+		
+	}
+	
+	@Test(timeout = defaultTimeout)
 	public void CanStepWithNoChangeInNumberOfObjects() 
 			throws InterruptedException {
 		CountingDebugListener listener = new CountingDebugListener();
