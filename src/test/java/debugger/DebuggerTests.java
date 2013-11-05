@@ -136,7 +136,6 @@ public class DebuggerTests {
 		listener.reset();
 		
 		debugger.step();
-		debugger.resume(); // we shouldn't have to do this
 		
 		assertEquals(3, listener.getResult());
 		
