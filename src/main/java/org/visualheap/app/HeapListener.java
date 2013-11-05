@@ -1,13 +1,17 @@
 package org.visualheap.app;
 
+import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
+import com.sun.jdi.Value;
 import org.visualheap.debugger.NullListener;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -23,10 +27,17 @@ public class HeapListener extends NullListener {
                 + fromStackFrame.size() + " object references");
 
         // try-catch block around for-each-object loop for file writing
-        try {
-            File file = new File("../out/heapdata.txt");
+        /*try {
+            File file = new File("/out/heaptext.txt");
+
             if(!file.exists()) {
-                file.createNewFile();
+                boolean success = file.mkdirs();
+                if(success) {
+                    System.out.println("in file does not exist");
+                    file.createNewFile();
+                } else {
+                    throw new IOException();
+                }
             }
 
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
@@ -35,7 +46,7 @@ public class HeapListener extends NullListener {
             for(ObjectReference object : fromStackFrame) {
                 bw.write("Unique ID: " + object.uniqueID());
                 bw.newLine();
-                bw.write("Hashcode: " + object.hashCode());
+                bw.write("Hash Code: " + object.hashCode());
                 bw.newLine();
                 bw.write("References: " + object.referringObjects(0)); // in-bound references
 
@@ -47,9 +58,16 @@ public class HeapListener extends NullListener {
                  * These extend ReferenceType which has the method allFields()
                  * which returns a list of Fields -> these can be used in the getValue/getValues methods
                  *   -> good example of this in debugger.java -> getObjectReferences method
-                 */
+                 */ /*
                 ReferenceType objectType = object.referenceType();
+                List<Field> fields = objectType.allFields();
 
+                for (Field f : fields) {
+                    Value v = object.getValue(f);
+                    if (v instanceof ObjectReference) {
+                        bw.write(v.toString());
+                    }
+                }
 
             }
 
@@ -58,6 +76,23 @@ public class HeapListener extends NullListener {
             System.out.println("Error with file creation. Exiting.");
             ex.printStackTrace();
             return;
+        }*/
+
+        for(ObjectReference object : fromStackFrame) {
+            System.out.println("Unique ID: " + object.uniqueID());
+            System.out.println("Hash Code: " + object.hashCode());
+            System.out.println("References: " + object.referringObjects(0)); //inbound references
+
+            ReferenceType objectType = object.referenceType();
+            List<Field> fields = objectType.allFields();
+
+            for (Field f : fields) {
+                System.out.println("Values: ");
+                Value v = object.getValue(f);
+                if (v instanceof ObjectReference) {
+                    System.out.println(v.toString());
+                }
+            }
         }
     }
 
