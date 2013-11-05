@@ -1,6 +1,7 @@
 package org.visualheap.app;
 
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import org.visualheap.debugger.NullListener;
 
 import java.io.BufferedWriter;
@@ -10,11 +11,10 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
+ * Creation Details.
  * User: eleanor
  * Date: 31/10/13
  * Time: 15:24
- * To change this template use File | Settings | File Templates.
  */
 public class HeapListener extends NullListener {
     @Override
@@ -22,6 +22,7 @@ public class HeapListener extends NullListener {
         System.out.println("breakpoint, got "
                 + fromStackFrame.size() + " object references");
 
+        // try-catch block around for-each-object loop for file writing
         try {
             File file = new File("../out/heapdata.txt");
             if(!file.exists()) {
@@ -36,7 +37,20 @@ public class HeapListener extends NullListener {
                 bw.newLine();
                 bw.write("Hashcode: " + object.hashCode());
                 bw.newLine();
-                bw.write("References: " + object.referringObjects(0));
+                bw.write("References: " + object.referringObjects(0)); // in-bound references
+
+                /* object.referenceType() returns the type of the object
+                 * {either ClassType, ArrayType or InterfaceType}
+                 * Given that we've been passed an ObjectReference
+                 * it is fair to assume they will always be ClassType in this method. (?)
+                 *
+                 * These extend ReferenceType which has the method allFields()
+                 * which returns a list of Fields -> these can be used in the getValue/getValues methods
+                 *   -> good example of this in debugger.java -> getObjectReferences method
+                 */
+                ReferenceType objectType = object.referenceType();
+
+
             }
 
             bw.close();
@@ -45,14 +59,6 @@ public class HeapListener extends NullListener {
             ex.printStackTrace();
             return;
         }
-
-        /*
-         * Iterate with for-each loop
-         * extract as much as possible that we can use
-         * output to file
-         *
-         * find some good graph algorithms
-         */
     }
 
 	@Override
