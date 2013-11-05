@@ -205,7 +205,6 @@ public class Debugger {
 	
 	/**
      * starts the event thread
-     * resumes VM
      */
     private void startEventThread() {
 		eventThread = new DebuggerEventThread(vm, listener);
