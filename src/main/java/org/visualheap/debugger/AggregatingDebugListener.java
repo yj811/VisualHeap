@@ -6,13 +6,26 @@ import java.util.Vector;
 import com.sun.jdi.ObjectReference;
 
 public class AggregatingDebugListener implements DebugListener {
+	/**
+	 * aggregates a set of @{link DebugListener}s together.
+	 * Passes all events this object recieves onto it's members.
+	 */
+	
 	
 	private List<DebugListener> listeners = new Vector<DebugListener>();
 	
+	/**
+	 * Add this listener to this aggregation set.
+	 * @param listener The listener to add.
+	 */
 	public void addListener(DebugListener listener) {
 		listeners.add(listener);
 	}
 	
+	/**
+	 * Remove this listener to this aggregation set.
+	 * @param listener The listener to remove.
+	 */
 	public void removeListener(DebugListener listener) {
 		listeners.remove(listener);
 	}
