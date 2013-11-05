@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
   testCompile 'junit:junit:4.+'
+  testCompile 'org.jmock:jmock-junit4:2.6.0'
   compile files("lib/tools.jar")
 }
 
