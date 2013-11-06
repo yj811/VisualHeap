@@ -18,7 +18,9 @@ public class HeapListener extends NullListener {
     @Override
     public void newOnBreakpoint(StackFrame sf) {
         System.out.println("HeapListener breakpoint, got object references");
-
+        //if the PrintWriter points to System.out, which can happen if the writer fails,
+        //make sure we don't close it.
+        boolean close = true;
         PrintWriter writer = null;
         try {
             writer = new PrintWriter("out/HeapListenerOutput.txt", "UTF-8");
@@ -30,6 +32,7 @@ public class HeapListener extends NullListener {
         	
         	if (writer == null) {	
             	writer = new PrintWriter(System.out);
+            	close = false;
             }
         }
         
@@ -60,9 +63,11 @@ public class HeapListener extends NullListener {
             // this might happen
             e.printStackTrace();
         }
-
-        writer.flush();
-        System.out.println("HeapListener: newOnBreakpoint finished");
+        if (close) {
+        	writer.close();
+        } else {
+        	writer.flush();
+        }
     }
 
     @Override
