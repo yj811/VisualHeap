@@ -15,6 +15,8 @@ public class Array {
 		System.out.println("starting");
   
 		outerArray.sum();
+		
+		System.out.println("after");
     
 		
 		

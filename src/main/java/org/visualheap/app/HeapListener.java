@@ -18,7 +18,7 @@ import java.util.List;
 public class HeapListener extends NullListener {
     // Only used in HeapListener to avoid having to change all the tests!
     @Override
-    public void newOnBreakpoint(StackFrame sf) {
+    public void onBreakpoint(StackFrame sf) {
         System.out.println("HeapListener breakpoint, got object references");
         //if the PrintWriter points to System.out, which can happen if the writer fails,
         //make sure we don't close it.
@@ -106,9 +106,9 @@ public class HeapListener extends NullListener {
     }
 
 	@Override
-	public void onStep(List<ObjectReference> fromStackFrame) {
-        System.out.println("HeapListener: onStep");
-		// TODO Auto-generated method stub
+	public void onStep(StackFrame sf) {
+		
+		System.out.println("HeapListener: onStep");
 	}
 
     @Override

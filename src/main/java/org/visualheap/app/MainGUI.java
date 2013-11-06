@@ -25,8 +25,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.visualheap.debugger.Debugger;
+import org.visualheap.debugger.NullListener;
 
-public class MainGUI {
+import com.sun.jdi.StackFrame;
+
+
+public class MainGUI extends NullListener {
 
 	//Variables
 	private Debugger debugger;
@@ -39,11 +43,13 @@ public class MainGUI {
 	private final JFileChooser fc = new JFileChooser();
 	private InputStreamThread istConsoleOutput;
 	private InputStreamThread istDebuggerOutput;
+  private final JLabel lblLineNo = new JLabel("Line Number: ");
+  private	final JTextField edtClassName = new JTextField();
 
 
 	public MainGUI(Debugger debugger) {
 		this.debugger = debugger;
-	}
+  }
 
 
 	/**
@@ -134,7 +140,6 @@ public class MainGUI {
 		});
 		fileSelectPane.add(button);
 
-		final JTextField edtClassName = new JTextField();
 		fileSelectPane.add(edtClassName);
 
 		final JPanel toolbarPane = new JPanel();
@@ -167,7 +172,6 @@ public class MainGUI {
 			}
 		});
 
-		final JLabel lblLineNo = new JLabel("Line Number: ");
 		toolbarPane.add(lblLineNo);
 		final JButton btnStep = new JButton ("Step");
 		toolbarPane.add(btnStep);
@@ -180,7 +184,36 @@ public class MainGUI {
 
 		JButton btnDebug = new JButton("Debug");
 		btnDebug.setPreferredSize(new Dimension(450, 40));
-		btnDebug.addActionListener(new ActionListener() {
+		btnDebug.addActionListener(new DebugConfig(this));
+		frame.getContentPane().add(btnDebug, BorderLayout.PAGE_END);
+
+
+		frame.pack();
+		frame.setVisible(true);
+    if (this != null) {
+      System.out.println("TEST - MainGUI is NULL");
+    }
+	}
+
+  public void onBreakpoint(StackFrame sf) {
+    lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+  }
+
+  public void onStep(StackFrame sf) {
+    lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+  }
+
+
+
+  private class DebugConfig implements ActionListener {
+      
+      final MainGUI gui;
+
+      public DebugConfig(MainGUI gui) {
+        this.gui = gui;
+      }
+      
+      @Override
 			public void actionPerformed(ActionEvent e) {
 				if (istConsoleOutput != null && !istConsoleOutput.finished()) {
 					istConsoleOutput.finish();
@@ -190,15 +223,11 @@ public class MainGUI {
 				debugger.setClassName(className);
 				debugger.setClassPath(classPath);
 				debugger.bootVM();
+	      debugger.addListener(gui);
 				istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
 				istConsoleOutput.start();
 			}
-		});
-		frame.getContentPane().add(btnDebug, BorderLayout.PAGE_END);
-
-
-		frame.pack();
-		frame.setVisible(true);
-	}
+		
+  }
 
 }

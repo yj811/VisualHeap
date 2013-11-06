@@ -6,6 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import org.visualheap.debugger.NullListener;
 
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
 
 
 public class LatchingDebugListener extends NullListener {
@@ -19,8 +20,8 @@ public class LatchingDebugListener extends NullListener {
 	}
 	
 	@Override
-	public void onBreakpoint(List<ObjectReference> fromStackFrame) {	
-		this.fromStackFrame = fromStackFrame;
+	public void onBreakpoint(StackFrame sf) {	
+		this.fromStackFrame = getObjectReferencesFromStackFrame(sf);
 		latch.countDown();
 	}
 	
@@ -30,7 +31,7 @@ public class LatchingDebugListener extends NullListener {
 	}
 
 	@Override
-	public void onStep(List<ObjectReference> fromStackFrame) {
+	public void onStep(StackFrame sf) {
 		// TODO Auto-generated method stub
 		
 	}

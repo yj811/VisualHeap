@@ -1,6 +1,6 @@
 apply plugin: "java"
 apply plugin: "checkstyle"
-apply plugin: 'eclipse'
+apply plugin: "eclipse"
 // apply plugin: "findbugs"
 
 // forces javac 1.7 
@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
   testCompile 'junit:junit:4.+'
+  testCompile 'org.jmock:jmock-junit4:2.6.0'
   compile files("lib/tools.jar")
 }
 
