@@ -56,7 +56,8 @@ public class Render3D extends Render {
                 int xPix = (int) (xx + xMove);
                 int yPix = (int) (yy + zMove);
                 zBuffer[x + y * width] = z;
-                pixels[x + y * width] = ((xPix & 15) * 16) | ((yPix & 15) * 16) << 8;
+               // pixels[x + y * width] = ((xPix & 15) * 16) | ((yPix & 15) * 16) << 8;
+                pixels[x + y * width] = Texture.floor.pixels[(xPix & 7) + (yPix & 7) * 8];
 
                 //if (z > 100) {
                 //    pixels[x + y * width] = 0;
