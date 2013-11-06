@@ -100,11 +100,6 @@ public class HeapListener extends NullListener {
         }
     }
 
-    // Unused in HeapListener
-    @Override
-    public void onBreakpoint(List<ObjectReference> fromStackFrame) {
-    }
-
 	@Override
 	public void onStep(StackFrame sf) {
 		
