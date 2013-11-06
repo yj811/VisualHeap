@@ -190,9 +190,6 @@ public class MainGUI extends NullListener {
 
 		frame.pack();
 		frame.setVisible(true);
-    if (this != null) {
-      System.out.println("TEST - MainGUI is NULL");
-    }
 	}
 
   public void onBreakpoint(StackFrame sf) {
