@@ -12,25 +12,25 @@ import java.io.*;
 
 public class MainGUI {
 
-  //Variables
+	//Variables
 	private Debugger debugger;
-  private String classPath;
+	private String classPath;
 	private String className;
-  
+
 	//GUI Components
 	private final JTextArea taConsoleOutput = new JTextArea();
-  private final JTextArea taDebuggerOutput = new JTextArea();
-  private final JFileChooser fc = new JFileChooser();
-  private InputStreamThread istConsoleOutput;
-  private InputStreamThread istDebuggerOutput;
-  
+	private final JTextArea taDebuggerOutput = new JTextArea();
+	private final JFileChooser fc = new JFileChooser();
+	private InputStreamThread istConsoleOutput;
+	private InputStreamThread istDebuggerOutput;
 
-  public MainGUI(Debugger debugger) {
+
+	public MainGUI(Debugger debugger) {
 		this.debugger = debugger;
 	}
 
-  
-  	/**
+
+	/**
 	 * Displays the gui which is built by constructing the MainGUI object.
 	 * 
 	 */
@@ -39,25 +39,25 @@ public class MainGUI {
 		//creating and showing this application's GUI.
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-		    buildGUI();
-		  }
+				buildGUI();
+			}
 		});
 
 	}
-	
-	
-	
+
+
+
 	private void buildGUI() {
 
-    //Generate the GUI root frame
+		//Generate the GUI root frame
 		JFrame frame = new JFrame("Visual Heap Analyser");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
+
 		//Base pane to add content to
 		JPanel contentPane = new JPanel(new BorderLayout());
 		frame.setContentPane(contentPane);
 
-    //Creates the pane containing the console and debugger outputs
+		//Creates the pane containing the console and debugger outputs
 		JPanel consolePane = new JPanel(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		contentPane.add(consolePane,BorderLayout.CENTER);
@@ -69,9 +69,9 @@ public class MainGUI {
 		constraints.weighty=0.5;
 		constraints.gridy=0;
 		constraints.gridx=0;
-    consolePane.add(debuggerScrollPane, constraints);
+		consolePane.add(debuggerScrollPane, constraints);
 
-    //This thread sets up the MainApplication's output and 
+		//This thread sets up the MainApplication's output and 
 		//error streams to the taDebuggerOutput.
 
 		Thread d = new Thread() {
@@ -91,49 +91,49 @@ public class MainGUI {
 			}
 		};
 		d.start();
-		
-		
+
+
 		JScrollPane consoleScrollPane = new JScrollPane(taConsoleOutput);
 		consoleScrollPane.setPreferredSize(new Dimension(300, 380));
 		constraints.gridx=1;
-    consolePane.add(consoleScrollPane, constraints);
+		consolePane.add(consoleScrollPane, constraints);
 
-    JPanel fileSelectPane = new JPanel();
+		JPanel fileSelectPane = new JPanel();
 		fileSelectPane.setLayout(new BoxLayout(fileSelectPane, BoxLayout.Y_AXIS));
-    frame.getContentPane().add(fileSelectPane, BorderLayout.NORTH);
-    
+		frame.getContentPane().add(fileSelectPane, BorderLayout.NORTH);
 
-    JButton button = new JButton("Choose classpath");
+
+		JButton button = new JButton("Choose classpath");
 		button.setPreferredSize(new Dimension(150, 40));
 		button.addActionListener(new ActionListener() {
- 			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				//In response to a button click:
-			  fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				int returnVal = fc.showOpenDialog(null);
-			  if (returnVal == JFileChooser.APPROVE_OPTION) {
-          taConsoleOutput.append("Classpath found: " +   fc.getSelectedFile().getPath() + "\n");
-				  classPath = fc.getSelectedFile().getPath();
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					taConsoleOutput.append("Classpath found: " +   fc.getSelectedFile().getPath() + "\n");
+					classPath = fc.getSelectedFile().getPath();
 				}
 			}
 		});
-    fileSelectPane.add(button);
+		fileSelectPane.add(button);
 
-    final JTextField edtClassName = new JTextField();
+		final JTextField edtClassName = new JTextField();
 		fileSelectPane.add(edtClassName);
-		
+
 		final JPanel toolbarPane = new JPanel();
 		toolbarPane.setLayout(new BoxLayout(toolbarPane, BoxLayout.X_AXIS));
 		toolbarPane.setPreferredSize(new Dimension(40,40));
 		fileSelectPane.add(toolbarPane);
-   
+
 		final JButton btnResume = new JButton ("Resume");
 		toolbarPane.add(btnResume);
-    btnResume.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-			  debugger.resume();
+		btnResume.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				debugger.resume();
 			}
 		});
-		
+
 		toolbarPane.add(btnResume);
 
 		final JSpinner spinLine = new JSpinner();
@@ -141,44 +141,44 @@ public class MainGUI {
 		toolbarPane.add(spinLine);
 
 
-	  
+
 		final JButton btnSetBreak = new JButton ("Set Breakpoint");
 		toolbarPane.add(btnSetBreak);
-    btnSetBreak.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+		btnSetBreak.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				System.out.println("Added breakpoint at line " + spinLine.getValue());
-        debugger.addBreakpoint(edtClassName.getText(), (Integer) spinLine.getValue());
+				debugger.addBreakpoint(edtClassName.getText(), (Integer) spinLine.getValue());
 			}
 		});
-		
+
 		final JLabel lblLineNo = new JLabel("Line Number: ");
 		toolbarPane.add(lblLineNo);
 		final JButton btnStep = new JButton ("Step");
 		toolbarPane.add(btnStep);
-    btnStep.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        debugger.step();
+		btnStep.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				debugger.step();
 			}
 		});
 
-		
+
 		JButton btnDebug = new JButton("Debug");
-   	btnDebug.setPreferredSize(new Dimension(450, 40));
+		btnDebug.setPreferredSize(new Dimension(450, 40));
 		btnDebug.addActionListener(new ActionListener() {
- 			public void actionPerformed(ActionEvent e) {
-				  if (istConsoleOutput != null && !istConsoleOutput.finished()) {
-            istConsoleOutput.finish();
-					}
-		      istConsoleOutput = new InputStreamThread(taConsoleOutput);
-					className = edtClassName.getText();
-					debugger.setClassName(className);
-					debugger.setClassPath(classPath);
-					debugger.bootVM();
-			    istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
-					istConsoleOutput.start();
+			public void actionPerformed(ActionEvent e) {
+				if (istConsoleOutput != null && !istConsoleOutput.finished()) {
+					istConsoleOutput.finish();
 				}
+				istConsoleOutput = new InputStreamThread(taConsoleOutput);
+				className = edtClassName.getText();
+				debugger.setClassName(className);
+				debugger.setClassPath(classPath);
+				debugger.bootVM();
+				istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
+				istConsoleOutput.start();
+			}
 		});
-    frame.getContentPane().add(btnDebug, BorderLayout.PAGE_END);
+		frame.getContentPane().add(btnDebug, BorderLayout.PAGE_END);
 
 
 		frame.pack();
