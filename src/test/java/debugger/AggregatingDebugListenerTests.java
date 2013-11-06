@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.visualheap.debugger.AggregatingDebugListener;
 import org.visualheap.debugger.DebugListener;
 
+import com.sun.jdi.StackFrame;
 import com.sun.jdi.ObjectReference;
 
 public class AggregatingDebugListenerTests {
@@ -23,7 +24,7 @@ public class AggregatingDebugListenerTests {
 	DebugListener listenerOne;
 	DebugListener listenerTwo;
 	DebugListener listenerThree;
-	List<ObjectReference> fromStackFrame;
+	StackFrame sf;
 	
 
 	@Before
@@ -33,7 +34,7 @@ public class AggregatingDebugListenerTests {
 		listenerOne = context.mock(DebugListener.class, "one");
 		listenerTwo = context.mock(DebugListener.class, "two");
 		listenerThree = context.mock(DebugListener.class, "three");
-		fromStackFrame = Collections.emptyList();
+		sf = context.mock(StackFrame.class, "stackFrame");
 		aggSingle.addListener(listenerOne);
 		aggThree.addListener(listenerOne);
 		aggThree.addListener(listenerTwo);
@@ -45,10 +46,10 @@ public class AggregatingDebugListenerTests {
 	public void singleListenerRecievesBreakpoint() {
 		
 		context.checking(new Expectations() {{
-			oneOf(listenerOne).onBreakpoint(fromStackFrame);
+			oneOf(listenerOne).onBreakpoint(sf);
 		}});
 		
-		aggSingle.onBreakpoint(fromStackFrame);
+		aggSingle.onBreakpoint(sf);
 		
 	}
 	
@@ -56,10 +57,10 @@ public class AggregatingDebugListenerTests {
 	public void singleListenerRecievesStep() {
 		
 		context.checking(new Expectations() {{
-			oneOf(listenerOne).onStep(fromStackFrame);
+			oneOf(listenerOne).onStep(sf);
 		}});
 		
-		aggSingle.onStep(fromStackFrame);
+		aggSingle.onStep(sf);
 		
 	}
 	
@@ -89,12 +90,12 @@ public class AggregatingDebugListenerTests {
 	public void tripleListenerRecievesBreakpoint() {
 		
 		context.checking(new Expectations() {{
-			oneOf(listenerOne).onBreakpoint(fromStackFrame);
-			oneOf(listenerTwo).onBreakpoint(fromStackFrame);
-			oneOf(listenerThree).onBreakpoint(fromStackFrame);
+			oneOf(listenerOne).onBreakpoint(sf);
+			oneOf(listenerTwo).onBreakpoint(sf);
+			oneOf(listenerThree).onBreakpoint(sf);
 		}});
 		
-		aggThree.onBreakpoint(fromStackFrame);
+		aggThree.onBreakpoint(sf);
 		
 	}
 	
@@ -102,12 +103,12 @@ public class AggregatingDebugListenerTests {
 	public void tripleListenerRecievesStep() {
 		
 		context.checking(new Expectations() {{
-			oneOf(listenerOne).onStep(fromStackFrame);
-			oneOf(listenerTwo).onStep(fromStackFrame);
-			oneOf(listenerThree).onStep(fromStackFrame);
+			oneOf(listenerOne).onStep(sf);
+			oneOf(listenerTwo).onStep(sf);
+			oneOf(listenerThree).onStep(sf);
 		}});
 		
-		aggThree.onStep(fromStackFrame);
+		aggThree.onStep(sf);
 		
 	}
 	

@@ -5,6 +5,7 @@ import java.util.concurrent.CountDownLatch;
 import org.visualheap.debugger.NullListener;
 
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
 
 
 public class CountingDebugListener extends NullListener {
@@ -18,9 +19,9 @@ public class CountingDebugListener extends NullListener {
 	}
 	
 	@Override
-	public void onBreakpoint(List<ObjectReference> fromStackFrame) {
+	public void onBreakpoint(StackFrame sf) {
 		System.out.println("breakpoint reached");
-		count = fromStackFrame.size();
+		count = getObjectReferencesFromStackFrame(sf).size();
 		latch.countDown();
 	}
 	
@@ -34,9 +35,9 @@ public class CountingDebugListener extends NullListener {
 	}
 
 	@Override
-	public void onStep(List<ObjectReference> fromStackFrame) {
+	public void onStep(StackFrame sf) {
 		System.out.println("step performed");
-		count = fromStackFrame.size();
+		count = getObjectReferencesFromStackFrame(sf).size();
 		latch.countDown();
 	}
 
