@@ -20,10 +20,10 @@ public class Render3D extends Render {
         double floorPosition = 8;
         //if infinite, turns black
         double ceilingPosition = 8;
-        double forward = game.time/5.0;
-        double right = game.time/ 5.0;
+        double zMove = game.controls.z;
+        double xMove = game.controls.x;
         //animates rotation
-        double rotation = game.time / 100.0;
+        double rotation = game.controls.rotation;
         //horizontal rotation
         double cosine = Math.cos(rotation);
         //vertical rotation
@@ -50,8 +50,8 @@ public class Render3D extends Render {
                 double xx = depth * cosine + z * sine;
                 //vertical movement
                 double yy = z * cosine - depth * sine;
-                int xPix = (int) (xx);
-                int yPix = (int) (yy);
+                int xPix = (int) (xx + xMove);
+                int yPix = (int) (yy + zMove);
                 pixels[x + y * width] = ((xPix & 15) * 16) | ((yPix & 15) * 16) << 8;
             }
         }

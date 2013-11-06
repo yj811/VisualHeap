@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 
 import graphics.Render;
 import graphics.Screen;
+import input.InputHandler;
 
 public class Display extends Canvas implements Runnable {
     public static final int WIDTH = 800;
@@ -21,6 +22,7 @@ public class Display extends Canvas implements Runnable {
     private BufferedImage img;
     private Game game;
     private int[] pixels;
+    private InputHandler input;
 
     public Display() {
         Dimension size = new Dimension(WIDTH, HEIGHT);
@@ -30,7 +32,15 @@ public class Display extends Canvas implements Runnable {
         screen = new Screen(WIDTH, HEIGHT);
         game = new Game();
         img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+
         pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
+
+        input = new InputHandler();
+        addKeyListener(input);
+        addFocusListener(input);
+        addMouseListener(input);
+        addMouseMotionListener(input);
+
     }
 
     private void start() {
@@ -98,7 +108,7 @@ public class Display extends Canvas implements Runnable {
     }
 
     private void tick() {
-        game.tick();
+        game.tick(input.key);
     }
 
     private void render() {
