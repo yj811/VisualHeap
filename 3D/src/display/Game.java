@@ -11,7 +11,6 @@ public class Game {
     public int time;
 
     public void tick() {
-        //time++
-        time+=3;
+        time++;
     }
 }
