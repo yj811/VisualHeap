@@ -36,22 +36,18 @@ package org.visualheap.debugger;
 
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ThreadReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.Bootstrap;
 import com.sun.jdi.connect.*;
-import com.sun.jdi.request.StepRequest;
 import com.sun.jdi.ReferenceType;
 
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 /**
  *
@@ -67,69 +63,67 @@ public class Debugger {
 	 * @see DebugListener
 	 */
 
-    // Running remote VM
-    private VirtualMachine vm;
-    private String innerClassPath = null;
-	private Integer breakpointLine;
+	// Running remote VM
+	private VirtualMachine vm;
+	private String innerClassPath = null;
 	private String mainClass;
 	private String mainArgs;
 	private DebugListener listener;
 	private DebuggerEventThread eventThread;
 
 	/**
-     * Launch target VM with specified breakpoint
-     * @param classPath classpath to class to invoke
-     * @param className the class to invoke, qualified by package name etc
-     * @param breakpointLine source line number to set a breakpoint at
-     * @param listener DebugListener to call back to when the breakpoint 
-     * is reached
-     * @see DebugListener
-     */
-    public Debugger(String classPath, String className,
-    		int breakpointLine, DebugListener listener) {
-    	
-    	this.listener = listener;
-    	this.innerClassPath = classPath;
-    	this.mainClass = className;
-    	this.breakpointLine = breakpointLine;
-        
-        
-			  bootVM();
-        addBreakpoint(className, breakpointLine);
-        resume();
-		}
+	 * Launch target VM with specified breakpoint
+	 * @param classPath classpath to class to invoke
+	 * @param className the class to invoke, qualified by package name etc
+	 * @param breakpointLine source line number to set a breakpoint at
+	 * @param listener DebugListener to call back to when the breakpoint 
+	 * is reached
+	 * @see DebugListener
+	 */
+	public Debugger(String classPath, String className,
+			int breakpointLine, DebugListener listener) {
+
+		this.listener = listener;
+		this.innerClassPath = classPath;
+		this.mainClass = className;
 
 
-    public Debugger(String classPath, String mainName, DebugListener listener) {
-    	
-    	this.listener = listener;
-      this.innerClassPath = classPath;
-    	this.mainClass = mainName;
-    	bootVM();	
+		bootVM();
+		addBreakpoint(className, breakpointLine);
+		resume();
+	}
+
+
+	public Debugger(String classPath, String mainName, DebugListener listener) {
+
+		this.listener = listener;
+		this.innerClassPath = classPath;
+		this.mainClass = mainName;
+		bootVM();	
 	}
 
 	public Debugger(DebugListener listener) {
-			this.listener = listener;
+		this.listener = listener;
 	}
 
 
-    /**
-     * returns a list of objects referenced by the given object.
-     * @param objRef object to get references for
-     * @return list of objects referenced by given object reference
-     * @see ObjectReference
-     */
+	/**
+	 * returns a list of objects referenced by the given object.
+	 * @param objRef object to get references for
+	 * @return list of objects referenced by given object reference
+	 * @see ObjectReference
+	 */
 	public final List<ObjectReference> getObjectReferences(ObjectReference objRef) {
-	    List<ObjectReference> resultList = new LinkedList<ObjectReference>();
-	    ReferenceType type = objRef.referenceType();
-	    List<Field> fields = type.fields();
-	    
-	    for (Field f : fields) {
-	        Value v = objRef.getValue(f);
-	        if (v instanceof ObjectReference) {
-	            resultList.add((ObjectReference) v);
-	        }
-	    }
+		List<ObjectReference> resultList = new LinkedList<ObjectReference>();
+		ReferenceType type = objRef.referenceType();
+		List<Field> fields = type.fields();
+
+		for (Field f : fields) {
+			Value v = objRef.getValue(f);
+			if (v instanceof ObjectReference) {
+				resultList.add((ObjectReference) v);
+			}
+		}
 
 		return resultList;
 	}
@@ -145,33 +139,33 @@ public class Debugger {
 		return vm.process().getInputStream();
 	}
 
-  /**
-  * Allows the debugger's target classpath can be configured, before execution.
-	*
-	*/
-	public void setClassPath(String classPath) {
-    this.innerClassPath = classPath;
-	}
-  
 	/**
-  * Allows the debugger's target classname and package can be configured, before execution.
-	*
-	*/
+	 * Allows the debugger's target classpath can be configured, before execution.
+	 *
+	 */
+	public void setClassPath(String classPath) {
+		this.innerClassPath = classPath;
+	}
+
+	/**
+	 * Allows the debugger's target classname and package can be configured, before execution.
+	 *
+	 */
 
 	public void setClassName(String className) {
-    this.mainClass = className;
+		this.mainClass = className;
 	}
 
 	/**
-		* starts the debugger's target program in a VM, and should result in the VM suspending at the VMStart event, ready for breakpoint adding.
-  */
-	
+	 * starts the debugger's target program in a VM, and should result in the VM suspending at the VMStart event, ready for breakpoint adding.
+	 */
+
 	public void bootVM() {
-        vm = launchTarget();
-        startEventThread();
+		vm = launchTarget();
+		startEventThread();
 
 	}
-	
+
 	/**
 	 * add a breakpoint at the specified line
 	 * @param className name of class to break in (qualified by package)
@@ -186,9 +180,9 @@ public class Debugger {
 	 * vm must be suspended.
 	 */
 	public void step() {
-		
+
 		System.out.println("debugger step");
-		
+
 		eventThread.step();
 	}
 
@@ -200,76 +194,76 @@ public class Debugger {
 			e.printStackTrace();
 		}
 	}
-	
+
 	//PRIVATE METHODS
-	
+
 	/**
-     * starts the event thread
-     */
-    private void startEventThread() {
+	 * starts the event thread
+	 */
+	private void startEventThread() {
 		eventThread = new DebuggerEventThread(vm, listener);
-        eventThread.start();
-        //vm.resume();
-    }
+		eventThread.start();
+		//vm.resume();
+	}
 
 
 	private String constructMainArguments(String className) {
 		StringBuffer sb = new StringBuffer();
-        
-    	sb.append("-cp");
-    	sb.append(" ");
-    	sb.append(innerClassPath);
-    	sb.append(" ");
-    	sb.append(mainClass);
+
+		sb.append("-cp");
+		sb.append(" ");
+		sb.append(innerClassPath);
+		sb.append(" ");
+		sb.append(mainClass);
 		return sb.toString();
 	}
 
 
-    /**
-     * Launch target VM.
-     */
-    private VirtualMachine launchTarget() {
-        mainArgs = constructMainArguments(mainClass);
-        LaunchingConnector connector = findLaunchingConnector();
-        Map<String, Connector.Argument> arguments =
-           connectorArguments(connector, mainArgs);
-        try {
-            return connector.launch(arguments);
-        } catch (IOException exc) {
-            throw new Error("Unable to launch target VM: " + exc);
-        } catch (IllegalConnectorArgumentsException exc) {
-            throw new Error("Internal error: " + exc);
-        } catch (VMStartException exc) {
-            throw new Error("Target VM failed to initialize: " +
-                            exc.getMessage());
-        }
-    }
+	/**
+	 * Launch target VM.
+	 */
+	private VirtualMachine launchTarget() {
+		mainArgs = constructMainArguments(mainClass);
+		LaunchingConnector connector = findLaunchingConnector();
+		Map<String, Connector.Argument> arguments =
+				connectorArguments(connector, mainArgs);
+		try {
+			return connector.launch(arguments);
+		} catch (IOException exc) {
+			throw new Error("Unable to launch target VM: " + exc);
+		} catch (IllegalConnectorArgumentsException exc) {
+			throw new Error("Internal error: " + exc);
+		} catch (VMStartException exc) {
+			throw new Error("Target VM failed to initialize: " +
+					exc.getMessage());
+		}
+	}
 
-    /**
-     * Find a com.sun.jdi.CommandLineLaunch connector
-     */
-    private LaunchingConnector findLaunchingConnector() {
-        List<Connector> connectors = Bootstrap.virtualMachineManager().allConnectors();
-        for (Connector connector : connectors) {
-            if (connector.name().equals("com.sun.jdi.CommandLineLaunch")) {
-                return (LaunchingConnector)connector;
-            }
-        }
-        throw new Error("No launching connector");
-    }
+	/**
+	 * Find a com.sun.jdi.CommandLineLaunch connector
+	 */
+	private LaunchingConnector findLaunchingConnector() {
+		List<Connector> connectors = Bootstrap.virtualMachineManager().allConnectors();
+		for (Connector connector : connectors) {
+			if (connector.name().equals("com.sun.jdi.CommandLineLaunch")) {
+				return (LaunchingConnector)connector;
+			}
+		}
+		throw new Error("No launching connector");
+	}
 
-    /**
-     * Return the launching connector's arguments.
-     */
-    private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, String mainArgs) {
-        Map<String, Connector.Argument> arguments = connector.defaultArguments();
-        Connector.Argument mainArg =
-                           (Connector.Argument)arguments.get("main");
-        if (mainArg == null) {
-            throw new Error("Bad launching connector");
-        }
-        mainArg.setValue(mainArgs);
+	/**
+	 * Return the launching connector's arguments.
+	 */
+	private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, String mainArgs) {
+		Map<String, Connector.Argument> arguments = connector.defaultArguments();
+		Connector.Argument mainArg =
+				(Connector.Argument)arguments.get("main");
+		if (mainArg == null) {
+			throw new Error("Bad launching connector");
+		}
+		mainArg.setValue(mainArgs);
 
-        return arguments;
-    }
+		return arguments;
+	}
 }

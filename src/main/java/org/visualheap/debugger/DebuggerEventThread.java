@@ -307,7 +307,7 @@ class DebuggerEventThread extends Thread {
      * Set watchpoint on each of its fields
      */
     private void classPrepareEvent(ClassPrepareEvent event)  {
-        EventRequestManager mgr = vm.eventRequestManager();
+        //EventRequestManager mgr = vm.eventRequestManager();
         
         ReferenceType refType = event.referenceType();
         for(Breakpoint bp : breakpointsToAdd) {
