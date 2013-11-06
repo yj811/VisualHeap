@@ -19,6 +19,9 @@ public class HeapListener extends NullListener {
     @Override
     public void newOnBreakpoint(StackFrame sf) {
         System.out.println("HeapListener breakpoint, got object references");
+        //if the PrintWriter points to System.out, which can happen if the writer fails,
+        //make sure we don't close it.
+        boolean close = true;
 
         PrintWriter writer = null;
         try {
@@ -27,7 +30,13 @@ public class HeapListener extends NullListener {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } finally {
+        	if (writer == null) {
+            	writer = new PrintWriter(System.out);
+            	close = false;
+            }
         }
+
         writer.println("-------- Heap Listener Output --------");
         writer.println("");
 
@@ -51,7 +60,11 @@ public class HeapListener extends NullListener {
             // this might happen
             e.printStackTrace();
         }
-        writer.close();
+        if (close) {
+        	writer.close();
+        } else {
+        	writer.flush();
+        }
     }
 
     public void getReferences(ObjectReference val, PrintWriter writer, HashMap<Integer, ObjectReference> prevRefs) {
