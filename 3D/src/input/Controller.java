@@ -11,6 +11,8 @@ public class Controller {
     public double x, z; // x is left and right movement. z is forward and backward movement
     public double rotation;
     double xa, za, rotationa;
+    public static boolean mouseTurnLeft = false;
+    public static boolean mouseTurnRight = false;
 
     public void tick(boolean forward, boolean back, boolean left, boolean right, boolean turnLeft, boolean turnRight) {
         double rotationSpeed = 0.025;
@@ -34,12 +36,12 @@ public class Controller {
             xMove++;
         }
 
-        if (turnLeft) {
+        if (turnLeft || mouseTurnLeft) {
             rotationa -= rotationSpeed;
 
         }
 
-        if (turnRight) {
+        if (turnRight || mouseTurnRight) {
             rotationa += rotationSpeed;
         }
 

@@ -8,6 +8,7 @@ import javax.swing.JFrame;
 
 import graphics.Render;
 import graphics.Screen;
+import input.Controller;
 import input.InputHandler;
 
 public class Display extends Canvas implements Runnable {
@@ -23,6 +24,8 @@ public class Display extends Canvas implements Runnable {
     private Game game;
     private int[] pixels;
     private InputHandler input;
+    private int newX = 0;
+    private int oldX = 0;
 
     public Display() {
         Dimension size = new Dimension(WIDTH, HEIGHT);
@@ -96,6 +99,21 @@ public class Display extends Canvas implements Runnable {
             // even when not ticked we need to render
             render();
             frames++;
+
+            newX = InputHandler.mouseX;
+            if (newX > oldX) {
+                //right
+                Controller.mouseTurnRight = true;
+            } else if (newX < oldX) {
+                //left
+                Controller.mouseTurnLeft = true;
+            } else if (newX == oldX) {
+                //havent moved
+                Controller.mouseTurnLeft = false;
+                Controller.mouseTurnRight = false;
+            }
+            oldX = newX;
+
         }
 
         /*

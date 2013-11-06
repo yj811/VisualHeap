@@ -12,6 +12,8 @@ import java.awt.event.*;
 public class InputHandler implements KeyListener, FocusListener, MouseListener, MouseMotionListener {
 
     public boolean[] key = new boolean[68836];
+    public static int mouseX;
+    public static int mouseY;
 
     public InputHandler() {
 
@@ -72,11 +74,13 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
     @Override
     public void mouseEntered(MouseEvent e) {
+        // when mouse enters a particular component
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
+        // mouse exits particular component
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -87,6 +91,8 @@ public class InputHandler implements KeyListener, FocusListener, MouseListener, 
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        mouseX = e.getX();
+        mouseY = e.getY();
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }
