@@ -45,6 +45,10 @@ public class MainGUI extends NullListener {
 	private InputStreamThread istDebuggerOutput;
   private final JLabel lblLineNo = new JLabel("Line Number: ");
   private	final JTextField edtClassName = new JTextField();
+  private	final JButton btnStep = new JButton ("Step");
+  private	final JButton btnResume = new JButton ("Resume");
+  private final JButton btnDebug = new JButton("Debug");
+  private	final JButton btnSetBreak = new JButton ("Set Breakpoint");
 
 
 	public MainGUI(Debugger debugger) {
@@ -147,10 +151,14 @@ public class MainGUI extends NullListener {
 		toolbarPane.setPreferredSize(new Dimension(40,40));
 		fileSelectPane.add(toolbarPane);
 
-		final JButton btnResume = new JButton ("Resume");
-		toolbarPane.add(btnResume);
+		btnResume.setEnabled(false);
+    toolbarPane.add(btnResume);
 		btnResume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+		    btnResume.setEnabled(false);
+        btnSetBreak.setEnabled(false);
+        btnStep.setEnabled(false);
+        
 				debugger.resume();
 			}
 		});
@@ -163,7 +171,7 @@ public class MainGUI extends NullListener {
 
 
 
-		final JButton btnSetBreak = new JButton ("Set Breakpoint");
+    btnSetBreak.setEnabled(false);
 		toolbarPane.add(btnSetBreak);
 		btnSetBreak.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -173,16 +181,16 @@ public class MainGUI extends NullListener {
 		});
 
 		toolbarPane.add(lblLineNo);
-		final JButton btnStep = new JButton ("Step");
 		toolbarPane.add(btnStep);
+    btnStep.setEnabled(false);
 		btnStep.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				debugger.step();
+				btnStep.setEnabled(false);
+        debugger.step();
 			}
 		});
 
 
-		JButton btnDebug = new JButton("Debug");
 		btnDebug.setPreferredSize(new Dimension(450, 40));
 		btnDebug.addActionListener(new DebugConfig(this));
 		frame.getContentPane().add(btnDebug, BorderLayout.PAGE_END);
@@ -194,10 +202,21 @@ public class MainGUI extends NullListener {
 
   public void onBreakpoint(StackFrame sf) {
     lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+		btnStep.setEnabled(true);
+    btnResume.setEnabled(true);
   }
 
   public void onStep(StackFrame sf) {
     lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+		btnStep.setEnabled(true);
+    btnResume.setEnabled(true);
+  }
+
+  @Override
+  public void vmDeath() {
+    btnDebug.setEnabled(true);
+    btnStep.setEnabled(false);
+    btnResume.setEnabled(false);
   }
 
 
@@ -223,6 +242,10 @@ public class MainGUI extends NullListener {
 	      debugger.addListener(gui);
 				istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
 				istConsoleOutput.start();
+        btnSetBreak.setEnabled(true);
+        btnStep.setEnabled(false);
+		    btnResume.setEnabled(true);
+		    btnDebug.setEnabled(false);
 			}
 		
   }
