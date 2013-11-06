@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Vector;
 
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
 
 public class AggregatingDebugListener implements DebugListener {
 	/**
@@ -62,6 +63,12 @@ public class AggregatingDebugListener implements DebugListener {
 		for(DebugListener listener : listeners) {
 			listener.vmDeath();
 		}
+	}
+
+	@Override
+	public void newOnBreakpoint(StackFrame sf) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

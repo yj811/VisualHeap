@@ -1,9 +1,9 @@
 package org.visualheap.debugger;
 
-import java.util.List;
-
-
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
+
+import java.util.List;
 
 public class NullListener implements DebugListener {
 
@@ -26,5 +26,10 @@ public class NullListener implements DebugListener {
 	public void vmDeath() {
 		System.out.println("NullListener: vmDeath");
 	}
-	
+
+    @Override
+    public void newOnBreakpoint(StackFrame sf) {
+        System.out.println("NullListener: newOnBreakpoint");
+    }
+
 }

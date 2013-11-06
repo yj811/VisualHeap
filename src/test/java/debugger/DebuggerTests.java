@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
@@ -219,7 +218,7 @@ public class DebuggerTests {
 		
 		final CountDownLatch latch = new CountDownLatch(1);
 		
-		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 15, 
+		new Debugger(CLASSPATH, ARRAYCLASS, 15, 
 				new NullListener() {
 			
 			@Override 
