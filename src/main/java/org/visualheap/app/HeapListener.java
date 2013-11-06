@@ -26,7 +26,14 @@ public class HeapListener extends NullListener {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } finally {
+        	
+        	if (writer == null) {	
+            	writer = new PrintWriter(System.out);
+            }
         }
+        
+        
         writer.println("-------- Heap Listener Output --------");
         writer.println("");
 
@@ -54,7 +61,8 @@ public class HeapListener extends NullListener {
             e.printStackTrace();
         }
 
-        writer.close();
+        writer.flush();
+        System.out.println("HeapListener: newOnBreakpoint finished");
     }
 
     @Override
@@ -134,8 +142,8 @@ public class HeapListener extends NullListener {
 
 	@Override
 	public void onStep(List<ObjectReference> fromStackFrame) {
-		// TODO Auto-generated method stub
 		
+		System.out.println("HeapListener: onStep");
 	}
 
     @Override
