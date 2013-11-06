@@ -17,13 +17,12 @@ public interface DebugListener {
 	 * @param fromStackFrame list visible objects on the stack at this breakpoint
 	 */
 	
-	void onBreakpoint(List<ObjectReference> fromStackFrame);
+  void onBreakpoint(StackFrame sf);
 	
-	void onStep(List<ObjectReference> fromStackFrame);
+	void onStep(StackFrame sf);
 	
 	void vmStart();
 	
 	void vmDeath();
 
-    void newOnBreakpoint(StackFrame sf);
 }

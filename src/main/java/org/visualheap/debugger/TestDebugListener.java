@@ -3,17 +3,20 @@ package org.visualheap.debugger;
 import java.util.List;
 
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
 
 public class TestDebugListener extends NullListener {
 
 	@Override
-	public void onBreakpoint(List<ObjectReference> fromStackFrame) {
+	public void onBreakpoint(StackFrame sf) {
+
+    List<ObjectReference> frameObjects = getObjectReferencesFromStackFrame(sf); 
 		System.out.println("breakpoint, got " 
-				+ fromStackFrame.size() + " object references");
+				+ frameObjects.size() + " object references");
 	}
 
 	@Override
-	public void onStep(List<ObjectReference> fromStackFrame) {
+	public void onStep(StackFrame sf) {
 		// TODO Auto-generated method stub
 		
 	}

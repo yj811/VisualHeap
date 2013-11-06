@@ -38,16 +38,16 @@ public class AggregatingDebugListener implements DebugListener {
 	}
 
 	@Override
-	public void onBreakpoint(List<ObjectReference> fromStackFrame) {
+	public void onBreakpoint(StackFrame  sf) {
 		for(DebugListener listener : listeners) {
-			listener.onBreakpoint(fromStackFrame);
+			listener.onBreakpoint(sf);
 		}
 	}
 
 	@Override
-	public void onStep(List<ObjectReference> fromStackFrame) {
+	public void onStep(StackFrame sf) {
 		for(DebugListener listener : listeners) {
-			listener.onStep(fromStackFrame);
+			listener.onStep(sf);
 		}
 	}
 
@@ -63,12 +63,6 @@ public class AggregatingDebugListener implements DebugListener {
 		for(DebugListener listener : listeners) {
 			listener.vmDeath();
 		}
-	}
-
-	@Override
-	public void newOnBreakpoint(StackFrame sf) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

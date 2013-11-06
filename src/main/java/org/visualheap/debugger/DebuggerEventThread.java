@@ -249,10 +249,8 @@ class DebuggerEventThread extends Thread {
     	lastBreakpointedThread = event.thread();
 
         
-        StackFrame sf = getStackFrame(thread);
-        listener.newOnBreakpoint(sf);
-        List<ObjectReference> objRefs = getObjectReferencesOnThreadStack(thread);
-        listener.onBreakpoint(objRefs);
+      StackFrame sf = getStackFrame(thread);
+      listener.onBreakpoint(sf);
     }
 
     private StackFrame getStackFrame(ThreadReference thread) {
@@ -266,32 +264,6 @@ class DebuggerEventThread extends Thread {
         return null;
     }
 
-    private List<ObjectReference> getObjectReferencesOnThreadStack(
-			ThreadReference thread) {
-		List<ObjectReference> objRefs = Collections.emptyList();
-		try {
-    		objRefs = new ArrayList<ObjectReference>();
-			StackFrame sf = thread.frame(0);
-			
-			System.out.println("Current location - " + sf.location().sourceName() + ": " + sf.location().lineNumber());
-			
-			for(LocalVariable lv : sf.visibleVariables()) {
-				Value val = sf.getValue(lv);
-				if(val instanceof ObjectReference) {
-					ObjectReference objRef = (ObjectReference) val;
-					objRefs.add(objRef);
-				}
-			}
-		} catch (IncompatibleThreadStateException e) {
-			// means the thread was not suspended, but obviously it will be
-			e.printStackTrace();
-		} catch (AbsentInformationException e) {
-			// if the invoked program was not compiled with full debug info,
-			// this might happen
-			e.printStackTrace();
-		}
-		return objRefs;
-	}
     
     /**
      * handles a step event
@@ -300,14 +272,9 @@ class DebuggerEventThread extends Thread {
      * @see DebuggerEventThread . step
      */
     private void stepEvent(StepEvent event) {
-    	
     	System.out.println("step event");
-    	
     	event.request().disable();
-    	
-    	List<ObjectReference> fromStackFrame 
-    		= getObjectReferencesOnThreadStack(lastBreakpointedThread);
-    	listener.onStep(fromStackFrame);
+    	listener.onStep(getStackFrame(lastBreakpointedThread));
     }
 
     /**
