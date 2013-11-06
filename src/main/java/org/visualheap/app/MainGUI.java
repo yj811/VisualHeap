@@ -29,6 +29,11 @@ public class MainGUI {
 		this.debugger = debugger;
 	}
 
+  
+  	/**
+	 * Displays the gui which is built by constructing the MainGUI object.
+	 * 
+	 */
 	public void show() {
 		//Schedule a job for the event-dispatching thread:
 		//creating and showing this application's GUI.
@@ -39,6 +44,8 @@ public class MainGUI {
 		});
 
 	}
+	
+	
 	
 	private void buildGUI() {
 
