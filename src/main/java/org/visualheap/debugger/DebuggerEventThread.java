@@ -264,6 +264,9 @@ class DebuggerEventThread extends Thread {
 		try {
     		objRefs = new ArrayList<ObjectReference>();
 			StackFrame sf = thread.frame(0);
+			
+			System.out.println("Current location - " + sf.location().sourceName() + ": " + sf.location().lineNumber());
+			
 			for(LocalVariable lv : sf.visibleVariables()) {
 				Value val = sf.getValue(lv);
 				if(val instanceof ObjectReference) {
