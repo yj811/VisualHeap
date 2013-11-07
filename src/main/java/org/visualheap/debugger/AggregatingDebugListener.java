@@ -64,5 +64,12 @@ public class AggregatingDebugListener implements DebugListener {
 			listener.vmDeath();
 		}
 	}
+	
+  @Override
+	public void exitedMain() {
+		for(DebugListener listener : listeners) {
+			listener.exitedMain();
+		}
+	}
 
 }

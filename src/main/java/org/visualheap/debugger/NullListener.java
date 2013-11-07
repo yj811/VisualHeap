@@ -34,6 +34,11 @@ public class NullListener implements DebugListener {
 	public void vmDeath() {
 		System.out.println("NullListener: vmDeath");
 	}
+	
+  @Override
+	public void exitedMain() {
+		System.out.println("NullListener: Exited main");
+	}
 
     protected List<ObjectReference> getObjectReferencesFromStackFrame(
 			StackFrame sf) {

@@ -22,4 +22,6 @@ public interface DebugListener {
     void vmStart();
 	
     void vmDeath();
+
+    void exitedMain();
 }
