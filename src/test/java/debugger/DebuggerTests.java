@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
@@ -11,6 +12,7 @@ import org.visualheap.debugger.NullListener;
 import org.visualheap.debugger.StepDepth;
 
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
 
 
 public class DebuggerTests {
@@ -258,7 +260,17 @@ public class DebuggerTests {
 		
 		final CountDownLatch latch = new CountDownLatch(1);
 		
+		// As far as I can see this is mental layout is the only way to make this work
+		final Debugger debugger 
+			= new Debugger(CLASSPATH, SIMPLEREFERENCE, new NullListener());
+		
 		DebugListener listener = new NullListener() {
+			
+			@Override
+			public void onBreakpoint(StackFrame sf) {
+				// when we hit the breakpoint just resume.
+				debugger.resume();
+			}
 			
 			@Override 
 			public void exitedMain() {
@@ -267,8 +279,12 @@ public class DebuggerTests {
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, SIMPLEREFERENCE, listener);
+		debugger.addListener(listener);		
+		// set a breakpoint so the MainExit event is activated.
+		debugger.addBreakpoint(SIMPLEREFERENCE, 15);
 		debugger.resume();
+
+	  	System.out.println("recieveExitedMainEvent running");
 		
 		latch.await();
 		

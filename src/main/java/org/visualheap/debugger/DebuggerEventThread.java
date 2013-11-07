@@ -216,8 +216,8 @@ class DebuggerEventThread extends Thread {
 	}
     private void methodExitEvent(MethodExitEvent event) {
     	if (event.method().name().equals("main")) {
-        listener.exitedMain();
-      }
+    		listener.exitedMain();
+	    }
 	}
 
 	/***
