@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import javax.swing.JFrame;
 
-import org.visualheap.world.graphics.Render;
 import org.visualheap.world.graphics.Screen;
 import org.visualheap.world.input.Controller;
 import org.visualheap.world.input.InputHandler;
@@ -21,14 +20,13 @@ public class Display extends Canvas implements Runnable {
 
     private Thread thread;
     private boolean running = false;
-    private Render render;
+
     private Screen screen;
-    private BufferedImage img;
     private Game game;
-    private int[] pixels;
     private InputHandler input;
-    private int newX = 0;
-    private int oldX = 0;
+
+    private BufferedImage img;
+    private int[] pixels;
 
     public Display() {
         Dimension size = new Dimension(WIDTH, HEIGHT);
@@ -66,15 +64,14 @@ public class Display extends Canvas implements Runnable {
         }
     }
 
-    // FPS counter counts the number of frames per second
-
     public void run() {
         int frames = 0;
         double unprocessedSeconds = 0;
         long previousTime = System.nanoTime();
         double secondsPerTick = 1 / SECONDS_IN_MIN;
         int tickCount = 0;
-        boolean ticked = false;
+        int newX = 0;
+        int oldX = 0;
 
         while (running) {
             long currentTime = System.nanoTime();
@@ -85,7 +82,6 @@ public class Display extends Canvas implements Runnable {
             while (unprocessedSeconds > secondsPerTick) {
                 tick();
                 unprocessedSeconds -= secondsPerTick;
-                ticked = true;
                 tickCount++;
                 if (tickCount % 60 == 0) {
                     System.out.println(frames + "fps");
@@ -94,36 +90,20 @@ public class Display extends Canvas implements Runnable {
                 }
             }
 
-            if (ticked) {
-                render();
-                frames++;
-            }
-
-            // even when not ticked we need to render
             render();
             frames++;
 
             newX = InputHandler.mouseX;
             if (newX > oldX) {
-                // right
                 Controller.mouseTurnRight = true;
             } else if (newX < oldX) {
-                // left
                 Controller.mouseTurnLeft = true;
             } else if (newX == oldX) {
-                // haven't moved
                 Controller.mouseTurnLeft = false;
                 Controller.mouseTurnRight = false;
             }
             oldX = newX;
         }
-
-        /*
-        while(running) {
-            tick();
-            render();
-        }
-        */
     }
 
     private void tick() {

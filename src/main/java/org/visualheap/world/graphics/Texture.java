@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
  * To change this template use File | Settings | File Templates.
  */
 public class Texture {
-    public static Render floor = loadBitmap("/texture.png");
+    public static Render floor = loadBitmap("../res/texture.png");
 
     public static Render loadBitmap(String filename) {
         try {
