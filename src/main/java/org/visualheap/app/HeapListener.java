@@ -16,15 +16,15 @@ import java.util.List;
  * Time: 15:24
  */
 public class HeapListener extends NullListener {
-    // Only used in HeapListener to avoid having to change all the tests!
+
     @Override
     public void onBreakpoint(StackFrame sf) {
-        System.out.println("HeapListener breakpoint, got object references");
+        System.out.println("HeapListener breakpoint, got stack frame");
         //if the PrintWriter points to System.out, which can happen if the writer fails,
         //make sure we don't close it.
         boolean close = true;
-
         PrintWriter writer = null;
+
         try {
             writer = new PrintWriter("out/HeapListenerOutput.txt", "UTF-8");
         } catch (FileNotFoundException e) {
@@ -73,6 +73,7 @@ public class HeapListener extends NullListener {
             writer.println("Cyclic reference found");
             return;
         }
+
         ReferenceType objectType = val.referenceType();
 
         writer.println("ObjectReference");
@@ -102,7 +103,6 @@ public class HeapListener extends NullListener {
 
 	@Override
 	public void onStep(StackFrame sf) {
-		
 		System.out.println("HeapListener: onStep");
 	}
 

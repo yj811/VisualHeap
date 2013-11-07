@@ -11,7 +11,6 @@ import com.sun.jdi.StackFrame;
 
 public class LatchingDebugListener extends NullListener {
 
-
 	private CountDownLatch latch;
 	private List<ObjectReference> fromStackFrame;
 
@@ -33,8 +32,5 @@ public class LatchingDebugListener extends NullListener {
 	@Override
 	public void onStep(StackFrame sf) {
 		// TODO Auto-generated method stub
-		
 	}
-
-
 }

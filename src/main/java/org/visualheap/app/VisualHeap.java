@@ -20,11 +20,9 @@ public class VisualHeap {
     public static void main(String[] args) {
         DebugListener debugListener = new HeapListener();
         debugger = null;
-				if(args.length != 3) {
+		if(args.length != 3) {
             debugger = new Debugger(debugListener);
-
         } else {
-
             String classPath = args[0];
             String className = args[1];
             int breakpointLine;
@@ -36,11 +34,11 @@ public class VisualHeap {
             }
 
             debugger = new Debugger(classPath, className, breakpointLine, debugListener);
-
         }
-			  MainGUI gui = new MainGUI(debugger);
+
+        MainGUI gui = new MainGUI(debugger);
         gui.show();
-		}
+	}
 
     private static void usage() {
         System.out.println("usage: java -jar debugger.jar"

@@ -5,43 +5,38 @@ import javax.swing.*;
 
 public class InputStreamThread extends Thread{
   
-	private JTextArea area;
-	private BufferedReader br;
-  private volatile boolean finished;
- 
+    private JTextArea area;
+    private BufferedReader br;
+    private volatile boolean finished;
   
-  public InputStreamThread(JTextArea area) {
+    public InputStreamThread(JTextArea area) {
 		this.area = area;	
 	}
 
 	public void setReader(BufferedReader in) {
-    br = in;
+        br = in;
 
-		if (in == null) {
-      System.out.println("NULL READER");
-		}
+		if (in == null)
+            System.out.println("NULL READER");
 	}
 
 	public void finish() {
-    finished = false;
+        finished = false;
 	}
 
 	public boolean finished() {
-    return finished;
+        return finished;
 	}
 
-	
 	public void run() {
 		finished = false;
 		try {
 			while (!finished) {
-				if (br.ready()) { 
+				if (br.ready())
 					area.append(br.readLine() + "\n");
-				}
-	    }
-		} catch (IOException ex) {
+			}
+	    } catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
-
 }
