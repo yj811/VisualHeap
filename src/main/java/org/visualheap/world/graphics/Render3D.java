@@ -1,6 +1,6 @@
-package graphics;
+package org.visualheap.world.graphics;
 
-import display.Game;
+import org.visualheap.world.display.Game;
 
 /**
  * Created with IntelliJ IDEA.

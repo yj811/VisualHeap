@@ -1,4 +1,4 @@
-package input;
+package org.visualheap.world.input;
 
 import java.awt.event.*;
 

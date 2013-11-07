@@ -1,4 +1,4 @@
-package graphics;
+package org.visualheap.world.graphics;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

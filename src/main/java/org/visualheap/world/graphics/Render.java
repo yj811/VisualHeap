@@ -1,6 +1,6 @@
-package graphics;
+package org.visualheap.world.graphics;
 
-import display.Display;
+import org.visualheap.world.display.Display;
 
 public class Render {
     public int width;

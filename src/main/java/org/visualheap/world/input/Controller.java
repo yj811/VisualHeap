@@ -1,4 +1,4 @@
-package input;
+package org.visualheap.world.input;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,7 +38,6 @@ public class Controller {
 
         if (turnLeft || mouseTurnLeft) {
             rotationa -= rotationSpeed;
-
         }
 
         if (turnRight || mouseTurnRight) {

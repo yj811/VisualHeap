@@ -1,8 +1,8 @@
-package graphics;
+package org.visualheap.world.graphics;
 
 import java.util.Random;
 
-import display.Game;
+import org.visualheap.world.display.Game;
 
 /**
  * Created with IntelliJ IDEA.

@@ -1,6 +1,6 @@
-package display;
+package org.visualheap.world.display;
 
-import input.Controller;
+import org.visualheap.world.input.Controller;
 
 import java.awt.event.KeyEvent;
 
