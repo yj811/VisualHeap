@@ -3,15 +3,8 @@ package org.visualheap.world.graphics;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Briony
- * Date: 06/11/13
- * Time: 23:17
- * To change this template use File | Settings | File Templates.
- */
 public class Texture {
-    public static Render floor = loadBitmap("../res/texture.png");
+    public static Render floor = loadBitmap("texture.png");
 
     public static Render loadBitmap(String filename) {
         try {

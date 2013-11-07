@@ -13,7 +13,7 @@ import org.visualheap.world.input.InputHandler;
 public class Display extends Canvas implements Runnable {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
-    public static final String TITLE = "3D Test";
+    public static final String TITLE = "3D Heap Visualisation";
 
     public static final double SECONDS_IN_MIN = 60.0;
     public static final double UNPROCESSED_SECONDS_DIV = 1000000000.0;
@@ -70,7 +70,7 @@ public class Display extends Canvas implements Runnable {
         long previousTime = System.nanoTime();
         double secondsPerTick = 1 / SECONDS_IN_MIN;
         int tickCount = 0;
-        int newX = 0;
+        int newX;
         int oldX = 0;
 
         while (running) {
@@ -121,9 +121,7 @@ public class Display extends Canvas implements Runnable {
 
         screen.render(game);
 
-        for (int i = 0; i < WIDTH * HEIGHT; i++) {
-            pixels[i] = screen.pixels[i];
-        }
+        System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 
         Graphics g = bs.getDrawGraphics();
         g.drawImage(img, 0, 0, WIDTH, HEIGHT, null);

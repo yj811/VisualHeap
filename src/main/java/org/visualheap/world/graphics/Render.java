@@ -7,7 +7,6 @@ public class Render {
     public int height;
     public int[] pixels;
 
-
     public Render(int width, int height) {
         this.width = width;
         this.height = height;
