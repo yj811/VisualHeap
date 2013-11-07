@@ -36,7 +36,7 @@ public class MainGUI extends NullListener {
 	private Debugger debugger;
 	private String classPath;
 	private String className;
-  private volatile boolean finished;
+	private volatile boolean finished;
 
 	//GUI Components
 	private final JTextArea taConsoleOutput = new JTextArea();
@@ -44,17 +44,17 @@ public class MainGUI extends NullListener {
 	private final JFileChooser fc = new JFileChooser();
 	private InputStreamThread istConsoleOutput;
 	private InputStreamThread istDebuggerOutput;
-  private final JLabel lblLineNo = new JLabel("Line Number: ");
-  private	final JTextField edtClassName = new JTextField();
-  private	final JButton btnStep = new JButton ("Step");
-  private	final JButton btnResume = new JButton ("Resume");
-  private final JButton btnDebug = new JButton("Debug");
-  private	final JButton btnSetBreak = new JButton ("Set Breakpoint");
+	private final JLabel lblLineNo = new JLabel("Line Number: ");
+	private	final JTextField edtClassName = new JTextField();
+	private	final JButton btnStep = new JButton ("Step");
+	private	final JButton btnResume = new JButton ("Resume");
+	private final JButton btnLoad = new JButton("Load Program");
+	private	final JButton btnSetBreak = new JButton ("Set Breakpoint");
 
 
 	public MainGUI(Debugger debugger) {
 		this.debugger = debugger;
-  }
+	}
 
 
 	/**
@@ -63,7 +63,7 @@ public class MainGUI extends NullListener {
 	 */
 	public void show() {
 		//Schedule a job for the event-dispatching thread:
-		//creating and showing this application's GUI.
+		//creating and showing thiFs application's GUI.
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				buildGUI();
@@ -130,9 +130,9 @@ public class MainGUI extends NullListener {
 		frame.getContentPane().add(fileSelectPane, BorderLayout.NORTH);
 
 
-		JButton button = new JButton("Choose classpath");
-		button.setPreferredSize(new Dimension(150, 40));
-		button.addActionListener(new ActionListener() {
+		JButton btnClasspath = new JButton("Choose classpath");
+		//button.setPreferredSize(new Dimension(150, 40));
+		btnClasspath.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//In response to a button click:
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -143,7 +143,8 @@ public class MainGUI extends NullListener {
 				}
 			}
 		});
-		fileSelectPane.add(button);
+		//frame.getContentPane().add(button, BorderLayout.BEFORE_FIRST_LINE);
+		fileSelectPane.add(btnClasspath);
 
 		fileSelectPane.add(edtClassName);
 
@@ -153,13 +154,13 @@ public class MainGUI extends NullListener {
 		fileSelectPane.add(toolbarPane);
 
 		btnResume.setEnabled(false);
-    toolbarPane.add(btnResume);
+		toolbarPane.add(btnResume);
 		btnResume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-		    btnResume.setEnabled(false);
-        btnSetBreak.setEnabled(false);
-        btnStep.setEnabled(false);
-        
+				btnResume.setEnabled(false);
+				btnSetBreak.setEnabled(false);
+				btnStep.setEnabled(false);
+
 				debugger.resume();
 			}
 		});
@@ -172,7 +173,7 @@ public class MainGUI extends NullListener {
 
 
 
-    btnSetBreak.setEnabled(false);
+		btnSetBreak.setEnabled(false);
 		toolbarPane.add(btnSetBreak);
 		btnSetBreak.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -183,81 +184,81 @@ public class MainGUI extends NullListener {
 
 		toolbarPane.add(lblLineNo);
 		toolbarPane.add(btnStep);
-    btnStep.setEnabled(false);
+		btnStep.setEnabled(false);
 		btnStep.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				btnStep.setEnabled(false);
-        debugger.step();
+				debugger.step();
 			}
 		});
 
 
-		btnDebug.setPreferredSize(new Dimension(450, 40));
-		btnDebug.addActionListener(new DebugConfig(this));
-		frame.getContentPane().add(btnDebug, BorderLayout.PAGE_END);
+		btnLoad.setPreferredSize(new Dimension(450, 40));
+		btnLoad.addActionListener(new DebugConfig(this));
+		frame.getContentPane().add(btnLoad, BorderLayout.PAGE_END);
 
 
 		frame.pack();
 		frame.setVisible(true);
 	}
 
-  public void onBreakpoint(StackFrame sf) {
-    lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+	public void onBreakpoint(StackFrame sf) {
+		lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
 		btnStep.setEnabled(true);
-    btnResume.setEnabled(true);
-  }
+		btnResume.setEnabled(true);
+	}
 
-  public void onStep(StackFrame sf) {
-    if (finished) {
-      debugger.resume();
-    } else {
-      lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
-		  btnStep.setEnabled(true);
-      btnResume.setEnabled(true);
-    }
-  }
+	public void onStep(StackFrame sf) {
+		if (finished) {
+			debugger.resume();
+		} else {
+			lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+			btnStep.setEnabled(true);
+			btnResume.setEnabled(true);
+		}
+	}
 
-  @Override
-  public void vmDeath() {
-    btnDebug.setEnabled(true);
-    btnStep.setEnabled(false);
-    btnResume.setEnabled(false);
-  }
+	@Override
+	public void vmDeath() {
+		btnLoad.setEnabled(true);
+		btnStep.setEnabled(false);
+		btnResume.setEnabled(false);
+	}
 
-  @Override
-  public void exitedMain() {
-    finished = true;
-  }
+	@Override
+	public void exitedMain() {
+		finished = true;
+	}
 
 
-  private class DebugConfig implements ActionListener {
-      
-      final MainGUI gui;
+	private class DebugConfig implements ActionListener {
 
-      public DebugConfig(MainGUI gui) {
-        this.gui = gui;
-      }
-      
-      @Override
-			public void actionPerformed(ActionEvent e) {
-				if (istConsoleOutput != null && !istConsoleOutput.finished()) {
-					istConsoleOutput.finish();
-				}
-				istConsoleOutput = new InputStreamThread(taConsoleOutput);
-				className = edtClassName.getText();
-				debugger.setClassName(className);
-				debugger.setClassPath(classPath);
-				debugger.bootVM();
-	      debugger.addListener(gui);
-				istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
-				istConsoleOutput.start();
-        btnSetBreak.setEnabled(true);
-        btnStep.setEnabled(false);
-		    btnResume.setEnabled(true);
-		    btnDebug.setEnabled(false);
-			  finished = false;
-      }
-		
-  }
+		final MainGUI gui;
+
+		public DebugConfig(MainGUI gui) {
+			this.gui = gui;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (istConsoleOutput != null && !istConsoleOutput.finished()) {
+				istConsoleOutput.finish();
+			}
+			istConsoleOutput = new InputStreamThread(taConsoleOutput);
+			className = edtClassName.getText();
+			debugger.setClassName(className);
+			debugger.setClassPath(classPath);
+			debugger.bootVM();
+			debugger.addListener(gui);
+			istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
+			istConsoleOutput.start();
+			btnSetBreak.setEnabled(true);
+			btnStep.setEnabled(false);
+			btnResume.setEnabled(true);
+			btnLoad.setEnabled(false);
+			finished = false;
+		}
+
+	}
 
 }
