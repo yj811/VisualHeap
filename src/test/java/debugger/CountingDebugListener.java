@@ -1,4 +1,5 @@
 package debugger;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -6,7 +7,6 @@ import org.visualheap.debugger.NullListener;
 
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
-
 
 public class CountingDebugListener extends NullListener {
 

@@ -17,7 +17,6 @@ import com.sun.jdi.ObjectReference;
 public class AggregatingDebugListenerTests {
 	
 	@Rule public JUnitRuleMockery context = new JUnitRuleMockery();
-	
 
 	AggregatingDebugListener aggSingle;
 	AggregatingDebugListener aggThree;
@@ -25,7 +24,6 @@ public class AggregatingDebugListenerTests {
 	DebugListener listenerTwo;
 	DebugListener listenerThree;
 	StackFrame sf;
-	
 
 	@Before
 	public void setUp() {
@@ -50,7 +48,6 @@ public class AggregatingDebugListenerTests {
 		}});
 		
 		aggSingle.onBreakpoint(sf);
-		
 	}
 	
 	@Test
@@ -61,7 +58,6 @@ public class AggregatingDebugListenerTests {
 		}});
 		
 		aggSingle.onStep(sf);
-		
 	}
 	
 	@Test
@@ -72,7 +68,6 @@ public class AggregatingDebugListenerTests {
 		}});
 		
 		aggSingle.vmStart();
-		
 	}
 	
 	@Test
@@ -83,7 +78,6 @@ public class AggregatingDebugListenerTests {
 		}});
 		
 		aggSingle.vmDeath();
-		
 	}
 	
 	@Test
@@ -96,7 +90,6 @@ public class AggregatingDebugListenerTests {
 		}});
 		
 		aggThree.onBreakpoint(sf);
-		
 	}
 	
 	@Test
@@ -109,7 +102,6 @@ public class AggregatingDebugListenerTests {
 		}});
 		
 		aggThree.onStep(sf);
-		
 	}
 	
 	@Test
@@ -122,7 +114,6 @@ public class AggregatingDebugListenerTests {
 		}});
 		
 		aggThree.vmStart();
-		
 	}
 	
 	@Test
@@ -135,7 +126,5 @@ public class AggregatingDebugListenerTests {
 		}});
 		
 		aggThree.vmDeath();
-		
 	}
-
 }
