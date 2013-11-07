@@ -63,6 +63,7 @@ class DebuggerEventThread extends Thread {
 	private List<Breakpoint> breakpointsToAdd = new Vector<Breakpoint>();
 
 	private ThreadReference lastBreakpointedThread;
+  private String lastBreakpointedClassName;
 
 	/**
 	 * construct an event thread, with preset breakpoint.
@@ -150,10 +151,11 @@ class DebuggerEventThread extends Thread {
      */
     private void setEventRequests() {
         EventRequestManager mgr = vm.eventRequestManager();
-
+        
         // want all exceptions
         ExceptionRequest excReq = mgr.createExceptionRequest(null,
                                                              true, true);
+
         // suspend so we can step
         excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         excReq.enable();
@@ -201,6 +203,8 @@ class DebuggerEventThread extends Thread {
         	stepEvent((StepEvent) event);
         } else if (event instanceof ThreadDeathEvent) {
         	threadDeathEvent((ThreadDeathEvent)event);
+        } else if (event instanceof MethodExitEvent) {
+            methodExitEvent((MethodExitEvent)event);
         } else {
             throw new Error("Unexpected event type " + event.toString());
         }
@@ -209,6 +213,11 @@ class DebuggerEventThread extends Thread {
 
     private void threadDeathEvent(ThreadDeathEvent event) {
     	System.out.println("thread death");	
+	}
+    private void methodExitEvent(MethodExitEvent event) {
+    	if (event.method().name().equals("main")) {
+        listener.exitedMain();
+      }
 	}
 
 	/***
@@ -248,7 +257,14 @@ class DebuggerEventThread extends Thread {
     	//vm.suspend(); // just to be safe
     	ThreadReference thread = event.thread();
     	lastBreakpointedThread = event.thread();
-
+      
+      
+      EventRequestManager mgr = vm.eventRequestManager();
+      MethodExitRequest mer = mgr.createMethodExitRequest();
+      mer.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+      mer.addThreadFilter(thread);
+      mer.enable();
+      
         
       StackFrame sf = getStackFrame(thread);
       listener.onBreakpoint(sf);

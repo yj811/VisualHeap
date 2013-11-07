@@ -36,6 +36,7 @@ public class MainGUI extends NullListener {
 	private Debugger debugger;
 	private String classPath;
 	private String className;
+  private volatile boolean finished;
 
 	//GUI Components
 	private final JTextArea taConsoleOutput = new JTextArea();
@@ -207,9 +208,13 @@ public class MainGUI extends NullListener {
   }
 
   public void onStep(StackFrame sf) {
-    lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
-		btnStep.setEnabled(true);
-    btnResume.setEnabled(true);
+    if (finished) {
+      debugger.resume();
+    } else {
+      lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+		  btnStep.setEnabled(true);
+      btnResume.setEnabled(true);
+    }
   }
 
   @Override
@@ -219,6 +224,10 @@ public class MainGUI extends NullListener {
     btnResume.setEnabled(false);
   }
 
+  @Override
+  public void exitedMain() {
+    finished = true;
+  }
 
 
   private class DebugConfig implements ActionListener {
@@ -246,7 +255,8 @@ public class MainGUI extends NullListener {
         btnStep.setEnabled(false);
 		    btnResume.setEnabled(true);
 		    btnDebug.setEnabled(false);
-			}
+			  finished = false;
+      }
 		
   }
 
