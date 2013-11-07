@@ -38,6 +38,7 @@ import com.sun.jdi.*;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 import org.visualheap.app.HeapListener;
+import org.visualheap.debugger.Breakpoint;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -332,25 +333,6 @@ class DebuggerEventThread extends Thread {
 		
 	}
 
-	private class Breakpoint {
-		private int line;
-	
-		private String className;
-		
-		public Breakpoint(String className, int line) {
-			this.line = line;
-			this.className = className;
-		}
-		
-		public int getLine() {
-			return line;
-		}
-
-		public String getClassName() {
-			return className;
-		}
-
-	}
 
 	/**
 	 * step the VM.
