@@ -253,6 +253,27 @@ public class DebuggerTests {
 		
 	}
 	
+  @Test(timeout = defaultTimeout)
+	public void recieveExitedMainEvent() throws InterruptedException {
+		
+		final CountDownLatch latch = new CountDownLatch(1);
+		
+		DebugListener listener = new NullListener() {
+			
+			@Override 
+			public void exitedMain() {
+				latch.countDown();
+			}
+			
+		};
+		
+		Debugger debugger = new Debugger(CLASSPATH, SIMPLEREFERENCE, listener);
+		debugger.resume();
+		
+		latch.await();
+		
+	}
+	
 	@Test(timeout = 2*defaultTimeout)
 	public void SimpleReferenceTestCanRun()
 			throws InterruptedException {
