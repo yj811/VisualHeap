@@ -35,8 +35,8 @@ public class VisualHeap {
 
             debugger = new Debugger(classPath, className, breakpointLine, debugListener);
         }
-
-        MainGUI gui = new MainGUI(debugger);
+		
+        TestGUI gui = new TestGUI(debugger);
         gui.show();
 	}
 
