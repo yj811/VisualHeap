@@ -1,12 +1,5 @@
 package org.visualheap.world.input;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Briony
- * Date: 06/11/13
- * Time: 20:49
- * To change this template use File | Settings | File Templates.
- */
 public class Controller {
     public double x, z; // x is left and right movement. z is forward and backward movement
     public double rotation;

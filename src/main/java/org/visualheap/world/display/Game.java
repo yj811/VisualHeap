@@ -1,22 +1,15 @@
 package org.visualheap.world.display;
 
-import org.visualheap.world.input.Controller;
-
 import java.awt.event.KeyEvent;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Briony
- * Date: 05/11/13
- * Time: 23:14
- * To change this template use File | Settings | File Templates.
- */
+import org.visualheap.world.input.Controller;
+
 public class Game {
     public int time;
     public Controller controls;
 
     public Game() {
-     controls = new Controller();
+        controls = new Controller();
     }
 
     public void tick(boolean[] key) {
