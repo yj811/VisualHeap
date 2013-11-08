@@ -5,13 +5,10 @@ import java.awt.EventQueue;
 
 import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
-
 import com.sun.jdi.StackFrame;
 
 import javax.swing.JFrame;
-import java.awt.GridBagLayout;
 import javax.swing.JTabbedPane;
-import java.awt.GridBagConstraints;
 
 import javax.swing.JFileChooser;
 import javax.swing.JTextArea;
@@ -24,17 +21,9 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
-import javax.swing.UIManager;
-import javax.swing.BoxLayout;
 import java.awt.BorderLayout;
 import javax.swing.JSplitPane;
-import javax.swing.JTextPane;
-import javax.swing.JInternalFrame;
-import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
-import javax.swing.Action;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
