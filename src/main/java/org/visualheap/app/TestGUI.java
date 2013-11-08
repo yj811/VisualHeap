@@ -245,7 +245,7 @@ public class TestGUI extends NullListener {
 					int size = tableModel.getRowCount();
 					for (int i = 0; i < size; i++) {
 						Vector row = (Vector)tableModel.getDataVector().elementAt(i);
-						if (row.elementAt(0).equals(null) && row.elementAt(1).equals(null)) {
+						if (!row.elementAt(0).equals(null) && !row.elementAt(1).equals(null)) {
 							debugger.addBreakpoint((String)row.elementAt(1), (Integer)row.elementAt(0));
 						}
 					}
