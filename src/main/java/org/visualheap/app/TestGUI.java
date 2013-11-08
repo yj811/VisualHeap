@@ -1,5 +1,6 @@
 package org.visualheap.app;
 
+import java.util.Vector;
 import java.awt.EventQueue;
 
 import org.visualheap.debugger.Debugger;
@@ -38,13 +39,14 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+
 public class TestGUI extends NullListener {
 
 	//Variables
 	private volatile Debugger debugger;
 	private String classPath;
 	private String className;
-	private volatile boolean finished;
+	private volatile GUI_STATE state;
 
 	private InputStreamThread istConsoleOutput;
 	
@@ -59,6 +61,7 @@ public class TestGUI extends NullListener {
 	private JButton btnNewBreakpoint;
 	private JTextArea taConsoleOutput;
 	private final JFileChooser fc = new JFileChooser();
+	private BreakpointTableModel tableModel;
 
 	/**
 	 * Launch the application.
@@ -88,6 +91,8 @@ public class TestGUI extends NullListener {
 
 	public TestGUI(Debugger debugger) {
 		this.debugger = debugger;
+		state = GUI_STATE.UNLOADED;
+		
 	}
 	
 	public void show() {
@@ -96,6 +101,7 @@ public class TestGUI extends NullListener {
 				try {
 					initialize();
 					frame.setVisible(true);
+					tableModel.addRow(new Object[]{ new Integer(12), "debugger.testprogs.Array"});
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -156,10 +162,22 @@ public class TestGUI extends NullListener {
 		paneConfigure.add(lblClassName);
 
 		btnNewBreakpoint = new JButton("Add Breakpoint");
+		btnNewBreakpoint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tableModel.addRow(new Object[] { null, className });
+			}
+		});
 		sl_paneConfigure.putConstraint(SpringLayout.WEST, btnNewBreakpoint, 24, SpringLayout.WEST, paneConfigure);
 		paneConfigure.add(btnNewBreakpoint);
 
 		JButton btnRemoveBreakpoint = new JButton("Delete Breakpoint");
+		btnRemoveBreakpoint.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (tblBreakpoints.getSelectedRow() > -1) {
+					tableModel.removeRow(tblBreakpoints.getSelectedRow());
+				}
+			}
+		});
 		sl_paneConfigure.putConstraint(SpringLayout.WEST, btnRemoveBreakpoint, 6, SpringLayout.EAST, btnNewBreakpoint);
 		paneConfigure.add(btnRemoveBreakpoint);
 
@@ -177,31 +195,9 @@ public class TestGUI extends NullListener {
 		sl_paneConfigure.putConstraint(SpringLayout.WEST, tblBreakpoints, 378, SpringLayout.WEST, paneConfigure);
 		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, tblBreakpoints, -10, SpringLayout.SOUTH, paneConfigure);
 		sl_paneConfigure.putConstraint(SpringLayout.EAST, tblBreakpoints, 0, SpringLayout.EAST, btnClasspath);
-		tblBreakpoints.setModel(new DefaultTableModel(
-				new Object[][] {
-						{null, null},
-				},
-				new String[] {
-						"Line Number", "Class Name"
-				}
-				) {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-			Class[] columnTypes = new Class[] {
-					Integer.class, String.class
-			};
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
-			boolean[] columnEditables = new boolean[] {
-					false, false
-			};
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		});
+		tableModel = new BreakpointTableModel();
+				
+		tblBreakpoints.setModel(tableModel);
 		tblBreakpoints.getColumnModel().getColumn(0).setPreferredWidth(100);
 		tblBreakpoints.getColumnModel().getColumn(0).setMinWidth(100);
 		tblBreakpoints.getColumnModel().getColumn(1).setPreferredWidth(160);
@@ -255,6 +251,18 @@ public class TestGUI extends NullListener {
 		btnResume = new JButton("Resume");
 		btnResume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (state.equals(GUI_STATE.LOADED)) {
+					//Load breakpoints to the debugger;
+					int size = tableModel.getRowCount();
+					for (int i = 0; i < size; i++) {
+						Vector row = (Vector)tableModel.getDataVector().elementAt(i);
+						if (row.elementAt(0).equals(null) && row.elementAt(1).equals(null)) {
+							debugger.addBreakpoint((String)row.elementAt(1), (Integer)row.elementAt(0));
+						}
+					}
+				}
+					
+				state = GUI_STATE.STARTED;
 				btnResume.setEnabled(false);
 				btnNewBreakpoint.setEnabled(false);
 				btnStep.setEnabled(false);
@@ -279,15 +287,17 @@ public class TestGUI extends NullListener {
 		lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
 		btnStep.setEnabled(true);
 		btnResume.setEnabled(true);
+		state = GUI_STATE.SUSPENDED;
 	}
 
 	public void onStep(StackFrame sf) {
-		if (finished) {
+		if (state.equals(GUI_STATE.FINISHED)) {
 			debugger.resume();
 		} else {
 			lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
 			btnStep.setEnabled(true);
 			btnResume.setEnabled(true);
+			state = GUI_STATE.SUSPENDED;
 		}
 	}
 
@@ -296,12 +306,18 @@ public class TestGUI extends NullListener {
 		btnLoadVM.setEnabled(true);
 		btnStep.setEnabled(false);
 		btnResume.setEnabled(false);
+		state = GUI_STATE.UNLOADED;
 	}
 
 	@Override
 	public void exitedMain() {
-		finished = true;
+		state = GUI_STATE.FINISHED;
 	}
+	
+	private enum GUI_STATE {
+		UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED
+	}
+
 	
 	private class DebugConfig implements ActionListener {
 
@@ -337,9 +353,41 @@ public class TestGUI extends NullListener {
 				System.out.println("NULL");
 			}
 			btnLoadVM.setEnabled(false);
-			finished = false;
+			state = GUI_STATE.LOADED;
 		}
 
+	}
+	
+	private class BreakpointTableModel extends DefaultTableModel {
+		
+		private static final long serialVersionUID = 1L;
+			
+		Class[] columnTypes = new Class[] {
+					Integer.class, String.class
+		};
+		
+		boolean[] columnEditables = new boolean[] {
+				true, true
+		};
+		
+	/**
+	 * 
+	 */
+		public BreakpointTableModel() {
+			super(new String[] {
+					"Line Number", "Class Name"
+				}, 0);
+		
+		}
+			
+		public Class getColumnClass(int columnIndex) {
+			return columnTypes[columnIndex];
+		}
+			
+		public boolean isCellEditable(int row, int column) {
+			return columnEditables[column];
+		}
+		
 	}
 
 }
