@@ -20,6 +20,9 @@ public class Display extends Canvas implements Runnable {
 
     private Thread thread;
     private boolean running = false;
+    
+    private int width;
+    private int height;
 
     private Screen screen;
     private Game game;
@@ -27,16 +30,22 @@ public class Display extends Canvas implements Runnable {
 
     private BufferedImage img;
     private int[] pixels;
-
+    
     public Display() {
-        Dimension size = new Dimension(WIDTH, HEIGHT);
+    	this(WIDTH, HEIGHT);
+    }
+
+    public Display(int w, int h) {
+    	this.width = w;
+    	this.height = h;
+        Dimension size = new Dimension(width, height);
         setPreferredSize(size);
         setMinimumSize(size);
         setMaximumSize(size);
 
-        screen = new Screen(WIDTH, HEIGHT);
+        screen = new Screen(width, height);
         game = new Game();
-        img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
         input = new InputHandler();
 
@@ -46,7 +55,7 @@ public class Display extends Canvas implements Runnable {
         addMouseMotionListener(input);
     }
 
-    private void start() {
+    public void start() {
         if (running) return;
         running = true;
         thread = new Thread(this);
@@ -86,7 +95,12 @@ public class Display extends Canvas implements Runnable {
                 unprocessedSeconds -= secondsPerTick;
                 tickCount++;
                 if (tickCount % 60 == 0) {
-                    System.out.println(frames + "fps");
+                	//TODO: Change this line to output elsewhere on screen for debugging purposes, 
+                	//now that it is integrated with the gui.
+                	
+                    //System.out.println(frames + "fps");
+                	
+                	
                     previousTime += 1000;
                     frames = 0;
                 }
@@ -124,10 +138,12 @@ public class Display extends Canvas implements Runnable {
         System.arraycopy(screen.pixels, 0, pixels, 0, pixels.length);
 
         Graphics g = bs.getDrawGraphics();
-        g.drawImage(img, 0, 0, WIDTH, HEIGHT, null);
+        g.drawImage(img, 0, 0, width, height, null);
         g.dispose();
         bs.show();
     }
+    
+    
 
     public static void main(String[] args) {
         Display game = new Display();
