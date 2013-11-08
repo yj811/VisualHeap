@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 
 import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
+import org.visualheap.world.display.Display;
+
 import com.sun.jdi.StackFrame;
 
 import javax.swing.JFrame;
@@ -51,6 +53,9 @@ public class TestGUI extends NullListener {
 	private JTextArea taConsoleOutput;
 	private final JFileChooser fc = new JFileChooser();
 	private BreakpointTableModel tableModel;
+	
+	private JPanel paneVisual;
+	private Display game;
 
 	/**
 	 * Launch the application.
@@ -90,6 +95,11 @@ public class TestGUI extends NullListener {
 				try {
 					initialize();
 					frame.setVisible(true);
+					game = new Display(paneVisual.getWidth(), paneVisual.getHeight());
+					paneVisual.add(game);
+					
+					game.start();
+					
 					tableModel.addRow(new Object[]{ new Integer(12), "debugger.testprogs.Array"});
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -265,8 +275,13 @@ public class TestGUI extends NullListener {
 		lblLineNo = new JLabel("Line Number: 0");
 		paneDebugControls.add(lblLineNo);
 
-		JPanel paneVisual = new JPanel();
+		paneVisual = new JPanel();
 		tabbedPane.addTab("Visual", null, paneVisual, null);
+		paneVisual.setVisible(true);
+		
+		
+		
+		
 		
 		btnLoadVM.addActionListener(new DebugConfig(this, debugger));
 	}
