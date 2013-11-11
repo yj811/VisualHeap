@@ -1,13 +1,14 @@
 package org.visualheap.world.layout;
 
+import java.awt.Dimension;
 import java.util.Collection;
 import java.util.HashSet;
 
 import javax.media.j3d.BoundingSphere;
 import javax.vecmath.Point3d;
+import javax.vecmath.Point3f;
 
-import edu.uci.ics.jung.algorithms.layout3d.AbstractLayout;
-import edu.uci.ics.jung.algorithms.layout3d.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -44,18 +45,21 @@ public class Layout<V extends AbstractVertex, E extends AbstractEdge> {
 	}
 	
 	public Collection<Vertex3D> layout() {
-		FRLayout<V, E> layout = new FRLayout<V, E>(graph, 
-				new BoundingSphere(new Point3d(0, 0, 0), 300));
+		//FRLayout<V, E> layout = new FRLayout<V, E>(graph, 
+		//		new BoundingSphere(new Point3d(0, 0, 0), 300));
+		FRLayout<V, E> layout = new FRLayout<V, E>(graph, new Dimension(300, 300));
 		
 		while(!layout.done()) {
-			System.out.println("step");
 			layout.step();
 		}
 		
 		
 		Collection<Vertex3D> points = new HashSet<Vertex3D>();
 		for(V v : graph.getVertices()) {
-			points.add(new Vertex3D(v, layout.transform(v)));
+			float x = (float) layout.getX(v);
+			float y = 0;
+			float z = (float) layout.getY(v);
+			points.add(new Vertex3D(v, new Point3f(x, y, z)));
 		}
 		return points;
 	}
