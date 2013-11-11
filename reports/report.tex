@@ -3,157 +3,216 @@
 \usepackage{graphicx}
 \usepackage{subcaption}
 
-\DeclareGraphicsExtensions{.jpg, .png}
+\DeclareGraphicsExtensions{.jpg, .png, .pdf} %.jpg .png .pdf
 
-\setlength{\parskip}{0.3cm}
+\setlength{\parskip}{0.2cm}
 \setlength{\parindent}{0cm}
+\addtolength{\textheight}{25pt}
 
 \begin{document}
-\title{Development Practice and Quality Assurance
+\title{Product Management
 \\ 3D Heap Visualisation}
-\author{Aviv Beeri, Briony Goldsack, Ying Jiang, 
-\\ Oliver Myerscough, Anna Thomas, Eleanor Vincent}
+\author{Aviv Beeri, Briony Goldsack, Ying Jiang, Oliver Myerscough,
+\\ Anna Thomas, Eleanor Vincent}
 \maketitle
+
 
 \section{Introduction}
 
 An object-oriented software application creates complex structures on the heap during its lifetime. Debugging object-oriented software often involves thinking about how the heap evolves as a program runs. The aim of our group project is to design a tool which supports visualisation of the heap of a running Java program as a 3D scene which can be navigated by the software developer by moving around as if in a first person shooter game.
 
-This report aims to present the methods we have employed to assure the quality of the software we are building and the techniques we have applied in our development process to ensure we deliver software smoothly and reliably. We will review each of our chosen methods and discuss how they will aid our overall goal of providing a better product to the customer and a better development process for ourselves. 
+This report aims to present the methods we have employed to elicit and manage the requirements of our project. We will discuss our stakeholders, how we have prioritised the requirements and decided what to build and how we plan on testing whether we have built the right product. 
 
-\section{Development Practices}
+\section{Customers and Stakeholders}
 
-This section details the development practices we have chosen to employ, why we chose these techniques and our experience carrying them out. 
+In our project we have a variety of types of customers, the first being our internal customer\textsuperscript{\cite{internal,internal2}} and project supervisor Alistair Donaldson. As our supervisor he is directly connected to the project and we have a close working relationship with him. Weekly meetings are organised to keep him updated on the project so we can acquire useful feedback from him on the latest features to adjust the product according to his advice and interests. These meetings are also useful to discuss what features should be implemented next and prioritised. It is important to maintain good relations and constant feedback from internal customers so that we can continue to rely on their expertise and advice throughout the project (As shown in the feedback section).
 
-\subsection{Version Control}
+We have also targeted our 3D heap visualisation tool directly at a variety of consumers whom we feel would benefit from using our product. These consumers can be other students, programmers or gamers. Interacting with our consumers is a key part of ensuring we are building the right product, as part of our consumer base are students we can easily gain feedback from other university students on our course and in lab sessions.
 
-Version control is a fundamental feature of any software project. The main benefits of version  control arise in the face of loss and reverting changes in the case of bugs.
-
-We have chosen Git as our source control and back-up system over alternatives such as SVN, Mercurial and Bazaar for several reasons. Firstly, our previous experience of Git gives it an advantage and has allowed us to quickly and easily integrate it into the project. Git's branching model allows users to have multiple local branches that can be entirely independent of each other and the creation, merging and deletion of these branches is the fastest of the alternatives. This is ideal for group project work as it will enable us to experiment with different ideas without fear of breaking existing features and losing previous work. A crucial feature of Git is that it is distributed rather than centralised, unlike CVS and SVN. This means that when we are using a centralised workflow, every user has a full backup of the main server, each of which could be pushed up to replace the main server in the event of a crash or corruption. There is no single point of failure as multiple clones of the repository exist on multiple machines. Another major factor for choosing Git was the expansion to GitHub, which provided a friendly user-interface to work with. 
-
-As we are using Git within our project it is important for us to use it effectively throughout all stages of our development. One way we do this is by having specific release branches on completion of key features. These are single commit branches that show the code at that particular state, ideally with no bugs in the code. This is a good process if we were doing weekly releases of the program because bug fixes could be pushed specifically to that branch and not become re-contaminated by new features that had begun since that release.
-
-Alongside this members will often be working on certain elements of their tasks within their own branches before pushing to the master branch. This ensures that code does not inconsistently interrupt other people’s features and enables the team to keep the git logs clear and coherent throughout production. Having different merge commits of multiple branches full of chronological commits is much easier to use when working out the different states of the code than if different peoples commits kept overlapping within one common branch. The important thing to remember in doing this is that the period between each merge must not become too long as then we run the risk of the code base becoming too different from the branch version, making merging more complicated than the code itself, perhaps even taking more time than the project could afford.
-
-\subsection{Automated Build Process}
-
-An automated build process compiles the code and runs unit tests in one step, reducing manual processes. It is essential for building and testing our code quickly and reliably, ensuring that every member of the team is building the project in the same way. This improves the security and consistency of the code being written. 
-
-Since we don’t all have the same setup for developing code, we chose to use a standard build system to compile the canonical version of our project and automate packaging it into a jar. We chose Gradle. We were put off build tools like Maven and Ant because they specify build scripts in XML, whereas Gradle lets us write our build scripts in Groovy DSL, a much more pleasant experience. This makes the build script much easier to comprehend compared to Maven. Maven does sport a powerful dependency management system with automated dependency fetching which would save us time. Rather than spend time searching for libraries group members can write code. This is a moot point as Gradle can be configured to hook into the Maven repositories, providing exactly the same functionality. Furthermore, Gradle is very flexible compared to Maven, allowing almost everything about a project to be configured. 
-
-\subsection{Continuous Integration}
-
-One way of reducing problems when many individuals are working on the same project is through continuous integration(CI). According to Martin Fowler of ThoughtWorks, continuous integration is a software development practice that requires team members to integrate their work frequently\textsuperscript{\cite{continuous1,continuous2}}. Every ‘push’ made by the team is checked by an automated build(i.e. Gradle), preventing the team from working on an obviously broken repository. The CI server will notify the team about the build results depending on the behaviour of the CI server. When a build fails, the team should not make any new commits until the current problem is solved. This is particularly important when the team members work at different locations. The member who commits a ‘broken’ build should take responsibility for solving the problem.
-
-Continuous integration has many advantages. The most notable being that by integrating regularly, you can detect errors quickly, and locate them more easily. This allows more time for adding features rather than debugging. A CI culture also make it easier for everyone in the team to get the latest version and improves the security of each release. On the other hand, It is possible for ‘incorrect code’ to pass a test suite and get committed  due to the limitations of testing. To combat this, we are employing the Test-drive development design pattern. 
-
-We have decided to run a continuous integration server, Travis CI. Travis CI is a CI server that can be easily installed and integrated with GitHub.  Compared with Jenkins(another popular CI server), Travis is quick to get started and can be used with minimal configuration. However, Travis CI can also be adapted to have more features. For instance, you can specify branches to build by whitelist or blacklist branches in .travis.yml. Build results are output to the console.
-
-\subsection{Pair Programming}
-
-Pair programming is a technique some consider quite integral to the extreme programming agile methodology and a number of organisations use it as part of their development practices. It works on the principle of a “driver” and a “navigator”, where the driver has the job of focusing on the current piece of coding required, while the navigator is charged with having a view towards the larger goal of completing the assigned task of the pair, worrying about the overall design and program structure. There is evidence which suggests that this produces a higher quality of code as it has been checked and discussed between two people, resulting in better design and readability, as well as fewer errors\textsuperscript{\cite{pairprog1a,pairprog1b,pairprog1c,pairprog1d}}.
-
-It is important to note that there is the opinion that pair programming is not a universal method that is suitable everywhere. It depends heavily on the programmers involved. Some people have better habits and are predisposed to working together, but the more solitary worker would not be well suited to a pair programming environment\textsuperscript{\cite{partswap}}.
-
-We have decided that our development practice will include the use of pair programming  which we hope will result in both an increase in the quality of code, as code will be sanity checked by multiple pairs of eyes, but also a better distribution of knowledge about our project across the entire team which is important because we have had past experiences where an individual becomes an “island of knowledge”, someone who is the only team member highly knowledgeable about particular key components of a system. This is something we want to avoid, so that they do not become essential for the further development of that area in the project\textsuperscript{\cite{pairprog2}}.
-
-The way we will be trying to use pair programming is as follows:
-At the start of each sprint, we will split into pairs to work on our tasks. At the very least, the task will begin with pair programming, so each team gets some understanding of the code relevant to the task at hand. At the beginning of the next sprint, we swap partners so that one person from a pair will work on a completely different area, the other on a similar one. In this way, knowledge can be passed between us on every part of the system, which is important, given the scale of the project.
-
-\section{Quality Assurance}
-
-This sections addresses the processes we have in place to ensure our product is always in a good working condition and maintaining consistent quality throughout.
-
-\subsection{Automated Testing and Test-Driven Development (TDD)}
-
-TDD combines test-first development and refactoring by writing an initial test case before writing and refactoring the code to pass it. Test-driven development is a key feature of extreme programming and has several advantages. Firstly, writing the tests first ensures that the developer focuses on fulfilling the requirements of the code. The unit tests can also be used as a detailed specification. Probably most importantly, TDD tells you immediately when your last change has broken previously working code. Furthermore, from a software design point of view, TDD helps create loosely coupled SOLID code. An argument against TDD is that it is hard to learn (a view of Mark Levison with which we sympathise\textsuperscript{\cite{mark}}) and can reduce productivity because of this, however, having practiced TDD previously we feel that this disadvantage is negated. 
-
-Programming in Java, we are using JUnit to implement TDD. We picked JUnit because it is familiar and straightforward. Furthermore, JUnit can easily be integrated with Gradle using it’s Java plugin to create a quick and intuitive way to run tests using the ‘test’ task. Gradle will not build the project if there are failing tests unless the ‘test’ task is manually excluded. After running tests, Gradle produces HTML formatted reports which make it very easy to get both a general overview of the results and look at particular tests (see figure 1). In addition, in accordance with CI, we have scripted automatic regression tests to run at the end of each build.
+Aside from the eventual users of the product there are many other stakeholders\textsuperscript{\cite{stakeholder}} to consider, for example, once our project is complete if it was being used by students in the university then it would be necessary to keep the software up to date and fix any bugs found. Therefore maintenance staff would be stakeholders, this means that our code must be maintainable and well documented so someone who hadn’t worked on the project would be able to understand and fix it. If the product was used as a teaching tool then lecturers, laboratory helpers and students would need to be able to install and operate the system so the product would need to be accessible and usable by them.
 
 \begin{figure}[h]
-	\centering
-	\includegraphics[width=\textwidth]{images/testresults.png}
-	\caption{Running Tests with Gradle}
+        \centering
+        \includegraphics[width=250px]{images/stakeholders.png}
+        \caption{Stakeholders}
 \end{figure}
 
-\subsection{Coding Standards and documentation}
+\section{Requirements}
 
-Coding standards define a programming style to be used throughout a software project. We have chosen to implement the following coding standards:
+\subsection{User stories and Personas}
+
+Extreme programming introduced the practice of expressing requirements in the form of user stories to describe the desired functionality of the system from the perspective of the customers. User stories have allowed us to be precise in our requirements by presenting them at a high level, smoothing out complexity, and exploring the customers behind them through personae.  Another advantage of using user stories is that they can be written and then replaced with more detailed stories when necessary\textsuperscript{\cite{mikeadv}}. Though one disadvantage is that it is difficult to encompass all of a system’s requirements in this form. 
+
+Our first step in creating user stories was to envision our end users (actors within each use case). We identified three initial applications of our heap visualisation tool which gave us an insight into our ‘actors’:
 \begin{itemize}
 
-  \item Naming conventions
-  \item File naming and organisation
-  \item Formatting and indentation
-  \item Comments and Documentation
-  \item Testing
+  \item Teacher/Lecturer
+  \item Beginner Programmer
+  \item Experienced Programmer 
+  \item A Typical Gamer 
 
 \end{itemize}
-It can be summarised that the main benefits of maintaining a coding standard are readability, maintainability and compatibility. It is particularly important regarding pair programming and swapping partners as any member of the team should be able to read the code of any other member. On the other hand, several arguments against coding standards have been identified, as discussed by Zac Gery\textsuperscript{\cite{zac}}. Such disadvantages that we agree should be highlighted are that standards such as spacing and comments could be seen as micro-managing and each new rule adds to the complexity of the implementation and could distract from the larger goal of building, testing and releasing functionality to a deadline. With these criticisms of coding standards in mind we have decided to keep our guidelines sensible, intuitive and minimal. An alternative approach could be to use code reviews, which can help developers focus on larger concerns such as architectural issues, prompt discussions and permit suggestions. However, code reviews can be time consuming. We feel that a joint approach would be most beneficial, whereby we have a set of coding standards and also perform intermittent code reviews within our pair programming groups. Code documentation is important when working in a group as it provides a convenient way of of understanding the code written by others. We have decided to employ Javadoc to generate code documentation as it is easy to keep up to date as the documentation is within the program itself.
+We decided to combine the agile development user story strategy with methods introduced in the HCD course in the form of personae (fictional people and their requirements for the product) to allow us to imagine in more detail scenarios in which our heap visualisation tool could be used.
+
+\begin{figure}[h]
+        \centering
+        \begin{subfigure}[b]{0.4\textwidth}
+                \centering
+                \includegraphics[width=100px]{images/Persona_1.png}
+                \caption{Persona One}
+        \end{subfigure}
+        \quad %add desired spacing between images, e. g. ~, \quad, \qquad etc.
+          %(or a blank line to force the subfigure onto a new line)
+        \begin{subfigure}[b]{0.4\textwidth}
+                \centering
+                \includegraphics[width=100px]{images/Persona_2.png}
+                \caption{Persona Two}
+        \end{subfigure}
+        \quad
+        \begin{subfigure}[b]{0.4\textwidth}
+                \centering
+                \includegraphics[width=100px]{images/Persona_3.png}
+                \caption{Persona Three}
+        \end{subfigure}
+        \quad
+        \begin{subfigure}[b]{0.4\textwidth}
+                \centering
+                \includegraphics[width=100px]{images/Persona_4.png}
+                \caption{Persona Four}
+        \end{subfigure}
+        \caption{}
+\end{figure}
+
+Following on from these personae, we were able to create user stories for each group of potential customers. In some cases, these user stories began quite general, but were developed to be more specific as the project progressed. 
+
+\subsubsection{User story examples:}
+\begin{itemize}
+  \item “As a lecturer in Computer Science, I want to visualise the references created using polymorphism as an aid to teaching object-oriented languages.”
+  \item “As a lecturer in Computer Science, I want to demonstrate garbage collection strategies as an aid to teaching object-oriented languages.”
+  \item “As an experienced programmer, I want to visualise memory usage to assist in debugging a program.”
+  \item “As a novice programmer, I want to visualise object information in order to learn more about the information stored on the heap.”
+  \item “As a gamer, I want to visualise the heap as a 3D interactive world so that I can complete dynamically-generated missions.”
+\end{itemize}
+
+
+\subsection{Prioritising requirements}
+
+Having carried out our use case analysis, we identified a set of base requirements, which we felt were essential to the project, as well as a set of requirements which could be added if time permitted. We prioritised our requirements base upon our user stories. Many of our user stories had features in common so formed our fundamental requirements. Priorities for additional requirements were focused around our customers. Most important of whom was our internal customer who had commissioned the project. Hence, primarily we wanted our tool to be educational.
+
+\subsection{Managing requirements}
+
+It is customary that a user story is implemented in a single iteration of an agile project. Most of our stories have worked well, for example, depicting the references within the 3D world from object to object. However, there have been some stories for which we have had to split the story over multiple iterations. For example, the creation of the interactive 3D landscape as a visually appealing entity that can be updated in real-time as a program runs. We decided to split this particular story up into a series of smaller stories by dividing the features of the 3D world into high priority that should be done first (as other stories depend upon it) and other parts that could be left until later. That is to say we created additional, more-developed user stories following an imaginary flow of user actions when using our tool, containing the goals:
+\begin{itemize}
+
+  \item I want to visualise the heap in 3D
+  \item I want to walk around the 3D world
+  \item I want to interact with the objects in the 3D world
+  \item I want the world to be visually appealing 
+
+\end{itemize}
+We then divided these by priority. Namely that the 3D rendering and interactivity were of high priority and the attractive graphics could be put off until later. Splitting up stories in this way is better than splitting up the stories depending on the kind of work that needs to be done or the application layers that are involved (horizontal slicing) for several reasons\textsuperscript{\cite{eight}}. Firstly, individual items such as the back-end of the debugger or the front-end of the GUI do not provide value separately, and so do not contribute to agile development as we may not always have a releasable product. Furthermore, splitting the work in this way could lead to bottlenecks, for example, the person in charge of designing the user interface may not get their work done on time so it cannot be integrated with the debugger. Another disadvantage is that so-called horizontal slices cannot be prioritised as they are all essential to the final product.  
+
+\section{Development}
+
+\subsection{Paper Prototypes}
+ 	
+In a design process, paper prototyping is one of the fastest techniques and offers opportunity for designers to collect usability data as early as possible which in turn reduces potential risks in later stages. It is also cheaper to make changes to the product in early stage than later. Furthermore, prototyping involves early communication with stakeholders and get feedback from them. For our project, we need a user interface. Before actually coding the user interface on a computer, we drew a paper prototype of GUI.
+
+\begin{figure}[h]
+        \centering
+        \includegraphics[width=200px]{images/paper_prototype.JPG}
+        \caption{Paper Prototypes}
+\end{figure}
+
+\subsection{Spikes}
+
+Spike is a technique which allows developers tackle technical problems at early stage including using new technology. It refers to short time-boxed pieces of research, normally of technical nature, to provide the team with just enough information to continue.
+
+We set the starting point as choosing an appropriate game engine, then learnt and tested it and finally decide whether to accept it. After first round filtering, we chose Unity, which looks quite simple at a glance, but after testing it, we found that we needed to learn C{\#}/javascript and it is not easy to hook up the debugger wrote in Java. We realized that a game engine with built-in IDE is not what we wanted, a better option should allow us to build the game directly either from scratch or in Java IDE such as Eclipse. This brought Java 3D to our attention. The main drawback of Java 3D is that Java 3D is a heavyweight component. In general lightweight and heavyweight component’s don’t mix very well so it may prove tricky to link together the windows in our Java swing application with the elements of our 3D visualisation. This said, its high-level, object oriented view of 3D graphics makes it straight forward to learn and as it is optimized for speed where possible it is a good fit for our application. We also tested JMonkeyEngine 3 which can be set up in Eclipse and is simpler than Java 3D with equal benefits. As a result, our final decision is JME 3. 
+
+Although some might not call it a spike as there was no code to integrate with, we used a similar technique at the beginning of the project when writing the debugger. A JVM provides a standard interface, the Java Platform Debugger Architecture, which allows external processes to inspect VM state. This is split into two levels, the high-level Java Debugger Interface for use in Java programs and low-level Java Virtual Machine Tools Interface for use with native code. We wanted already intended to code the project in Java and thought a high level interface would be more appropriate than a low level one. We ensured we would be able to use the Java Debugger Interface (JDI) by modifying an example program it ships with (“trace”) to do the tasks we wanted -- adding breakpoints, inspecting the stack and finding the objects referenced by a given object. Once we established the JDI was straightforward to use we started afresh and rewrote the debugger in a more mindful fashion.
+
+This exercise was very helpful as it meant that we weren’t bogged down by implementation details when writing the final debugger code; any misunderstandings had already been cleared. As a result we could concentrate on program architecture.
+
+\subsection{Impact Mapping}
+
+We do not build products independently. Our product should be built as customers desired.  Impact mapping helps us focus on the core features needed in our project and prevents us spending time on unrealistic tasks. We make impact mapping by making assumptions and our customers can decide if the prioritisation matches. From the impact map, each deliverable we plan to make should have corresponding impact.  
+
+\begin{figure}[h]
+        \centering
+        \includegraphics[width=350px]{images/Impact_mapping.png}
+        \caption{Impact Mapping}
+\end{figure}
+
+The map above shows the dynamic relation between customers and developers. The goal of the project is in the blue box. The first branch specifies ‘actors’ in the project. The second level are the impacts we are achieving and the bottom level shows what we can do to make the expected impacts. 
+
+\section{Feedback}
+
+Our product should result in a usable tool for both lecturers and students. To achieve this, its important that we regularly gather feedback as part of our iterative development practice so that we can produce a product which is useful and usable. Once all the components of the project come together, we can extend our testing efforts to our other stakeholders, in order to gain further insights for improvement. 
+
+We plan to collect feedback on our product using both formative and heuristic evaluation techniques. An example of formative evaluation we plan to use is the focus group\textsuperscript{\cite{focus}}. By having actual potential users test our project we are able to gain a new understanding of the product with a fresh set of eyes and consider things from a new angle. However, by approaching a set of students in this manner, it has the con that the group discussion can sometimes be hard to manage and certain points of interest can be lost in the general flow of a conversation. To facilitate this focus group we plan to present a number of questions for them to work through and discuss. Here are some examples:
+\begin{itemize}
+
+  \item How easy was it to use without asking questions?
+  \item Was the output clear?
+  \item How attractive is the product on a scale of 1 - 10
+  \item Is there anything you’d like to see in the product? 
+  \item Was navigating the 3D space as you expected, or did you encounter problems? 
+  \item How easy was it to begin debugging a program? (Scale of 1 - 10) 
+  \item Did the tool help you understand how the heap of objects has been organised? 
+      
+\end{itemize}
+We were advised by our supervisor to test our questionnaire on a couple of people without using their results, just to sanity check the survey, before allowing more people to answer it. We feel this is a good idea to help improve the integrity of our results.
+
+To compliment this we also plan to perform some heuristic evaluation. Jacob Nielsons has written extensively on this subject and we plan to work through the ten usability heuristics for design that he presents\textsuperscript{\cite{heuristic}} and apply them to our product. Whilst it presents no new outlook on the product, given our familiarity with the piece, with these guidelines we will be able to quickly identify specific points about the project and how to improve them relative to the feedback we also get from the formative evaluation. 
+
+To further improve on the user experience of our tool, we could try to record some quantitative data on how users interact with the product. These would include the amounts of idle time between mouse clicks, recording the path of a user through the program, where they get stuck and perhaps even using some A/B testing to try different program layouts. This data would allow us to see areas that would need improvements, but the disadvantage is having to actually implement the mechanisms for collecting these analytics, so it is unlikely that we will use this particular technique to gather feedback from potential users. However, after the project is completed, we could use it for further improvements.
 
 \section{Supervisor Discussion}
 
-The feedback from our supervisor regarding our development practices and quality assurance methods was particularly useful in defining our implementation process. We were encouraged to think about the range of version control tools and automated build processes available and those most suited to our project. We also researched the use of these techniques in industry, in particular, pair programming, and how methods such as test-driven development and continuous integration fit within agile development. Our supervisor also highlighted the importance of coding standards and code documentation to improve code clarity and quality. From this discussion with our supervisor, we improved our development practices by implementing a set of coding standards and ensuring that we followed a continuous integration culture, understanding its importance in extreme programming. 
-
-\section{Conclusion}
-
-The development practices we have chosen to implement, such as continuous integration (CI) and test-driven development (TDD), automated builds and testing, integrate well with the iterations of agile development to provide high quality code and project flexibility. These practices should help our team to work more efficiently, even when geographically distributed and working on a variety of machines. In conclusion, we feel that the most important practice here is continuous integration, which solves many of the early pitfalls encountered by agile teams. A CI culture ensures the efficient development of quality software, while TDD provides quick feedback. The Gradle automated build process further supports continuous integration by running tests to detect integration errors as quickly as possible. In addition, the use of version control using Git underpins CI culture by encouraging commits to be made little and often. Overall these practices should help is to provide a better product for the customer and a better development process for us. 
+We have already been gathering feedback from our supervisor, who was able to attempt to use our newly designed GUI for the debugger tool, without prior experience and with little understanding of what he was trying to achieve. We took notes on his experience as well as comments he made during the process, which we will be implementing soon. He pointed out to use a few areas where things were poorly labelled and would allow use to improve the clarity of the GUI, hopefully leading to a better user experience.
 
 \begin{thebibliography}{9}
 
-\bibitem{partswap}
-  Tim Ottinger, Jeff Langr,
-  \emph{Partner swapping},
-  \\http://agileinaflash.blogspot.co.uk/2009/02/pair-programming-smells.html
+\bibitem{eight}
+  Christiaan Verwijs, 
+  \emph{8 Useful Strategies for Splitting Large User Stories},
+  \\ http://www.christiaanverwijs.nl/post/2013/05/17/8-useful-strategies-for-splitting-large-user-stories-{\%}28and-a-cheatsheet{\%}29.aspx
 
-\bibitem{glen}
-  Glen Stansberry,
-  \emph{7 Version Control Systems Reviewed},
-  \\http://www.smashingmagazine.com/2008/09/18/the-top-7-open-source-version-control-systems/
-  
-\bibitem{mark}
-  Mark Levison,
-  \emph{Advantages of TDD},
-  \\http://agilepainrelief.com/notesfromatooluser/2008/10/advantages-of-tdd.html
-  
-\bibitem{zac}
-  Zac Gery,
-  \emph{Coding Standards Are Overrated},
-  \\http://java.dzone.com/articles/coding-standards-are-overrated
+\bibitem{focus} 
+  Evaluation Toolbox, 
+  \emph{Focus Group},
+  \\ http://evaluationtoolbox.net.au/index.php?option=com{\_}content{\&}view=article{\&}id=32{\&}Itemid=140
 
-\bibitem{continuous1}
-  ThoughtWorks, Inc.,
-  \emph{Continuous Integration},
-  \\http://www.thoughtworks.com/continuous-integration
+\bibitem{mikeadv} 
+  Mike Cohn, 
+  \emph{Advantages of User Stories for Requirements}, 
+  \\ http://www.mountaingoatsoftware.com/articles/advantages-of-user-stories-for-requirements
 
-\bibitem{continuous2}
-  Mark van Lent,
-  \emph{Continuous Integration},
-  \\http://www.vlent.nl/weblog/2012/10/12/travis-ci-easy-and-fun-ci-for-your-plone-packages-nejc-zupan/ 
+\bibitem{heuristic} 
+  Jacob Nielson, 
+  \emph{10 Usability Heuristics for User Interface Design},
+  \\ http://www.nngroup.com/articles/ten-usability-heuristics/
 
-\bibitem{pairprog1a}
-  Don Wells,
-  \emph{Pair Programming},
-  \\http://www.extremeprogramming.org/rules/pair.html
-  
-\bibitem{pairprog1b}
-  Agile Alliance, Institut Agile.,
-  \emph{Pair Programming},
-  \\http://guide.agilealliance.org/guide/pairing.html
-  
-\bibitem{pairprog1c}
-  John Griffin,
-  \emph{Pair Programming},
-  \\http://www.johng.co.uk/2010/07/04/pair-programming-pros-and-cons/
+\bibitem{proto}
+  Jacob Nielson, 
+  \emph{Paper Prototyping: Getting User Data Before You Code},
+  \\ http://www.nngroup.com/articles/paper-prototyping/
 
-\bibitem{pairprog1d}
-  Jon Evans,
-  \emph{Pair Programming},
-  \\http://techcrunch.com/2012/03/03/pair-programming-considered-harmful/ 
+\bibitem{internal} 
+  Donna Earl, 
+  \emph{What Is Internal Customer Service? A Definition and Case Study}
+  \\ http://www.donnaearltraining.com/Articles/InternalCustomerService.html
 
-\bibitem{pairprog2}
-  VersionOne, Inc.,
-  \emph{Pair Programming},
-  \\http://www.versionone.com/Agile101/Pair{\_}Programming.asp
+\bibitem{internal2}
+  Chris Joseph, 
+  \emph{What Is an Internal Customer {\&} a External Customer?},
+  \\ http://smallbusiness.chron.com/internal-customer-external-customer-11698.html
+
+\bibitem{stakeholder} 
+  Rachel Thompson, 
+  \emph{Stakeholder Analysis: Winning Support for Your Projects},
+  \\ http://www.mindtools.com/pages/article/newPPM{\_}07.htm
 
 \end{thebibliography}
 
