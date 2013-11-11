@@ -21,13 +21,18 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
 import javax.swing.JScrollPane;
 import java.awt.BorderLayout;
 import javax.swing.JSplitPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 
 
@@ -38,6 +43,7 @@ public class TestGUI extends NullListener {
 	private String classPath;
 	private String className;
 	private volatile GUI_STATE state;
+	private volatile StringBuilder finalPath;
 
 	private InputStreamThread istConsoleOutput;
 	
@@ -80,13 +86,14 @@ public class TestGUI extends NullListener {
 	 * @wbp.parser.constructor
 	 */
 	public TestGUI() {
+	    finalPath = new StringBuilder();
 		initialize();
 	}
 
 	public TestGUI(Debugger debugger) {
 		this.debugger = debugger;
 		state = GUI_STATE.UNLOADED;
-		
+		finalPath = new StringBuilder();
 	}
 	
 	public void show() {
@@ -98,7 +105,7 @@ public class TestGUI extends NullListener {
 					game = new Display(paneVisual.getWidth(), paneVisual.getHeight());
 					paneVisual.add(game);
 					
-					game.start();
+					//game.start();
 					
 					tableModel.addRow(new Object[]{ new Integer(12), "debugger.testprogs.Array"});
 				} catch (Exception e) {
@@ -254,7 +261,7 @@ public class TestGUI extends NullListener {
 					//Load breakpoints to the debugger;
 					int size = tableModel.getRowCount();
 					for (int i = 0; i < size; i++) {
-						Vector row = (Vector)tableModel.getDataVector().elementAt(i);
+						Vector<? extends Object> row = (Vector<? extends Object>)tableModel.getDataVector().elementAt(i);
 						if (!row.elementAt(0).equals(null) && !row.elementAt(1).equals(null)) {
 							debugger.addBreakpoint((String)row.elementAt(1), (Integer)row.elementAt(0));
 						}
@@ -282,6 +289,8 @@ public class TestGUI extends NullListener {
 		
 		
 		
+		edtClassName.getDocument().addDocumentListener(new PathFieldListener());
+		edtClassPath.getDocument().addDocumentListener(new PathFieldListener());
 		
 		btnLoadVM.addActionListener(new DebugConfig(this, debugger));
 	}
@@ -311,6 +320,7 @@ public class TestGUI extends NullListener {
 		btnStep.setEnabled(false);
 		btnResume.setEnabled(false);
 		state = GUI_STATE.UNLOADED;
+		btnLoadVM.doClick();
 	}
 
 	@Override
@@ -393,5 +403,35 @@ public class TestGUI extends NullListener {
 		}
 		
 	}
+	
+	private class PathFieldListener implements DocumentListener {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            buildUpdate(e);
+        }
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            buildUpdate(e);
+        }
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+        }
+        
+        private void buildUpdate(DocumentEvent e) {
+            finalPath.setLength(0);
+            finalPath.append(edtClassPath.getText());
+            finalPath.append("/");
+            finalPath.append(edtClassName.getText().replaceAll("\\Q.\\E", "/"));
+            finalPath.append(".class");
+            //if the new string results in a final product, load the VM automagically.
+            
+            File f = new File(finalPath.toString());
+            if(f.exists()) { 
+                btnLoadVM.doClick();
+            }
+        }
+        
+        
+    } 
 
 }
