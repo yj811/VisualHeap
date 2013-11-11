@@ -20,24 +20,30 @@ public class VisualHeap {
     public static void main(String[] args) {
         DebugListener debugListener = new HeapListener();
         debugger = null;
-		if(args.length != 3) {
+		if(args.length < 2 && args.length > 3) {
             debugger = new Debugger(debugListener);
+            TestGUI gui = new TestGUI(debugger);
+            gui.show();
         } else {
             String classPath = args[0];
             String className = args[1];
-            int breakpointLine;
-            try {
-                breakpointLine = Integer.parseInt(args[2]);
-            } catch(NumberFormatException e) {
-                usage();
-                return;
+            debugger = new Debugger(debugListener);
+            TestGUI gui = new TestGUI(debugger);
+            if (args.length == 3) {
+                Integer breakpointLine = 0;
+                try {
+                    breakpointLine = Integer.parseInt(args[2]);
+                } catch(NumberFormatException e) {
+                    usage();
+                    return;
+                }
+                gui.addBreakpoint(breakpointLine, className);
             }
-
-            debugger = new Debugger(classPath, className, breakpointLine, debugListener);
+            gui.show(classPath, className);
+            
         }
 		
-        TestGUI gui = new TestGUI(debugger);
-        gui.show();
+  
 	}
 
     private static void usage() {

@@ -87,6 +87,7 @@ public class TestGUI extends NullListener {
 	 */
 	public TestGUI() {
 	    finalPath = new StringBuilder();
+	    tableModel = new BreakpointTableModel();
 		initialize();
 	}
 
@@ -94,6 +95,14 @@ public class TestGUI extends NullListener {
 		this.debugger = debugger;
 		state = GUI_STATE.UNLOADED;
 		finalPath = new StringBuilder();
+		tableModel = new BreakpointTableModel();
+	}
+	
+	public void show(String path, String name) {
+	    classPath = path;
+        className = name;
+	    show();
+	    
 	}
 	
 	public void show() {
@@ -106,13 +115,16 @@ public class TestGUI extends NullListener {
 					paneVisual.add(game);
 					
 					//game.start();
-					
-					tableModel.addRow(new Object[]{ new Integer(12), "debugger.testprogs.Array"});
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});	
+	}
+	
+	public void addBreakpoint(Integer number, String className) {
+	    System.out.println(className);
+	    tableModel.addRow(new Object[] { number, className });
 	}
 
 	/**
@@ -161,7 +173,7 @@ public class TestGUI extends NullListener {
 		paneConfigure.add(edtClassName);
 		edtClassName.setColumns(10);
 
-		JLabel lblClassName = new JLabel("Package/Class:");
+		JLabel lblClassName = new JLabel("Qualified Class Name:");
 		sl_paneConfigure.putConstraint(SpringLayout.WEST, edtClassName, 6, SpringLayout.EAST, lblClassName);
 		sl_paneConfigure.putConstraint(SpringLayout.NORTH, lblClassName, 2, SpringLayout.NORTH, edtClassName);
 		sl_paneConfigure.putConstraint(SpringLayout.WEST, lblClassName, 0, SpringLayout.WEST, edtClassPath);
@@ -201,7 +213,7 @@ public class TestGUI extends NullListener {
 		sl_paneConfigure.putConstraint(SpringLayout.WEST, tblBreakpoints, 378, SpringLayout.WEST, paneConfigure);
 		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, tblBreakpoints, -10, SpringLayout.SOUTH, paneConfigure);
 		sl_paneConfigure.putConstraint(SpringLayout.EAST, tblBreakpoints, 0, SpringLayout.EAST, btnClasspath);
-		tableModel = new BreakpointTableModel();
+		
 				
 		tblBreakpoints.setModel(tableModel);
 		tblBreakpoints.getColumnModel().getColumn(0).setPreferredWidth(100);
@@ -293,6 +305,8 @@ public class TestGUI extends NullListener {
 		edtClassPath.getDocument().addDocumentListener(new PathFieldListener());
 		
 		btnLoadVM.addActionListener(new DebugConfig(this, debugger));
+		edtClassPath.setText(classPath);
+        edtClassName.setText(className);
 	}
 	
 	
