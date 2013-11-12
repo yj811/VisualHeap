@@ -2,7 +2,6 @@ package org.visualheap.app;
 
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
-import org.visualheap.app.MainGUI;
 
 /**
  * Created with IntelliJ IDEA.

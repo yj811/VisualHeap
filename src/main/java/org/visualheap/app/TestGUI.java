@@ -405,12 +405,6 @@ public class TestGUI extends NullListener {
         edtClassName.setText(className);
     }
 
-
-
-
-
-
-
     private class BreakpointTableModel extends DefaultTableModel {
 
         private static final long serialVersionUID = 1L;
