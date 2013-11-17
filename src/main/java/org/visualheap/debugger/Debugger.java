@@ -16,6 +16,7 @@
 
 package org.visualheap.debugger;
 
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
@@ -24,9 +25,11 @@ import com.sun.jdi.Bootstrap;
 import com.sun.jdi.connect.*;
 import com.sun.jdi.ReferenceType;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.List;
+import java.util.Vector;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -186,8 +189,51 @@ public class Debugger {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Invokes getSourceCodeFilenames without any filters
+	 * @return list of source code file names.
+	 */
+	public List<String> getSourceCodeFilenames() {
+		return getSourceCodeFilenames(Collections.<String> emptyList());
+	}
+	
+	/**
+	 * @param filters regular expressions matching class names to exclude
+	 * @return list of source code file names.
+	 */
+	public List<String> getSourceCodeFilenames(List<String> filters) {
+		List<String> fileNames = new Vector<String>();		
+		for(ReferenceType loadedClass : vm.allClasses()) {
+			try {
+				if(!matchesFilter(loadedClass.name(), filters)) {
+					fileNames.addAll(loadedClass.sourcePaths(null));
+				}
+			} catch (AbsentInformationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return fileNames;
+	}
 
 	//PRIVATE METHODS
+
+	/**
+	 * Used by getSourceCodeFilenames to perform filtering of classes.
+	 * @param className candidate path
+	 * @param filters regular expression filters
+	 * @return whether this sourcePath matches any of the filters
+	 */
+	private boolean matchesFilter(String className, List<String> filters) {
+		for(String filter : filters) {
+			if(className.matches(filter)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	/**
 	 * starts the event thread
