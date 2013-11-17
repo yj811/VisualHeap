@@ -18,6 +18,7 @@ package org.visualheap.debugger;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
+import com.sun.jdi.Location;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
@@ -215,6 +216,21 @@ public class Debugger {
 			}
 		}
 		return fileNames;
+	}
+	
+	public List<Location> getBreakpointableLocationsInClass(String className) {
+		List<ReferenceType> classes = vm.classesByName(className);
+		
+		if(classes.isEmpty()) {
+			return Collections.emptyList();
+		} else {
+			try {
+				return classes.get(0).allLineLocations();
+			} catch (AbsentInformationException e) {
+				return Collections.emptyList();
+			}
+		}
+		
 	}
 
 	//PRIVATE METHODS
