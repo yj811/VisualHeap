@@ -1,6 +1,7 @@
 package debugger;
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -33,6 +34,7 @@ public class DebuggerTests {
 	private static final String SIMPLEREFERENCE = "debugger.testprogs.SimpleReference";
 	private static final String NOREFERENCES = "debugger.testprogs.NoReferences";
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
+	private static final String CYCLICREFFILE = "debugger/testprogs/CyclicReference.java";
 
 	
 	
@@ -399,6 +401,39 @@ public class DebuggerTests {
 		
 		assertEquals("Cyclic refererence should get back to original object",
 				firstObject.uniqueID(), returnToFirst.uniqueID());
+	}
+	
+	@Test
+	public void getSourceFilenameContainsMainProgramFile() throws InterruptedException {
+		
+		LatchingDebugListener listener = new LatchingDebugListener();
+		Debugger debugger = new Debugger(CLASSPATH, CYCLICREFERENCE, 18, listener);
+		
+		listener.getResult();
+		
+		for(String s : debugger.getSourceCodeFilenames()) {
+			System.out.println("sourcefile " + s);
+		}
+		
+		assertTrue("getSourceCodeFilenames should return the filename of the program being debugged",
+				debugger.getSourceCodeFilenames().contains(CYCLICREFFILE));
+	
+	}
+	
+	@Test
+	public void getSourceFilenameFilterWorks() throws InterruptedException {
+		
+		LatchingDebugListener listener = new LatchingDebugListener();
+		Debugger debugger = new Debugger(CLASSPATH, CYCLICREFERENCE, 18, listener);
+
+		listener.getResult();
+		
+		List<String> filters = Arrays.asList(".*java.*", ".*sun.*");
+		
+		List<String> justCyclic = debugger.getSourceCodeFilenames(filters);
+		assertEquals("should have filtered out everything else", justCyclic.size(), 1);
+		assertEquals("should give cyclic reference source file", justCyclic.get(0), CYCLICREFFILE);
+		
 	}
 	
 }
