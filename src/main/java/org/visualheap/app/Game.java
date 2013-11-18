@@ -26,15 +26,10 @@ public class Game extends SimpleApplication {
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
 	Geometry obj;
 	private Boolean running = true;
-	
-	static class B {
-		public boolean val = false;
-	}
-	
+
 	// start a new game.
 	public static void main(String[] args) {
 		final Game game = new Game();
-		final B haveHitBreakpoint = new B();
 		
 		DebugListener listener = new NullListener() {
 			
@@ -56,16 +51,7 @@ public class Game extends SimpleApplication {
 		};
 		
 		
-		Debugger debugger = new Debugger(CLASSPATH, CYCLICREFERENCE, 18, listener);
-
-		debugger.await();
-		
-		System.out.println(haveHitBreakpoint.val);
-		
-		//debugger.bootVM();
-		
-		//debugger.resume();
-		
+		Debugger debugger = new Debugger(CLASSPATH, CYCLICREFERENCE, 18, listener);		
 		
     }
 	
