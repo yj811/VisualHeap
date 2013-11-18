@@ -8,6 +8,11 @@ import javax.media.j3d.BoundingSphere;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 
+import org.visualheap.debugger.Debugger;
+
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
+
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -15,6 +20,19 @@ import edu.uci.ics.jung.graph.Graph;
 public class LayoutBuilder<V> {
 
 	private Graph<V, Edge> graph;
+	
+	public static LayoutBuilder<ObjectReference> fromObjectReferences(Debugger debugger,
+			Collection<ObjectReference> initialSet, int depth) {
+		
+		ObjectReference dummy = new DummyObjectReference();
+		LayoutBuilder<ObjectReference> layoutBuilder = new LayoutBuilder<ObjectReference>();
+		
+		for(ObjectReference ref : initialSet) {
+			layoutBuilder.addObjectToGraph(dummy, ref);
+		}
+		
+		return layoutBuilder;
+	}
 	
 	public LayoutBuilder() {
 		graph = new DirectedSparseGraph<V, Edge>();
@@ -29,7 +47,7 @@ public class LayoutBuilder<V> {
 	}
 	
 	public Collection<Vertex3D<V>> computeLayout() {
-		FRLayout<V, Edge> layout = new FRLayout<V, Edge>(graph, new Dimension(300, 300));
+		FRLayout<V, Edge> layout = new FRLayout<V, Edge>(graph, new Dimension(10, 10));
 		
 		while(!layout.done()) {
 			layout.step();
