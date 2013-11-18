@@ -39,9 +39,21 @@ public class LayoutBuilder<V> {
 		
 		for(ObjectReference ref : initialSet) {
 			layoutBuilder.addObjectToGraph(dummy, ref);
+			expandNodes(debugger, layoutBuilder, ref, depth);
 		}
 		
 		return layoutBuilder;
+	}
+	
+	private static void expandNodes(Debugger debugger, LayoutBuilder<ObjectReference> layoutBuilder, 
+			ObjectReference parent, int depth) {
+		System.out.println("expand");
+		if(depth != 0) {
+			for(ObjectReference child : debugger.getObjectReferences(parent)) {
+				layoutBuilder.addObjectToGraph(parent, child);
+				expandNodes(debugger, layoutBuilder, child, depth - 1);
+			}
+		}
 	}
 	
 	private LayoutBuilder() {
@@ -63,7 +75,7 @@ public class LayoutBuilder<V> {
 	 * @return
 	 */
 	public Layout<V, Edge> computeLayout() {
-		FRLayout<V, Edge> layout = new FRLayout<V, Edge>(graph, new Dimension(10, 10));
+		FRLayout<V, Edge> layout = new FRLayout<V, Edge>(graph, new Dimension(100, 100));
 		
 		while(!layout.done()) {
 			layout.step();

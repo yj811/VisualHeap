@@ -37,6 +37,8 @@ public class Game extends SimpleApplication {
 	private static final String CLASSPATH = "build/classes/test";
 	private static final String ARRAYCLASS = "debugger.testprogs.Array";
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
+	private static final String SIMPLEREFERENCE = "debugger.testprogs.SimpleReference";
+	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
 	
 	private Boolean running = true;
 	private LayoutBuilder<ObjectReference> layoutBuilder;
@@ -64,7 +66,7 @@ public class Game extends SimpleApplication {
 						Collection<ObjectReference> initialSet = getObjectReferencesFromStackFrame(sf);
 						
 						LayoutBuilder<ObjectReference> layoutBuilder 
-							= LayoutBuilder.fromObjectReferences(new Debugger(new NullListener()), initialSet, 10);
+							= LayoutBuilder.fromObjectReferences(new Debugger(new NullListener()), initialSet, 4);
 					
 						game.useLayoutBuilder(layoutBuilder);
 						game.start();
@@ -75,7 +77,7 @@ public class Game extends SimpleApplication {
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 15, listener);
+		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 19, listener);
 		
 	
     }
@@ -100,6 +102,8 @@ public class Game extends SimpleApplication {
 		
 		Graph<ObjectReference, Edge> graph = layoutBuilder.getGraph();
 		Layout<ObjectReference, Edge> layout = layoutBuilder.computeLayout();
+		
+		System.out.println(graph.getVertexCount() + " objects");
 		
 		// draw the vertices
 		for(ObjectReference vertex : graph.getVertices()) {
