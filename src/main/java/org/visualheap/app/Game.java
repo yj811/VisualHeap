@@ -37,7 +37,7 @@ public class Game extends SimpleApplication {
 	private static final String CLASSPATH = "build/classes/test";
 	private static final String ARRAYCLASS = "debugger.testprogs.Array";
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
-	Geometry obj;
+	
 	private Boolean running = true;
 	private LayoutBuilder<ObjectReference> layoutBuilder;
 	private Material matBrick;
@@ -138,7 +138,6 @@ public class Game extends SimpleApplication {
         g.setMaterial(matBrick);
 		g.setMesh(line);
 		rootNode.attachChild(g);
-        rootNode.attachChild(obj);
 	}
 
 	/**
@@ -149,7 +148,7 @@ public class Game extends SimpleApplication {
 	 */
 	private void drawBox(float x, float y, float z) {
 		Box box = new Box(1,1,1);
-        obj = new Geometry("Box", box );
+        Geometry obj = new Geometry("Box", box );
         obj.setMaterial(matBrick);
         obj.setLocalTranslation(x, y, z);
         // make obj visible on scene.
@@ -165,10 +164,8 @@ public class Game extends SimpleApplication {
     // initiate key triggers.
     private void keyMapping() {
     	inputManager.addMapping("Pause", new KeyTrigger(KeyInput.KEY_SPACE));
-    	inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_A));
     	
     	inputManager.addListener(actionListener, "Pause");
-    	inputManager.addListener(analogListener, "Rotate");
     }
     
     private ActionListener actionListener = new ActionListener() {
@@ -177,15 +174,6 @@ public class Game extends SimpleApplication {
 		public void onAction(String action, boolean pressed, float f) {
 			if(action.equals("Pause") && !pressed)
 				running = !running;				
-		}
-    };
-    	
-	private AnalogListener analogListener = new AnalogListener() {
-
-		@Override
-		public void onAnalog(String action, float f1, float f2) {
-			if(running && action.equals("Rotate"))
-				obj.rotate(2, speed*f1, 3);				
 		}
     };
     
