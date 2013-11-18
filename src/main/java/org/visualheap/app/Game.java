@@ -1,5 +1,13 @@
 package org.visualheap.app;
 
+
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import org.visualheap.debugger.DebugListener;
+import org.visualheap.debugger.Debugger;
+import org.visualheap.debugger.NullListener;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -8,16 +16,57 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.sun.jdi.StackFrame;
+
 
 public class Game extends SimpleApplication {
 
+	private static final String CLASSPATH = "build/classes/test";
+	private static final String ARRAYCLASS = "debugger.testprogs.Array";
+	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
 	Geometry obj;
 	private Boolean running = true;
 	
+	static class B {
+		public boolean val = false;
+	}
+	
 	// start a new game.
 	public static void main(String[] args) {
-		Game game = new Game();
-		game.start();
+		final Game game = new Game();
+		final B haveHitBreakpoint = new B();
+		
+		DebugListener listener = new NullListener() {
+			
+			
+			@Override
+			public void onBreakpoint(final StackFrame sf) {
+				Executor exec =  Executors.newCachedThreadPool();
+				exec.execute(new Runnable() {
+
+					@Override
+					public void run() {
+						game.start();
+					}
+					
+				});
+			}
+			
+			
+		};
+		
+		
+		Debugger debugger = new Debugger(CLASSPATH, CYCLICREFERENCE, 18, listener);
+
+		debugger.await();
+		
+		System.out.println(haveHitBreakpoint.val);
+		
+		//debugger.bootVM();
+		
+		//debugger.resume();
+		
+		
     }
 	
 	// load objects before game starts.
