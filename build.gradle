@@ -17,9 +17,9 @@ repositories {
 dependencies {
   testCompile 'junit:junit:4.+'
   testCompile 'org.jmock:jmock-junit4:2.6.0'
-  compile files("lib/tools.jar")
   compile 'net.sf.jung:jung-3d:2.0.1'
   compile 'net.sf.jung:jung-graph-impl:2.0.1'
+  compile fileTree("lib")
 }
 
 jar {
