@@ -24,6 +24,7 @@ import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Line;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 
@@ -39,6 +40,7 @@ public class Game extends SimpleApplication {
 	Geometry obj;
 	private Boolean running = true;
 	private LayoutBuilder<ObjectReference> layoutBuilder;
+	private Material matBrick;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -78,6 +80,7 @@ public class Game extends SimpleApplication {
 	
     }
 	
+	
 	private void useLayoutBuilder(
 			LayoutBuilder<ObjectReference> layoutBuilder) {
 		this.layoutBuilder = layoutBuilder;
@@ -90,9 +93,15 @@ public class Game extends SimpleApplication {
 	@Override
 	public void simpleInitApp() {
 		
+		// load materials
+		matBrick = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        matBrick.setTexture("ColorMap", assetManager.loadTexture("Texture/images.jpeg"));
+	
+		
 		Graph<ObjectReference, Edge> graph = layoutBuilder.getGraph();
 		Layout<ObjectReference, Edge> layout = layoutBuilder.computeLayout();
 		
+		// draw the vertices
 		for(ObjectReference vertex : graph.getVertices()) {
 			
 			// transform a vertex into it's location according to the layout
@@ -102,9 +111,35 @@ public class Game extends SimpleApplication {
 			drawBox((float)location.getX(), 0, (float)location.getY());
 		}
 		
+		for(Edge edge : graph.getEdges()) {
+			ObjectReference from = graph.getSource(edge);
+			ObjectReference to = graph.getDest(edge);
+			
+			Point2D fromPoint = layout.transform(from);
+			Point2D toPoint = layout.transform(to);
+			
+			drawArrow(fromPoint, toPoint);
+			
+		}
+		
         keyMapping();
 	}
+	
+	private static Vector3f threedeeify(Point2D point) {
+		// we want this on the x-z plane in JME
+		return new Vector3f((float)point.getX(), 0, (float)point.getY());
+	}
 
+
+	private void drawArrow(Point2D fromPoint, Point2D toPoint) {
+		Line line = new Line(threedeeify(fromPoint), threedeeify(toPoint));
+		Geometry g = new Geometry("line", line);
+		
+        g.setMaterial(matBrick);
+		g.setMesh(line);
+		rootNode.attachChild(g);
+        rootNode.attachChild(obj);
+	}
 
 	/**
 	 * add a box a (x, y, z)
@@ -115,11 +150,7 @@ public class Game extends SimpleApplication {
 	private void drawBox(float x, float y, float z) {
 		Box box = new Box(1,1,1);
         obj = new Geometry("Box", box );
-        Material mat_brick = new Material( 
-            assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat_brick.setTexture("ColorMap", 
-            assetManager.loadTexture("Texture/images.jpeg"));
-        obj.setMaterial(mat_brick);
+        obj.setMaterial(matBrick);
         obj.setLocalTranslation(x, y, z);
         // make obj visible on scene.
         rootNode.attachChild(obj);
