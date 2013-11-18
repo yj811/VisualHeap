@@ -19,8 +19,10 @@ import org.visualheap.world.layout.LayoutBuilder;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.PhysicsControl;
@@ -38,6 +40,7 @@ import com.jme3.math.Plane;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Line;
@@ -69,6 +72,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Material matBrick;
 	private BulletAppState bulletAppState;
 	private CharacterControl player;
+	private Node collidables;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -120,16 +124,27 @@ public class Game extends SimpleApplication implements ActionListener {
 	 */
 	@Override
 	public void simpleInitApp() {
+		
+		// will hold all collidable objects.
+		collidables = new Node();
+		rootNode.attachChild(collidables);
 	
 		// load materials
 		matBrick = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         matBrick.setTexture("ColorMap", assetManager.loadTexture("Texture/images.jpeg"));
 	
+        // some initial physics setup
+	    bulletAppState = new BulletAppState();
+	    stateManager.attach(bulletAppState);
 		
 		setupGraphics();
 		setupPhysics();
 		setupLight();
         setupKeys();
+        
+        // create a collision shape for all collidable objects
+        CollisionShape world = CollisionShapeFactory.createDynamicMeshShape(collidables);
+        bulletAppState.getPhysicsSpace().add(new RigidBodyControl(world, 0));
 	}
 
 	  private void setupLight() {
@@ -146,8 +161,6 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	private void setupPhysics() {
 		
-	    bulletAppState = new BulletAppState();
-	    stateManager.attach(bulletAppState);
 	   // bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 	 
 	    // setup the player's collision boundary + some parameters
@@ -156,8 +169,10 @@ public class Game extends SimpleApplication implements ActionListener {
 	    player.setJumpSpeed(20);
 	    player.setFallSpeed(30);
 	    player.setGravity(30);
-	    player.setPhysicsLocation(new Vector3f(0, 0, 0));
+	    player.setPhysicsLocation(new Vector3f(0, 10, 0));
 	
+	    
+	    // adding an object to the physics space makes it collidable
 	    bulletAppState.getPhysicsSpace().add(player);
 	    
 	    
@@ -213,7 +228,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		
         g.setMaterial(matBrick);
 		g.setMesh(line);
-		rootNode.attachChild(g);
+		rootNode.attachChild(g); // non - collidable
 	}
 
 	/**
@@ -227,8 +242,9 @@ public class Game extends SimpleApplication implements ActionListener {
         Geometry obj = new Geometry("Box", box );
         obj.setMaterial(matBrick);
         obj.setLocalTranslation(x, y, z);
-        // make obj visible on scene.
-        rootNode.attachChild(obj);
+        // make obj visible on scene and collidable
+        collidables.attachChild(obj);     
+          
 	}
     
     // initiate key triggers.
