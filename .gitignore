@@ -23,3 +23,6 @@ bin
 
 # gradle I think?
 files
+
+# generate by JME
+*.so
