@@ -45,6 +45,10 @@ public class Game extends SimpleApplication {
 			@Override
 			public void onBreakpoint(final StackFrame sf) {
 				Executor exec =  Executors.newCachedThreadPool();
+				/*
+				 * If the game is started in this thread it blocks the event-thread
+				 * Perhaps we should start all event handlers in their own threads?
+				 */
 				exec.execute(new Runnable() {
 
 					@Override
@@ -75,18 +79,29 @@ public class Game extends SimpleApplication {
 		System.out.println("layout has " + layout.size() + " objects");
 	}
 
-	// load objects before game starts.
+	/**
+	 * Executed by JME when the game starts up.
+	 * Adds a box at each of the vertices specified by the layout.
+	 */
 	@Override
 	public void simpleInitApp() {
 		
 		for(Vertex3D<ObjectReference> vertex : layout) {
 			Point3f location = vertex.getLocation();
+			// later we could draw a box in different colours etc using 
+			// the ObjectReferece from vertex.getInnerVertex()
 			drawBox(location.x, location.y, location.z);
 		}
 		
         keyMapping();
 	}
 
+	/**
+	 * add a box a (x, y, z)
+	 * @param x
+	 * @param y
+	 * @param z
+	 */
 	private void drawBox(float x, float y, float z) {
 		Box box = new Box(1,1,1);
         obj = new Geometry("Box", box );

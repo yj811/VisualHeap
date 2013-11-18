@@ -16,6 +16,12 @@ import com.sun.jdi.Type;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 
+
+/**
+ * Fake ObjectReference represents the stack frame.
+ * @author oliver
+ *
+ */
 final class DummyObjectReference implements ObjectReference {
 	@Override
 	public Type type() {

@@ -21,6 +21,13 @@ public class LayoutBuilder<V> {
 
 	private Graph<V, Edge> graph;
 	
+	/**
+	 * builds a graph of the heap to depth specified.
+	 * @param debugger a debugger object (doesn't need to be the main one...)
+	 * @param initialSet ObjectReferences on the stack frame
+	 * @param depth depth to search to (unimplemented)
+	 * @return
+	 */
 	public static LayoutBuilder<ObjectReference> fromObjectReferences(Debugger debugger,
 			Collection<ObjectReference> initialSet, int depth) {
 		
@@ -34,11 +41,11 @@ public class LayoutBuilder<V> {
 		return layoutBuilder;
 	}
 	
-	public LayoutBuilder() {
+	private LayoutBuilder() {
 		graph = new DirectedSparseGraph<V, Edge>();
 	}	
 	
-	public LayoutBuilder(Graph<V, Edge> graph) {
+	private LayoutBuilder(Graph<V, Edge> graph) {
 		this.graph = graph;
 	}
 	
@@ -46,6 +53,12 @@ public class LayoutBuilder<V> {
 		graph.addEdge(new Edge(), from, to);
 	}
 	
+	/**
+	 * compute a 2d layout for this graph.
+	 * it should be possible to get JUNG to layout in 3d, but I can't make that
+	 * work, yet.
+	 * @return
+	 */
 	public Collection<Vertex3D<V>> computeLayout() {
 		FRLayout<V, Edge> layout = new FRLayout<V, Edge>(graph, new Dimension(10, 10));
 		
