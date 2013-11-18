@@ -42,6 +42,7 @@ import org.visualheap.debugger.Breakpoint;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
@@ -61,9 +62,10 @@ class DebuggerEventThread extends Thread {
 	private AggregatingDebugListener listener = new AggregatingDebugListener();
 	
 	private List<Breakpoint> breakpointsToAdd = new Vector<Breakpoint>();
+	private List<Location> validBreakpointLines = new Vector<Location>();
 
 	private ThreadReference lastBreakpointedThread;
-  private String lastBreakpointedClassName;
+    private String lastBreakpointedClassName;
 
 	/**
 	 * construct an event thread, with preset breakpoint.
@@ -117,21 +119,27 @@ class DebuggerEventThread extends Thread {
             }
         }
     }
+    
+    public List<Location> getBreakpointableLines(ReferenceType classType) throws AbsentInformationException {
+        
+        List<Location> lines = new LinkedList<Location>();
+        
+        for(Location loc : classType.allLineLocations()) {
+            lines.add(loc);
+        }
+        
+        return lines;
+    }
 
 	private void setBreakpoint(ReferenceType classType, Breakpoint bp) {
 		Location bpLoc = null;
-		try {
-			for(Location loc : classType.allLineLocations()) {
-				
-    			System.out.println(classType.name() + " line number " + loc.lineNumber());
-    			if(loc.lineNumber() == bp.getLine()) {
-    				bpLoc = loc;
-    			}
-    		}
-		} catch (AbsentInformationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		for(Location line : validBreakpointLines) {
+        	
+        	System.out.println(classType.name() + " line number " + line.lineNumber());
+        	if(line.declaringType().equals(classType) && line.lineNumber() == bp.getLine()) {
+        		bpLoc = line;
+        	}
+        }
 		
 		if(bpLoc != null) {
 	    	BreakpointRequest bpReq = vm.eventRequestManager()
@@ -302,9 +310,19 @@ class DebuggerEventThread extends Thread {
         //EventRequestManager mgr = vm.eventRequestManager();
         
         ReferenceType refType = event.referenceType();
+        
+        
+        
         for(Breakpoint bp : breakpointsToAdd) {
 	        if(refType.name().equals(bp.getClassName())) {
+	            try {
+	                List<Location> test = getBreakpointableLines(refType);
+	                validBreakpointLines.addAll(test);
+	            } catch (AbsentInformationException e) {
+	                e.printStackTrace();
+	            }
 	        	System.out.println("found " + bp.getClassName());
+	        	
 	        	setBreakpoint(refType, bp);
 	        }
         }
