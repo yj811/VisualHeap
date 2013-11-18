@@ -1,17 +1,19 @@
 package org.visualheap.app;
 
 
+import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.vecmath.Point2f;
 import javax.vecmath.Point3f;
 
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
+import org.visualheap.world.layout.Edge;
 import org.visualheap.world.layout.LayoutBuilder;
-import org.visualheap.world.layout.Vertex3D;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
@@ -25,6 +27,9 @@ import com.jme3.scene.shape.Box;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 
+import edu.uci.ics.jung.algorithms.layout.Layout;
+import edu.uci.ics.jung.graph.Graph;
+
 
 public class Game extends SimpleApplication {
 
@@ -33,7 +38,7 @@ public class Game extends SimpleApplication {
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
 	Geometry obj;
 	private Boolean running = true;
-	private Collection<Vertex3D<ObjectReference>> layout;
+	private LayoutBuilder<ObjectReference> layoutBuilder;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -58,9 +63,8 @@ public class Game extends SimpleApplication {
 						
 						LayoutBuilder<ObjectReference> layoutBuilder 
 							= LayoutBuilder.fromObjectReferences(new Debugger(new NullListener()), initialSet, 10);
-						Collection<Vertex3D<ObjectReference>> layout = layoutBuilder.computeLayout();
-						
-						game.setLayout(layout);
+					
+						game.useLayoutBuilder(layoutBuilder);
 						game.start();
 					}
 					
@@ -74,9 +78,9 @@ public class Game extends SimpleApplication {
 	
     }
 	
-	protected void setLayout(Collection<Vertex3D<ObjectReference>> layout) {
-		this.layout = layout;
-		System.out.println("layout has " + layout.size() + " objects");
+	private void useLayoutBuilder(
+			LayoutBuilder<ObjectReference> layoutBuilder) {
+		this.layoutBuilder = layoutBuilder;
 	}
 
 	/**
@@ -86,15 +90,21 @@ public class Game extends SimpleApplication {
 	@Override
 	public void simpleInitApp() {
 		
-		for(Vertex3D<ObjectReference> vertex : layout) {
-			Point3f location = vertex.getLocation();
+		Graph<ObjectReference, Edge> graph = layoutBuilder.getGraph();
+		Layout<ObjectReference, Edge> layout = layoutBuilder.computeLayout();
+		
+		for(ObjectReference vertex : graph.getVertices()) {
+			
+			// transform a vertex into it's location according to the layout
+			Point2D location = layout.transform(vertex);
 			// later we could draw a box in different colours etc using 
 			// the ObjectReferece from vertex.getInnerVertex()
-			drawBox(location.x, location.y, location.z);
+			drawBox((float)location.getX(), 0, (float)location.getY());
 		}
 		
         keyMapping();
 	}
+
 
 	/**
 	 * add a box a (x, y, z)

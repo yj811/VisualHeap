@@ -2,7 +2,9 @@ package org.visualheap.world.layout;
 
 import java.awt.Dimension;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.media.j3d.BoundingSphere;
 import javax.vecmath.Point3d;
@@ -14,6 +16,7 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -59,21 +62,18 @@ public class LayoutBuilder<V> {
 	 * work, yet.
 	 * @return
 	 */
-	public Collection<Vertex3D<V>> computeLayout() {
+	public Layout<V, Edge> computeLayout() {
 		FRLayout<V, Edge> layout = new FRLayout<V, Edge>(graph, new Dimension(10, 10));
 		
 		while(!layout.done()) {
 			layout.step();
 		}
-		
-		Collection<Vertex3D<V>> points = new HashSet<Vertex3D<V>>();
-		for(V v : graph.getVertices()) {
-			float x = (float) layout.getX(v);
-			float y = 0;
-			float z = (float) layout.getY(v);
-			points.add(new Vertex3D<V>(v, new Point3f(x, y, z)));
-		}
-		return points;
+	
+		return layout;
+	}
+	
+	public Graph<V, Edge> getGraph() {
+		return graph;
 	}
 	
 	
