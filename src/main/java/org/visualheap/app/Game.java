@@ -1,40 +1,103 @@
 package org.visualheap.app;
 
+
+import java.util.Collection;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import javax.vecmath.Point3f;
+
+import org.visualheap.debugger.DebugListener;
+import org.visualheap.debugger.Debugger;
+import org.visualheap.debugger.NullListener;
+import org.visualheap.world.layout.LayoutBuilder;
+import org.visualheap.world.layout.Vertex3D;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
+
 
 public class Game extends SimpleApplication {
 
+	private static final String CLASSPATH = "build/classes/test";
+	private static final String ARRAYCLASS = "debugger.testprogs.Array";
+	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
 	Geometry obj;
 	private Boolean running = true;
-	
+	private Collection<Vertex3D<ObjectReference>> layout;
+
 	// start a new game.
 	public static void main(String[] args) {
-		Game game = new Game();
-		game.start();
+		final Game game = new Game();
+
+		DebugListener listener = new NullListener() {
+			
+			
+			@Override
+			public void onBreakpoint(final StackFrame sf) {
+				Executor exec =  Executors.newCachedThreadPool();
+				exec.execute(new Runnable() {
+
+					@Override
+					public void run() {
+						
+						Collection<ObjectReference> initialSet = getObjectReferencesFromStackFrame(sf);
+						
+						LayoutBuilder<ObjectReference> layoutBuilder 
+							= LayoutBuilder.fromObjectReferences(new Debugger(new NullListener()), initialSet, 10);
+						Collection<Vertex3D<ObjectReference>> layout = layoutBuilder.computeLayout();
+						
+						game.setLayout(layout);
+						game.start();
+					}
+					
+				});
+			}
+			
+		};
+		
+		Debugger debugger = new Debugger(CLASSPATH, ARRAYCLASS, 15, listener);
+		
+	
     }
 	
+	protected void setLayout(Collection<Vertex3D<ObjectReference>> layout) {
+		this.layout = layout;
+		System.out.println("layout has " + layout.size() + " objects");
+	}
+
 	// load objects before game starts.
 	@Override
 	public void simpleInitApp() {
 		
-        Box box = new Box(1,1,1);
+		for(Vertex3D<ObjectReference> vertex : layout) {
+			Point3f location = vertex.getLocation();
+			drawBox(location.x, location.y, location.z);
+		}
+		
+        keyMapping();
+	}
+
+	private void drawBox(float x, float y, float z) {
+		Box box = new Box(1,1,1);
         obj = new Geometry("Box", box );
         Material mat_brick = new Material( 
             assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat_brick.setTexture("ColorMap", 
             assetManager.loadTexture("Texture/images.jpeg"));
         obj.setMaterial(mat_brick);
-        obj.setLocalTranslation(2.0f,-2.5f,0.0f);
+        obj.setLocalTranslation(x, y, z);
         // make obj visible on scene.
         rootNode.attachChild(obj);
-        keyMapping();
 	}
 	
 	// initiate actions and update game state.
