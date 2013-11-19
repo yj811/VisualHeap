@@ -137,8 +137,11 @@ public class Game extends SimpleApplication implements ActionListener {
 	    bulletAppState = new BulletAppState();
 	    stateManager.attach(bulletAppState);
 		
-		setupGraphics();
-		setupPhysics();
+		constructWorld();
+		
+		setupPlayer();
+		createFloor();
+		
 		setupLight();
         setupKeys();
         
@@ -159,11 +162,8 @@ public class Game extends SimpleApplication implements ActionListener {
 		    rootNode.addLight(dl);
 	  }
 
-	private void setupPhysics() {
-		
-	   // bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-	 
-	    // setup the player's collision boundary + some parameters
+	private void setupPlayer() {
+		// setup the player's collision boundary + some parameters
 	    CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
 	    player = new CharacterControl(capsuleShape, 0.05f);
 	    player.setJumpSpeed(20);
@@ -174,9 +174,11 @@ public class Game extends SimpleApplication implements ActionListener {
 	    
 	    // adding an object to the physics space makes it collidable
 	    bulletAppState.getPhysicsSpace().add(player);
-	    
-	    
-	    // create a floor, else we fall immediately
+	}
+
+
+	private void createFloor() {
+		// create a floor, else we fall immediately
 	    // plane with normal (0, 1, 0) i.e. up
 	    // 5 units below the origin.
 	    Plane floor = new Plane(new Vector3f(0, 1, 0), -5);
@@ -187,7 +189,11 @@ public class Game extends SimpleApplication implements ActionListener {
 	}
 
 
-	private void setupGraphics() {
+	/**
+	 * Iterates through all objects in the graph, creating objects in the 3d world
+	 * corresponding to each vertex and edge
+	 */
+	private void constructWorld() {
 		
 		Graph<ObjectReference, Edge> graph = layoutBuilder.getGraph();
 		Layout<ObjectReference, Edge> layout = layoutBuilder.computeLayout();
@@ -201,7 +207,7 @@ public class Game extends SimpleApplication implements ActionListener {
 			Point2D location = layout.transform(vertex);
 			// later we could draw a box in different colours etc using 
 			// the ObjectReferece from vertex.getInnerVertex()
-			drawBox((float)location.getX(), 0, (float)location.getY());
+			createVertex((float)location.getX(), 0, (float)location.getY());
 		}
 		
 		for(Edge edge : graph.getEdges()) {
@@ -211,7 +217,7 @@ public class Game extends SimpleApplication implements ActionListener {
 			Point2D fromPoint = layout.transform(from);
 			Point2D toPoint = layout.transform(to);
 			
-			drawArrow(fromPoint, toPoint);
+			createEdge(fromPoint, toPoint);
 			
 		}
 	}
@@ -222,7 +228,12 @@ public class Game extends SimpleApplication implements ActionListener {
 	}
 
 
-	private void drawArrow(Point2D fromPoint, Point2D toPoint) {
+	/**
+	 * construct at edge between two points
+	 * @param fromPoint
+	 * @param toPoint
+	 */
+	private void createEdge(Point2D fromPoint, Point2D toPoint) {
 		Line line = new Line(threedeeify(fromPoint), threedeeify(toPoint));
 		Geometry g = new Geometry("line", line);
 		
@@ -232,12 +243,12 @@ public class Game extends SimpleApplication implements ActionListener {
 	}
 
 	/**
-	 * add a box a (x, y, z)
+	 * construct a vertex at (x, y, z)
 	 * @param x
 	 * @param y
 	 * @param z
 	 */
-	private void drawBox(float x, float y, float z) {
+	private void createVertex(float x, float y, float z) {
 		Box box = new Box(1,1,1);
         Geometry obj = new Geometry("Box", box );
         obj.setMaterial(matBrick);
