@@ -99,7 +99,7 @@ public class Debugger {
 	 * @return list of objects referenced by given object reference
 	 * @see ObjectReference
 	 */
-	public final List<ObjectReference> getObjectReferences(ObjectReference objRef) {
+	public static final List<ObjectReference> getObjectReferences(ObjectReference objRef) {
 		List<ObjectReference> resultList = new LinkedList<ObjectReference>();
 		ReferenceType type = objRef.referenceType();
 		List<Field> fields = type.fields();
