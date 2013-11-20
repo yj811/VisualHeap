@@ -51,6 +51,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	private static final String CLASSPATH = "build/classes/test";
 	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
 	
+	private static final float WALK_SPEED = 0.3f;
+	
 	private Layout<Vertex, Edge> layout;
 	private Material matBrick;
 	private BulletAppState bulletAppState;
@@ -247,8 +249,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	 */
 	@Override
 	public void simpleUpdate(float tpf) {
-		camDir.set(cam.getDirection()).multLocal(0.6f);
-		camLeft.set(cam.getLeft()).multLocal(0.4f);
+		camDir.set(cam.getDirection()).multLocal(WALK_SPEED);
+		camLeft.set(cam.getLeft()).multLocal(WALK_SPEED);
 		walkDirection.set(0, 0, 0);
 		if (left) {
 			System.out.println("left");
