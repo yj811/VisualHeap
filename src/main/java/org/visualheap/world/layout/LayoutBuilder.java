@@ -2,28 +2,21 @@ package org.visualheap.world.layout;
 
 import java.awt.Dimension;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-
-import javax.media.j3d.BoundingSphere;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-
-import org.visualheap.debugger.Debugger;
 
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.StackFrame;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 
-public class LayoutBuilder<V> {
+/**
+ * not a real class, just wraps the two static functions you see here.
+ * @author oliver
+ *
+ */
+public class LayoutBuilder {
 
-	private Graph<V, Edge> graph;
-	
 	/**
 	 * builds a graph of the heap to depth specified.
 	 * @param debugger a debugger object (doesn't need to be the main one...)
@@ -31,63 +24,54 @@ public class LayoutBuilder<V> {
 	 * @param depth depth to search to (unimplemented)
 	 * @return
 	 */
-	public static LayoutBuilder<ObjectReference> fromObjectReferences(Debugger debugger,
-			Collection<ObjectReference> initialSet, int depth) {
+	public static Layout<Vertex, Edge> fromObjectReferences(Collection<ObjectReference> initialSet, int depth) {
 		
-		ObjectReference dummy = new DummyObjectReference();
-		LayoutBuilder<ObjectReference> layoutBuilder = new LayoutBuilder<ObjectReference>();
+		// construct the graph
+		Vertex dummy = new DummyVertex();
+		Graph<Vertex, Edge> graph = new DirectedSparseGraph<Vertex, Edge>();
+		FRLayout<Vertex, Edge> layout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
+		
 		
 		for(ObjectReference ref : initialSet) {
-			layoutBuilder.addObjectToGraph(dummy, ref);
-			expandNodes(debugger, layoutBuilder, ref, depth);
+			Vertex vert = new ObjectReferenceVertex(ref, layout);
+			graph.addEdge(new Edge(layout, dummy, vert), dummy, vert);
+			visitChildren(graph, layout, vert, 4);
 		}
 		
-		return layoutBuilder;
+		// run the layout algorithm
+		
+		layout.initialize();
+		while(!layout.done()) {
+			layout.step();
+		}
+		
+		
+		
+		return layout;
 	}
 	
-	private static void expandNodes(Debugger debugger, LayoutBuilder<ObjectReference> layoutBuilder, 
-			ObjectReference parent, int depth) {
-		System.out.println("expand");
+	/**
+	 * adds children of parent to graph so long as depth > 0
+	 * @param graph graph to add children to
+	 * @param layout layout (needed to construct Vertex / Edge classes)
+	 * @param parent Vertex to add children of
+	 * @param depth depth to search to
+	 */
+	private static void visitChildren(Graph<Vertex, Edge> graph, Layout<Vertex, Edge> layout, 
+			Vertex parent, int depth) {
 		if(depth != 0) {
-			for(ObjectReference child : debugger.getObjectReferences(parent)) {
-				layoutBuilder.addObjectToGraph(parent, child);
-				expandNodes(debugger, layoutBuilder, child, depth - 1);
+			for(ObjectReference child : parent.getChildren()) {
+				Vertex childVert = new ObjectReferenceVertex(child, layout);
+
+				graph.addEdge(new Edge(layout, parent, childVert), parent, childVert);
+				visitChildren(graph, layout, childVert, depth - 1);
 			}
 		}
 	}
 	
 	private LayoutBuilder() {
-		graph = new DirectedSparseGraph<V, Edge>();
-	}	
-	
-	private LayoutBuilder(Graph<V, Edge> graph) {
-		this.graph = graph;
-	}
-	
-	public void addObjectToGraph(V from, V to) {
-		graph.addEdge(new Edge(), from, to);
-	}
-	
-	/**
-	 * compute a 2d layout for this graph.
-	 * it should be possible to get JUNG to layout in 3d, but I can't make that
-	 * work, yet.
-	 * @return
-	 */
-	public Layout<V, Edge> computeLayout() {
-		FRLayout<V, Edge> layout = new FRLayout<V, Edge>(graph, new Dimension(100, 100));
 		
-		while(!layout.done()) {
-			layout.step();
-		}
-	
-		return layout;
 	}
-	
-	public Graph<V, Edge> getGraph() {
-		return graph;
-	}
-	
 	
 
 }
