@@ -103,8 +103,9 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 						Layout<Vertex, Edge> layout 
 							= LayoutBuilder.fromObjectReferences(initialSet, 4);
-						game.useLayout(layout);
 						
+						game.useLayout(layout);
+						game.setShowSettings(false);
 						game.start();
 						
 					
