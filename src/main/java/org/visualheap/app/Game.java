@@ -2,10 +2,9 @@ package org.visualheap.app;
 
 
 import java.util.Collection;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.vecmath.Matrix3f;
+import java.util.concurrent.TimeUnit;
 
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
@@ -36,8 +35,6 @@ import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
@@ -80,8 +77,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Vector3f camLeft = new Vector3f();
 	private Vector3f camUp = new Vector3f();
 	private Vector3f walkDirection = new Vector3f();
+	private Debugger d;
 
-	
 	// start a new game.
 	public static void main(String[] args) {
 		final Game game = new Game();
@@ -91,39 +88,57 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 			@Override
 			public void onBreakpoint(final StackFrame sf) {
-				Executor exec =  Executors.newCachedThreadPool();
+				
+				final ExecutorService es =  Executors.newCachedThreadPool();
 				/*
 				 * If the game is started in this thread it blocks the event-thread
 				 * Perhaps we should start all event handlers in their own threads?
 				 */
-				exec.execute(new Runnable() {
+				es.execute(new Runnable() {
 
 					@Override
 					public void run() {
 						
 						Collection<ObjectReference> initialSet = getObjectReferencesFromStackFrame(sf);
-						
+			
 						Layout<Vertex, Edge> layout 
 							= LayoutBuilder.fromObjectReferences(initialSet, 4);
-					
 						game.useLayout(layout);
+						
 						game.start();
+						
+					
 					}
 					
 				});
+				
+				es.shutdown();
+				try {
+					es.awaitTermination(1, TimeUnit.MICROSECONDS);
+				} catch (InterruptedException e) {
+				
+					e.printStackTrace();
+				}
 			}
 			
 		};
 		
 		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 19, listener);
-		
+		game.setDebugger(debugger);
 	
     }
+	
+	private void setDebugger(Debugger debugger) {
+		this.d = debugger;
+		
+	}
 	
 	
 	private void useLayout(Layout<Vertex, Edge> layout) {
 		this.layout = layout;
 	}
+	
+
 
 	/**
 	 * Executed by JME when the game starts up.
@@ -133,7 +148,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	public void simpleInitApp() {
 		
 		matBrick = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	  	matBrick.setTexture("ColorMap", assetManager.loadTexture("Texture/images.jpeg"));
+	  	matBrick.setTexture("ColorMap", assetManager.loadTexture("Textures/images.jpeg"));
 
 		
 		// will hold all collidable objects.
@@ -212,7 +227,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		for (Edge edge : graph.getEdges()) {
 			edge.createInWorld(this);
 		}
-		rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+		//rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
 		addGridSquare();
 		
 	}
@@ -228,12 +243,14 @@ public class Game extends SimpleApplication implements ActionListener {
 		inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_S));
 		inputManager.addMapping("Rise", new KeyTrigger(KeyInput.KEY_E));
 		inputManager.addMapping("Sink", new KeyTrigger(KeyInput.KEY_Q));
+		inputManager.addMapping("Quit", new KeyTrigger(KeyInput.KEY_ESCAPE));
 		inputManager.addListener(this, "Left");
 		inputManager.addListener(this, "Right");
 		inputManager.addListener(this, "Up");
 		inputManager.addListener(this, "Down");
 		inputManager.addListener(this, "Rise");
 		inputManager.addListener(this, "Sink");
+		inputManager.addListener(this, "Quit");
 	}
 
 	/**
@@ -252,6 +269,10 @@ public class Game extends SimpleApplication implements ActionListener {
 		    rise = isPressed;
 		} else if (binding.equals("Sink")) {
 		    sink = isPressed;
+        } else if (binding.equals("Quit")) {
+        	//TODO: Change this to our expected behaviour when the user closes the game window
+        	d.resume();
+        	this.stop();
         }
 	}
 
@@ -309,14 +330,14 @@ public class Game extends SimpleApplication implements ActionListener {
 	public void addGridSquare() {
 	    Quad q = new Quad(1000,1000);
         Geometry blueq = new Geometry("Quad", q);
-        blueq.setLocalTranslation(new Vector3f(0, -2f,0));
+        blueq.setLocalTranslation(new Vector3f(0, -1.2f,0));
         blueq.rotate( 270*FastMath.DEG_TO_RAD , 270*FastMath.DEG_TO_RAD  , 0f);
         Material mat1 = new Material(assetManager, 
                 "Common/MatDefs/Misc/Unshaded.j3md");
         
         mat1.setColor("Color", ColorRGBA.White);
         Texture quadTexture = assetManager.loadTexture(
-                "Interface/Logo/Monkey.jpg");
+                "Textures/grid.jpg");
         quadTexture.setWrap(Texture.WrapMode.Repeat);
         q.scaleTextureCoordinates(new Vector2f(500,500));
         mat1.setTexture("ColorMap", quadTexture);
