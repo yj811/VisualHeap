@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
