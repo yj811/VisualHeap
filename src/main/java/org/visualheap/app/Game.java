@@ -187,12 +187,13 @@ public class Game extends SimpleApplication implements ActionListener {
 	private void setupPlayer() {
 		// setup the player's collision boundary + some parameters
 		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f,
-				6f, 1);
+				10f, 1);
 		player = new CharacterControl(capsuleShape, 0.05f);
 		player.setJumpSpeed(0);
 		player.setFallSpeed(0);
+		cam.lookAt(new Vector3f(10f,0f,10f), camUp);
 	
-		player.setPhysicsLocation(new Vector3f(0, 10, 0));
+		player.setPhysicsLocation(new Vector3f(0, 4, 0));
 
 		// adding an object to the physics space makes it collidable
 		bulletAppState.getPhysicsSpace().add(player);
