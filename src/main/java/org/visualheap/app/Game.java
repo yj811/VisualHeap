@@ -32,12 +32,14 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Plane;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Quad;
+import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
@@ -311,7 +313,14 @@ public class Game extends SimpleApplication implements ActionListener {
         blueq.rotate( 270*FastMath.DEG_TO_RAD , 270*FastMath.DEG_TO_RAD  , 0f);
         Material mat1 = new Material(assetManager, 
                 "Common/MatDefs/Misc/Unshaded.j3md");
-        mat1.setColor("Color", ColorRGBA.Blue);
+        
+        mat1.setColor("Color", ColorRGBA.White);
+        Texture quadTexture = assetManager.loadTexture(
+                "Interface/Logo/Monkey.jpg");
+        quadTexture.setWrap(Texture.WrapMode.Repeat);
+        q.scaleTextureCoordinates(new Vector2f(500,500));
+        mat1.setTexture("ColorMap", quadTexture);
+       
         blueq.setMaterial(mat1);   
         rootNode.attachChild(blueq);
 	

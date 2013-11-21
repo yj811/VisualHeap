@@ -41,6 +41,7 @@ public class Edge {
 		Point2D endPoint = layout.transform(end);		
 		
 		Line line = new Line(threedeeify(startPoint), threedeeify(endPoint));
+		line.setLineWidth(5);
 		Geometry g = new Geometry("line", line);
 		
         g.setMaterial(game.getStandardMaterial());
