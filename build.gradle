@@ -13,7 +13,7 @@ compileJava.options.debugOptions.debugLevel = "source,lines,vars"
 sourceSets {
     main {
         resources {
-            srcDir 'jme3 /assets'
+            srcDir 'jme3/assets'
         }
     }
 }
