@@ -1,8 +1,5 @@
 package debugger;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
@@ -12,7 +9,6 @@ import org.visualheap.debugger.AggregatingDebugListener;
 import org.visualheap.debugger.DebugListener;
 
 import com.sun.jdi.StackFrame;
-import com.sun.jdi.ObjectReference;
 
 public class AggregatingDebugListenerTests {
 	
