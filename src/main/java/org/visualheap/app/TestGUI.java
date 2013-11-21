@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 
 import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
-import org.visualheap.world.display.Display;
 
 import com.sun.jdi.StackFrame;
 
@@ -58,7 +57,6 @@ public class TestGUI extends NullListener {
     private BreakpointTableModel tableModel;
 
     private JPanel paneVisual;
-    private Display game;
 
     private enum GUI_STATE {
         UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED
@@ -94,8 +92,6 @@ public class TestGUI extends NullListener {
                 try {
                     initialize();
                     frame.setVisible(true);
-                    game = new Display(paneVisual.getWidth(), paneVisual.getHeight());
-                    paneVisual.add(game);
 
                     //game.start();
                 } catch (Exception e) {
