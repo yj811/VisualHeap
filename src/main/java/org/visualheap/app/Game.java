@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.vecmath.Matrix3f;
+
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
@@ -28,10 +30,15 @@ import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Plane;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Quad;
+import com.jme3.util.SkyFactory;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
 
@@ -51,7 +58,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private static final String CLASSPATH = "build/classes/test";
 	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
 	
-	private static final float WALK_SPEED = 0.3f;
+	private static final float WALK_SPEED = 0.5f;
 	
 	private Layout<Vertex, Edge> layout;
 	private Material matBrick;
@@ -167,6 +174,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		player = new CharacterControl(capsuleShape, 0.05f);
 		player.setJumpSpeed(0);
 		player.setFallSpeed(0);
+	
 		player.setPhysicsLocation(new Vector3f(0, 10, 0));
 
 		// adding an object to the physics space makes it collidable
@@ -202,6 +210,9 @@ public class Game extends SimpleApplication implements ActionListener {
 		for (Edge edge : graph.getEdges()) {
 			edge.createInWorld(this);
 		}
+		rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+		addGridSquare();
+		
 	}
 
 	/**
@@ -247,7 +258,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	 * 
 	 * This is the main event loop--walking happens here. We check in which
 	 * direction the player is walking by interpreting the camera direction
-	 * forward (camDir) and to the side (camLeft). The setWalkDirection()
+	 * forward (camDir) and to the side (camLeft) and above (camUp) . The setWalkDirection()
 	 * command is what lets a physics-controlled player walk. We also make sure
 	 * here that the camera moves with player.
 	 */
@@ -292,5 +303,18 @@ public class Game extends SimpleApplication implements ActionListener {
 	public void addNonCollidable(Geometry child) {
 		rootNode.attachChild(child);
 	}
-    
+	
+	public void addGridSquare() {
+	    Quad q = new Quad(1000,1000);
+        Geometry blueq = new Geometry("Quad", q);
+        blueq.setLocalTranslation(new Vector3f(0, -2f,0));
+        blueq.rotate( 270*FastMath.DEG_TO_RAD , 270*FastMath.DEG_TO_RAD  , 0f);
+        Material mat1 = new Material(assetManager, 
+                "Common/MatDefs/Misc/Unshaded.j3md");
+        mat1.setColor("Color", ColorRGBA.Blue);
+        blueq.setMaterial(mat1);   
+        rootNode.attachChild(blueq);
+	
+	}
+
 }
