@@ -329,9 +329,9 @@ public class Game extends SimpleApplication implements ActionListener {
 	}
 	
 	public void addGridSquare() {
-	    Quad q = new Quad(1000,1000);
+	    Quad q = new Quad(2000,2000);
         Geometry blueq = new Geometry("Quad", q);
-        blueq.setLocalTranslation(new Vector3f(0, -1.2f,0));
+        blueq.setLocalTranslation(new Vector3f(-1000, -1.2f,-1000));
         blueq.rotate( 270*FastMath.DEG_TO_RAD , 270*FastMath.DEG_TO_RAD  , 0f);
         Material mat1 = new Material(assetManager, 
                 "Common/MatDefs/Misc/Unshaded.j3md");
