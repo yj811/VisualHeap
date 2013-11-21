@@ -64,9 +64,12 @@ public class Game extends SimpleApplication implements ActionListener {
 	private boolean right;
 	private boolean up;
 	private boolean down;
+	private boolean rise;
+	private boolean sink;
 	
 	private Vector3f camDir = new Vector3f();
 	private Vector3f camLeft = new Vector3f();
+	private Vector3f camUp = new Vector3f();
 	private Vector3f walkDirection = new Vector3f();
 
 	
@@ -162,9 +165,8 @@ public class Game extends SimpleApplication implements ActionListener {
 		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f,
 				6f, 1);
 		player = new CharacterControl(capsuleShape, 0.05f);
-		player.setJumpSpeed(20);
-		player.setFallSpeed(30);
-		player.setGravity(30);
+		player.setJumpSpeed(0);
+		player.setFallSpeed(0);
 		player.setPhysicsLocation(new Vector3f(0, 10, 0));
 
 		// adding an object to the physics space makes it collidable
@@ -211,12 +213,14 @@ public class Game extends SimpleApplication implements ActionListener {
 		inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_D));
 		inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_W));
 		inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_S));
-		inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
+		inputManager.addMapping("Rise", new KeyTrigger(KeyInput.KEY_E));
+		inputManager.addMapping("Sink", new KeyTrigger(KeyInput.KEY_Q));
 		inputManager.addListener(this, "Left");
 		inputManager.addListener(this, "Right");
 		inputManager.addListener(this, "Up");
 		inputManager.addListener(this, "Down");
-		inputManager.addListener(this, "Jump");
+		inputManager.addListener(this, "Rise");
+		inputManager.addListener(this, "Sink");
 	}
 
 	/**
@@ -231,11 +235,11 @@ public class Game extends SimpleApplication implements ActionListener {
 			up = isPressed;
 		} else if (binding.equals("Down")) {
 			down = isPressed;
-		} else if (binding.equals("Jump")) {
-			if (isPressed) {
-				player.jump();
-			}
-		}
+		} else if (binding.equals("Rise")) {
+		    rise = isPressed;
+		} else if (binding.equals("Sink")) {
+		    sink = isPressed;
+        }
 	}
 
 	/**
@@ -251,6 +255,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	public void simpleUpdate(float tpf) {
 		camDir.set(cam.getDirection()).multLocal(WALK_SPEED);
 		camLeft.set(cam.getLeft()).multLocal(WALK_SPEED);
+		camUp.set(cam.getUp()).multLocal(WALK_SPEED);
 		walkDirection.set(0, 0, 0);
 		if (left) {
 			System.out.println("left");
@@ -265,6 +270,12 @@ public class Game extends SimpleApplication implements ActionListener {
 		if (down) {
 			walkDirection.addLocal(camDir.negate());
 		}
+		if (rise) {
+            walkDirection.addLocal(camUp);
+        }
+		if (sink) {
+            walkDirection.addLocal(camUp.negate());
+        }
 		player.setWalkDirection(walkDirection);
 		cam.setLocation(player.getPhysicsLocation());
 		System.out.println(cam.getLocation().toString());
