@@ -149,7 +149,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	public void simpleInitApp() {
 		
 		matBrick = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	  	matBrick.setTexture("ColorMap", assetManager.loadTexture("Textures/images.jpeg"));
+	  	matBrick.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
 
 		
 		// will hold all collidable objects.
@@ -339,7 +339,7 @@ public class Game extends SimpleApplication implements ActionListener {
         
         mat1.setColor("Color", ColorRGBA.White);
         Texture quadTexture = assetManager.loadTexture(
-                "Textures/grid.jpg");
+                "textures/grid.jpg");
         quadTexture.setWrap(Texture.WrapMode.Repeat);
         q.scaleTextureCoordinates(new Vector2f(500,500));
         mat1.setTexture("ColorMap", quadTexture);
