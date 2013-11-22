@@ -180,7 +180,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		constructWorld();
 		
 		setupPlayer();
-		createFloor();
+		//createFloor();
 		
 		setupLight();
         setupKeys();
@@ -215,17 +215,6 @@ public class Game extends SimpleApplication implements ActionListener {
 
 		// adding an object to the physics space makes it collidable
 		bulletAppState.getPhysicsSpace().add(player);
-	}
-
-	private void createFloor() {
-		// create a floor, else we fall immediately
-		// plane with normal (0, 1, 0) i.e. up
-		// 5 units below the origin.
-		Plane floor = new Plane(new Vector3f(0, 1, 0), -5);
-		PlaneCollisionShape floorShape = new PlaneCollisionShape(floor);
-		PhysicsControl floorControl = new RigidBodyControl(floorShape);
-
-		bulletAppState.getPhysicsSpace().add(floorControl);
 	}
 
 	/**
@@ -367,7 +356,7 @@ public class Game extends SimpleApplication implements ActionListener {
         mat1.setTexture("ColorMap", quadTexture);
         
         blueq.setMaterial(mat1);   
-        rootNode.attachChild(blueq);
+        collidables.attachChild(blueq);
 	
 	}
 
