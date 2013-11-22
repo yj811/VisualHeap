@@ -13,7 +13,7 @@ compileJava.options.debugOptions.debugLevel = "source,lines,vars"
 sourceSets {
     main {
         resources {
-            srcDir 'jme3/assets'
+            srcDir 'assets'
         }
     }
 }
@@ -63,7 +63,7 @@ task game(type: Jar) {
       include "org/visualheap/**"
   }
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-  from { fileTree "jme3 /assets" }
+  from { fileTree "assets" }
 
   manifest.attributes("Main-Class": "org.visualheap.app.Game")
 }

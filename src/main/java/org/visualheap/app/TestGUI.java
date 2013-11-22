@@ -1,17 +1,13 @@
 package org.visualheap.app;
 
 import java.util.Vector;
-import java.awt.EventQueue;
+import com.sun.jdi.StackFrame;
 
 import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
-import org.visualheap.world.display.Display;
-
-import com.sun.jdi.StackFrame;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
-
 import javax.swing.JFileChooser;
 import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
@@ -25,25 +21,28 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JScrollPane;
-import java.awt.BorderLayout;
 import javax.swing.JSplitPane;
+
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
 
+import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class TestGUI extends NullListener {
 
-    //Variables
+    // variables --are they though?
     private volatile Debugger debugger;
-    private String classPath;
-    private String className;
     private volatile GUI_STATE state;
     private volatile StringBuilder finalPath;
+    private final JFileChooser fc = new JFileChooser();
 
     private InputStreamThread istConsoleOutput;
+    private String classPath;
+    private String className;
 
     private JFrame frame;
     private JTextField edtClassPath;
@@ -54,11 +53,8 @@ public class TestGUI extends NullListener {
     private JButton btnResume;
     private JButton btnNewBreakpoint;
     private JTextArea taConsoleOutput;
-    private final JFileChooser fc = new JFileChooser();
     private BreakpointTableModel tableModel;
-
     private JPanel paneVisual;
-    private Display game;
 
     private enum GUI_STATE {
         UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED
@@ -85,7 +81,6 @@ public class TestGUI extends NullListener {
         classPath = path;
         className = name;
         show();
-
     }
 
     public void show() {
@@ -94,9 +89,6 @@ public class TestGUI extends NullListener {
                 try {
                     initialize();
                     frame.setVisible(true);
-                    game = new Display(paneVisual.getWidth(), paneVisual.getHeight());
-                    paneVisual.add(game);
-
                     //game.start();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -109,8 +101,7 @@ public class TestGUI extends NullListener {
         System.out.println(className);
         tableModel.addRow(new Object[] { number, className });
     }
-    
-    
+
     public void onBreakpoint(StackFrame sf) {
         lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
         btnStep.setEnabled(true);
@@ -145,7 +136,6 @@ public class TestGUI extends NullListener {
     }
 
     private void prepareVM() {
-
         if (istConsoleOutput != null && !istConsoleOutput.finished()) {
             istConsoleOutput.finish();
         }
@@ -187,14 +177,13 @@ public class TestGUI extends NullListener {
             finalPath.append("/");
             finalPath.append(edtClassName.getText().replaceAll("\\Q.\\E", "/"));
             finalPath.append(".class");
-            //if the new string results in a final product, load the VM automagically.
+            // if the new string results in a final product, load the VM auto-magically.
 
             File f = new File(finalPath.toString());
             if(f.exists()) { 
                 prepareVM();
             }
         }
-
     } 
 
     private class ClassPathButtonListener implements ActionListener {
@@ -323,14 +312,12 @@ public class TestGUI extends NullListener {
         sl_paneConfigure.putConstraint(SpringLayout.SOUTH, tblBreakpoints, -10, SpringLayout.SOUTH, paneConfigure);
         sl_paneConfigure.putConstraint(SpringLayout.EAST, tblBreakpoints, 0, SpringLayout.EAST, btnClasspath);
 
-
         tblBreakpoints.setModel(tableModel);
         tblBreakpoints.getColumnModel().getColumn(0).setPreferredWidth(100);
         tblBreakpoints.getColumnModel().getColumn(0).setMinWidth(100);
         tblBreakpoints.getColumnModel().getColumn(1).setPreferredWidth(160);
         tblBreakpoints.getColumnModel().getColumn(1).setMinWidth(160);
         tblBreakpoints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-
 
         JPanel paneOutputs = new JPanel();
         tabbedPane.addTab("Program Output", null, paneOutputs, null);
@@ -371,7 +358,6 @@ public class TestGUI extends NullListener {
         JScrollPane scrollPane_1 = new JScrollPane();
         paneProgramOutput.add(scrollPane_1, BorderLayout.CENTER);
 
-
         taConsoleOutput = new JTextArea();
         scrollPane_1.setViewportView(taConsoleOutput);
 
@@ -386,17 +372,12 @@ public class TestGUI extends NullListener {
         btnResume.addActionListener(new ResumeButtonListener());
         paneDebugControls.add(btnResume);
 
-
-
         lblLineNo = new JLabel("Line Number: 0");
         paneDebugControls.add(lblLineNo);
 
         paneVisual = new JPanel();
         tabbedPane.addTab("Visual", null, paneVisual, null);
         paneVisual.setVisible(true);
-
-
-
 
         edtClassName.getDocument().addDocumentListener(new PathFieldListener());
         edtClassPath.getDocument().addDocumentListener(new PathFieldListener());
@@ -406,7 +387,6 @@ public class TestGUI extends NullListener {
     }
 
     private class BreakpointTableModel extends DefaultTableModel {
-
         private static final long serialVersionUID = 1L;
 
         @SuppressWarnings("rawtypes")
@@ -425,7 +405,6 @@ public class TestGUI extends NullListener {
             super(new String[] {
                     "Line Number", "Class Name"
             }, 0);
-
         }
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -436,9 +415,5 @@ public class TestGUI extends NullListener {
         public boolean isCellEditable(int row, int column) {
             return columnEditables[column];
         }
-
     }
-
-
-
 }
