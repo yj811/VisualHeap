@@ -19,7 +19,7 @@ public class VisualHeap {
     public static void main(String[] args) {
         DebugListener debugListener = new HeapListener();
         debugger = null;
-		if(args.length < 2 && args.length > 3) {
+		if(args.length < 2 || args.length > 3) {
             debugger = new Debugger(debugListener);
             TestGUI gui = new TestGUI(debugger);
             gui.show();

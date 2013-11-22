@@ -10,6 +10,14 @@ sourceCompatibility = 1.7
 // compile with debugging symbols
 compileJava.options.debugOptions.debugLevel = "source,lines,vars"
 
+sourceSets {
+    main {
+        resources {
+            srcDir 'assets'
+        }
+    }
+}
+
 repositories {
   mavenCentral()
 }
@@ -17,7 +25,9 @@ repositories {
 dependencies {
   testCompile 'junit:junit:4.+'
   testCompile 'org.jmock:jmock-junit4:2.6.0'
-  compile files("lib/tools.jar")
+  compile 'net.sf.jung:jung-3d:2.0.1'
+  compile 'net.sf.jung:jung-graph-impl:2.0.1'
+  compile fileTree("lib")
 }
 
 jar {
@@ -45,6 +55,17 @@ task breakpoints(type: Jar) {
   from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
   manifest.attributes("Main-Class": "org.group.jdiTest.breakpoints.Breakpoints")
+}
+
+task game(type: Jar) {
+  baseName = "game"
+  from(sourceSets.main.output) {
+      include "org/visualheap/**"
+  }
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+  from { fileTree "assets" }
+
+  manifest.attributes("Main-Class": "org.visualheap.app.Game")
 }
 
 checkstyle {
