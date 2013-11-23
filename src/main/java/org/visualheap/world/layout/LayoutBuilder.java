@@ -27,10 +27,9 @@ public class LayoutBuilder {
 	public static Layout<Vertex, Edge> fromObjectReferences(Collection<ObjectReference> initialSet, int depth) {
 		
 		// construct the graph
-		Vertex dummy = new DummyVertex();
 		Graph<Vertex, Edge> graph = new DirectedSparseGraph<Vertex, Edge>();
 		FRLayout<Vertex, Edge> layout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
-		
+		Vertex dummy = new DummyVertex(layout);
 		
 		for(ObjectReference ref : initialSet) {
 			Vertex vert = new ObjectReferenceVertex(ref, layout);
