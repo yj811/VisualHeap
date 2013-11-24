@@ -42,7 +42,14 @@ public class ObjectReferenceVertex extends Vertex {
         
         obj.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
         // make obj visible on scene and collidable
-        game.addCollidable(obj);  
+        game.addCollidable(obj, new CollisionHandler() {
+
+			@Override
+			public void callback() {
+				System.out.println("hit an object reference");
+			}
+        	
+        });  
 	}
 
 	/**
