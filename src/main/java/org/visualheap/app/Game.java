@@ -22,24 +22,31 @@ import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.collision.CollisionResults;
+import com.jme3.font.BitmapText;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Plane;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
+import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
+import com.sun.jdi.Value;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
@@ -55,7 +62,7 @@ import edu.uci.ics.jung.graph.Graph;
 public class Game extends SimpleApplication implements ActionListener {
 
 	private static final String CLASSPATH = "build/classes/test";
-	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
+	private static final String TREEREFERENCE = "debugger.testprogs.SimpleReference";
 	
 	private static final float WALK_SPEED = 0.5f;
 	
@@ -64,6 +71,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	private BulletAppState bulletAppState;
 	private CharacterControl player;
 	private Node collidables;
+	private BitmapText objInfo;
+	private Geometry target;
 
 	// are left/right/up/down keys pressed?
 	private boolean left;
@@ -117,16 +126,15 @@ public class Game extends SimpleApplication implements ActionListener {
 				try {
 					es.awaitTermination(1, TimeUnit.MICROSECONDS);
 				} catch (InterruptedException e) {
-				
 					e.printStackTrace();
 				}
 			}
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 19, listener);
+		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 15, listener);
 		game.setDebugger(debugger);
-	
+        
     }
 	
 	private void setDebugger(Debugger debugger) {
@@ -148,6 +156,10 @@ public class Game extends SimpleApplication implements ActionListener {
 	@Override
 	public void simpleInitApp() {
 		
+		// hide FPS/object statistics
+		setDisplayFps(false);
+		setDisplayStatView(false);
+		
 		matBrick = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	  	matBrick.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
 
@@ -162,15 +174,28 @@ public class Game extends SimpleApplication implements ActionListener {
 		
 		constructWorld();
 		
+		setupCrossHairs();
 		setupPlayer();
 		createFloor();
 		
 		setupLight();
         setupKeys();
-        
+
         // create a collision shape for all collidable objects
         CollisionShape world = CollisionShapeFactory.createDynamicMeshShape(collidables);
         bulletAppState.getPhysicsSpace().add(new RigidBodyControl(world, 0));
+	}
+
+	// from JME tutorial, create a cross to help user determine target.
+	private void setupCrossHairs() {
+		 setDisplayStatView(false);
+		 guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+		 BitmapText ch = new BitmapText(guiFont, false);
+		 ch.setSize(guiFont.getCharSet().getRenderedSize()*2);
+		 ch.setText("+"); 
+		 ch.setLocalTranslation(
+		 settings.getWidth() / 2 - ch.getLineWidth()/2, settings.getHeight() / 2 + ch.getLineHeight()/2, 0);
+		 guiNode.attachChild(ch);		
 	}
 
 	private void setupLight() {
@@ -220,18 +245,17 @@ public class Game extends SimpleApplication implements ActionListener {
 		Graph<Vertex, Edge> graph = layout.getGraph();
 
 		System.out.println(graph.getVertexCount() + " objects");
-
+		
 		// draw the vertices
 		for (Vertex vertex : graph.getVertices()) {
 			vertex.createInWorld(this);
 		}
-
+		
 		for (Edge edge : graph.getEdges()) {
 			edge.createInWorld(this);
 		}
 		//rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
-		addGridSquare();
-		
+		addGridSquare();		
 	}
 
 	/**
@@ -246,6 +270,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		inputManager.addMapping("Rise", new KeyTrigger(KeyInput.KEY_E));
 		inputManager.addMapping("Sink", new KeyTrigger(KeyInput.KEY_Q));
 		inputManager.addMapping("Quit", new KeyTrigger(KeyInput.KEY_ESCAPE));
+		inputManager.addMapping("Select", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		inputManager.addListener(this, "Left");
 		inputManager.addListener(this, "Right");
 		inputManager.addListener(this, "Up");
@@ -253,8 +278,9 @@ public class Game extends SimpleApplication implements ActionListener {
 		inputManager.addListener(this, "Rise");
 		inputManager.addListener(this, "Sink");
 		inputManager.addListener(this, "Quit");
+		inputManager.addListener(this, "Select");
 	}
-
+	
 	/**
 	 * Called when an Action occours.
 	 */
@@ -275,6 +301,22 @@ public class Game extends SimpleApplication implements ActionListener {
         	//TODO: Change this to our expected behaviour when the user closes the game window
         	d.resume();
         	this.stop();
+        } else if (binding.equals("Select") && !isPressed) {
+            CollisionResults results = new CollisionResults();
+            Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+            collidables.collideWith(ray, results);
+            if (objInfo != null) guiNode.detachChild(objInfo);
+            if (results.size() > 0) {
+            	// pick the closest object as the target
+                target = results.getClosestCollision().getGeometry();             
+                objInfo = new BitmapText(guiFont, false);          
+        		objInfo.setSize(guiFont.getCharSet().getRenderedSize());     
+        		objInfo.setColor(ColorRGBA.Yellow); 
+        		// show target information
+        		objInfo.setText("target info");   
+        		objInfo.setLocalTranslation(0, 200, 0); 
+        		guiNode.attachChild(objInfo);               
+            }             
         }
 	}
 
