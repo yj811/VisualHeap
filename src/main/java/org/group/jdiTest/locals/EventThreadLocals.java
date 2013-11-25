@@ -228,6 +228,7 @@ public class EventThreadLocals extends Thread {
             try {
                 cnt = thread.frameCount();
             } catch (IncompatibleThreadStateException exc) {
+                exc.printStackTrace();
             }
             while (cnt-- > 0) {
                 indent.append("| ");

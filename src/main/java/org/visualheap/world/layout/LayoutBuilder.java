@@ -22,7 +22,7 @@ public class LayoutBuilder {
 	 * @param debugger a debugger object (doesn't need to be the main one...)
 	 * @param initialSet ObjectReferences on the stack frame
 	 * @param depth depth to search to (unimplemented)
-	 * @return
+	 * @return returns a graph layout
 	 */
 	public static Layout<Vertex, Edge> fromObjectReferences(Collection<ObjectReference> initialSet, int depth) {
 		
