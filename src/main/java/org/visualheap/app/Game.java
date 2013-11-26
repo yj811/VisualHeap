@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
-import org.visualheap.world.layout.CollisionHandler;
 import org.visualheap.world.layout.Edge;
 import org.visualheap.world.layout.LayoutBuilder;
 import org.visualheap.world.layout.Vertex;
@@ -18,7 +17,6 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.PhysicsControl;
@@ -32,16 +30,13 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Plane;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
@@ -70,7 +65,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Material matBrick;
 	private BulletAppState bulletAppState;
 	private CharacterControl player;
-	private CompoundCollisionShape collidables = new CompoundCollisionShape();
+	private Node collidables;
 
 	// are left/right/up/down keys pressed?
 	private boolean left;
@@ -172,6 +167,11 @@ public class Game extends SimpleApplication implements ActionListener {
 	    BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);        
 	    fpp.addFilter(bloom);
 	    viewPort.addProcessor(fpp);
+
+		
+		// will hold all collidable objects.
+		collidables = new Node();
+		rootNode.attachChild(collidables);
 	
         // some initial physics setup
 	    bulletAppState = new BulletAppState();
@@ -183,11 +183,11 @@ public class Game extends SimpleApplication implements ActionListener {
 		//createFloor();
 		
 		setupLight();
-        setupKeys();   
+        setupKeys();
         
-        bulletAppState.getPhysicsSpace().addCollisionListener(new CollisionAdapter());
-        
-        
+        // create a collision shape for all collidable objects
+        CollisionShape world = CollisionShapeFactory.createDynamicMeshShape(collidables);
+        bulletAppState.getPhysicsSpace().add(new RigidBodyControl(world, 0));
 	}
 
 	private void setupLight() {
@@ -320,6 +320,7 @@ public class Game extends SimpleApplication implements ActionListener {
         }
 		player.setWalkDirection(walkDirection);
 		cam.setLocation(player.getPhysicsLocation());
+		System.out.println(cam.getLocation().toString());
 	}
 
 	public Material getGreenGlowMaterial() {
@@ -330,38 +331,8 @@ public class Game extends SimpleApplication implements ActionListener {
 		return magentaGlowMat;
 	}
 
-	/**
-	 * makes a geometry visible and collidable.
-	 * @param child Geometry to show
-	 * @param userObject CollisionHandler to callback to when a collision occurs
-	 */
-	public void addCollidable(Geometry child, CollisionHandler userObject) {
-		
-		// create a mesh from the geometry
-		CollisionShape meshShape
-			= CollisionShapeFactory.createDynamicMeshShape(child);
-		// mesh is at coordinates (0, 0, 0), no way to change that
-		
-		
-		// extract geometry translation / rotation
-		Quaternion localRotation = child.getLocalRotation();
-		Matrix3f rotationMatrix = localRotation == null ? null : localRotation.toRotationMatrix();
-		Vector3f location = child.getLocalTranslation();
-		
-		// create compound collision shape
-		CompoundCollisionShape positionedShape = new CompoundCollisionShape();
-		// add the mesh shape we just made, at the translation / rotation of the
-		// given geometry.
-		positionedShape.addChildShape(meshShape, location, rotationMatrix);
-		
-		RigidBodyControl control = new RigidBodyControl(positionedShape, 0);
-		control.setUserObject(userObject); // user object can be retrieved with getUserObject()
-		
-		bulletAppState.getPhysicsSpace().add(control);
-		
-		// make visible
-		addNonCollidable(child);		
-		
+	public void addCollidable(Geometry child) {
+		collidables.attachChild(child);
 	}
 
 	public void addNonCollidable(Geometry child) {
@@ -385,8 +356,7 @@ public class Game extends SimpleApplication implements ActionListener {
         mat1.setTexture("ColorMap", quadTexture);
         
         blueq.setMaterial(mat1);   
-        
-        addCollidable(blueq, null);
+        collidables.attachChild(blueq);
 	
 	}
 
