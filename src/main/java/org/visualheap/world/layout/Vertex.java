@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.visualheap.app.Game;
 
+import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
 
 /**
@@ -27,4 +28,7 @@ public abstract class Vertex {
 	 */
 	public abstract Collection<ObjectReference> getChildren();
 
+ 
+	public abstract String createInformation();
+	
 }

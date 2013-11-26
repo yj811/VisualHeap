@@ -64,7 +64,7 @@ import edu.uci.ics.jung.graph.Graph;
 public class Game extends SimpleApplication implements ActionListener {
 
 	private static final String CLASSPATH = "build/classes/test";
-	private static final String TREEREFERENCE = "debugger.testprogs.SimpleReference";
+	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
 	
 	private static final float WALK_SPEED = 0.5f;
 	
@@ -135,7 +135,7 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 15, listener);
+		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 21, listener);
 		game.setDebugger(debugger);
 			
     }
@@ -312,13 +312,19 @@ public class Game extends SimpleApplication implements ActionListener {
             if (objInfo != null) guiNode.detachChild(objInfo);
             if (results.size() > 0) {
             	// pick the closest object as the target
-                target = results.getClosestCollision().getGeometry();             
-                objInfo = new BitmapText(guiFont, false);          
-        		objInfo.setSize(guiFont.getCharSet().getRenderedSize());     
-        		objInfo.setColor(ColorRGBA.Yellow);
-        		objInfo.setText(target.getName());
-        		objInfo.setLocalTranslation(0, 350, 0); 
-        		guiNode.attachChild(objInfo);               
+                target = results.getClosestCollision().getGeometry();
+                Vertex vertex = target.getUserData("vertex");
+                	
+                if(vertex != null) {
+	                objInfo = new BitmapText(guiFont, false);          
+	        		objInfo.setSize(guiFont.getCharSet().getRenderedSize());     
+	        		objInfo.setColor(ColorRGBA.Yellow);
+	        		objInfo.setText(vertex.createInformation());
+	        		objInfo.setLocalTranslation(0, 350, 0); 
+	        		guiNode.attachChild(objInfo);
+                }
+                
+                 
             }             
         }
 	}

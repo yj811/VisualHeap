@@ -44,4 +44,10 @@ public class DummyVertex extends Vertex {
 		return null;
 	}
 
+	@Override
+	public String createInformation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
