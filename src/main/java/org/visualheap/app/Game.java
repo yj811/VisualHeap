@@ -73,6 +73,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Node collidables;
 	private BitmapText objInfo;
 	private Geometry target;
+	private Graph<Vertex, Edge> graph;
 
 	// are left/right/up/down keys pressed?
 	private boolean left;
@@ -116,8 +117,6 @@ public class Game extends SimpleApplication implements ActionListener {
 						game.useLayout(layout);
 						game.setShowSettings(false);
 						game.start();
-						
-					
 					}
 					
 				});
@@ -134,12 +133,11 @@ public class Game extends SimpleApplication implements ActionListener {
 		
 		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 15, listener);
 		game.setDebugger(debugger);
-        
+			
     }
 	
 	private void setDebugger(Debugger debugger) {
-		this.d = debugger;
-		
+		this.d = debugger;		
 	}
 	
 	
@@ -242,7 +240,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	 */
 	private void constructWorld() {
 
-		Graph<Vertex, Edge> graph = layout.getGraph();
+		graph = layout.getGraph();
 
 		System.out.println(graph.getVertexCount() + " objects");
 		
@@ -311,10 +309,9 @@ public class Game extends SimpleApplication implements ActionListener {
                 target = results.getClosestCollision().getGeometry();             
                 objInfo = new BitmapText(guiFont, false);          
         		objInfo.setSize(guiFont.getCharSet().getRenderedSize());     
-        		objInfo.setColor(ColorRGBA.Yellow); 
-        		// show target information
-        		objInfo.setText("target info");   
-        		objInfo.setLocalTranslation(0, 200, 0); 
+        		objInfo.setColor(ColorRGBA.Yellow);
+        		objInfo.setText(target.getName());
+        		objInfo.setLocalTranslation(0, 350, 0); 
         		guiNode.attachChild(objInfo);               
             }             
         }

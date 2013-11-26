@@ -35,14 +35,15 @@ public class ObjectReferenceVertex extends Vertex {
 	@Override
 	public void createInWorld(Game game) {
 		Box box = new Box(1,1,1);
-        Geometry obj = new Geometry("Box", box );
+        Geometry obj = new Geometry(objRef.toString(), box);
         obj.setMaterial(game.getStandardMaterial());
         
         Point2D location = layout.transform(this);
         
         obj.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
         // make obj visible on scene and collidable
-        game.addCollidable(obj);  
+        game.addCollidable(obj); 
+        
 	}
 
 	/**
@@ -52,5 +53,5 @@ public class ObjectReferenceVertex extends Vertex {
 	public Collection<ObjectReference> getChildren() {
 		return Debugger.getObjectReferences(objRef);
 	}
-
+	
 }
