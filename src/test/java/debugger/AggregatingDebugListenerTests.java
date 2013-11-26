@@ -1,5 +1,6 @@
 package debugger;
 
+import org.hamcrest.Matcher;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Before;
@@ -34,14 +35,14 @@ public class AggregatingDebugListenerTests {
 		aggThree.addListener(listenerThree);
 	}
 
-	@Test
-	public void singleListenerReceivesBreakpoint() {
-		context.checking(new Expectations() {{
-			oneOf(listenerOne).onBreakpoint(sf);
-		}});
-		aggSingle.onBreakpoint(sf);
-	}
-	
+    @Test
+    public void singleListenerReceivesBreakpoint() {
+        context.checking(new Expectations() {{
+            oneOf(listenerOne).onBreakpoint(sf);
+        }});
+        aggSingle.onBreakpoint(sf);
+    }
+
 	@Test
 	public void singleListenerReceivesStep() {
 		context.checking(new Expectations() {{
