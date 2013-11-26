@@ -22,15 +22,14 @@ public class LayoutBuilder {
 	 * @param debugger a debugger object (doesn't need to be the main one...)
 	 * @param initialSet ObjectReferences on the stack frame
 	 * @param depth depth to search to (unimplemented)
-	 * @return
+	 * @return returns a graph layout
 	 */
 	public static Layout<Vertex, Edge> fromObjectReferences(Collection<ObjectReference> initialSet, int depth) {
 		
 		// construct the graph
-		Vertex dummy = new DummyVertex();
 		Graph<Vertex, Edge> graph = new DirectedSparseGraph<Vertex, Edge>();
 		FRLayout<Vertex, Edge> layout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
-		
+		Vertex dummy = new DummyVertex(layout);
 		
 		for(ObjectReference ref : initialSet) {
 			Vertex vert = new ObjectReferenceVertex(ref, layout);

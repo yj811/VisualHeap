@@ -38,6 +38,8 @@ import com.jme3.math.Plane;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
@@ -88,6 +90,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Vector3f camUp = new Vector3f();
 	private Vector3f walkDirection = new Vector3f();
 	private Debugger d;
+	private Material greenGlowMat;
+	private Material magentaGlowMat;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -161,6 +165,19 @@ public class Game extends SimpleApplication implements ActionListener {
 		matBrick = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	  	matBrick.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
 
+	    greenGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+	    greenGlowMat.setColor("Color", ColorRGBA.Blue);
+	    greenGlowMat.setColor("GlowColor", ColorRGBA.Green);
+	    
+	    magentaGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+	    magentaGlowMat.setColor("Color", ColorRGBA.Blue);
+	    magentaGlowMat.setColor("GlowColor", ColorRGBA.Magenta);
+	    
+	    FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+	    BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);        
+	    fpp.addFilter(bloom);
+	    viewPort.addProcessor(fpp);
+
 		
 		// will hold all collidable objects.
 		collidables = new Node();
@@ -174,7 +191,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		
 		setupCrossHairs();
 		setupPlayer();
-		createFloor();
+		//createFloor();
 		
 		setupLight();
         setupKeys();
@@ -221,17 +238,6 @@ public class Game extends SimpleApplication implements ActionListener {
 
 		// adding an object to the physics space makes it collidable
 		bulletAppState.getPhysicsSpace().add(player);
-	}
-
-	private void createFloor() {
-		// create a floor, else we fall immediately
-		// plane with normal (0, 1, 0) i.e. up
-		// 5 units below the origin.
-		Plane floor = new Plane(new Vector3f(0, 1, 0), -5);
-		PlaneCollisionShape floorShape = new PlaneCollisionShape(floor);
-		PhysicsControl floorControl = new RigidBodyControl(floorShape);
-
-		bulletAppState.getPhysicsSpace().add(floorControl);
 	}
 
 	/**
@@ -356,8 +362,12 @@ public class Game extends SimpleApplication implements ActionListener {
 		System.out.println(cam.getLocation().toString());
 	}
 
-	public Material getStandardMaterial() {
-		return matBrick;
+	public Material getGreenGlowMaterial() {
+		return greenGlowMat;
+	}
+	
+	public Material getMagentaGlowMaterial() {
+		return magentaGlowMat;
 	}
 
 	public void addCollidable(Geometry child) {
@@ -377,14 +387,15 @@ public class Game extends SimpleApplication implements ActionListener {
                 "Common/MatDefs/Misc/Unshaded.j3md");
         
         mat1.setColor("Color", ColorRGBA.White);
+        
         Texture quadTexture = assetManager.loadTexture(
                 "textures/grid.jpg");
         quadTexture.setWrap(Texture.WrapMode.Repeat);
         q.scaleTextureCoordinates(new Vector2f(500,500));
         mat1.setTexture("ColorMap", quadTexture);
-       
+        
         blueq.setMaterial(mat1);   
-        rootNode.attachChild(blueq);
+        collidables.attachChild(blueq);
 	
 	}
 

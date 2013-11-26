@@ -34,9 +34,10 @@ public class ObjectReferenceVertex extends Vertex {
 	 */
 	@Override
 	public void createInWorld(Game game) {
+		
 		Box box = new Box(1,1,1);
-        Geometry obj = new Geometry(objRef.toString(), box);
-        obj.setMaterial(game.getStandardMaterial());
+        Geometry obj = new Geometry(objRef.toString(), box );
+        obj.setMaterial(game.getGreenGlowMaterial());
         
         Point2D location = layout.transform(this);
         

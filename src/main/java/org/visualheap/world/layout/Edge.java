@@ -44,7 +44,7 @@ public class Edge {
 		line.setLineWidth(5);
 		Geometry g = new Geometry("line", line);
 		
-        g.setMaterial(game.getStandardMaterial());
+        g.setMaterial(game.getMagentaGlowMaterial());
 		g.setMesh(line);
 		game.addNonCollidable(g); // non - collidable
 	}
