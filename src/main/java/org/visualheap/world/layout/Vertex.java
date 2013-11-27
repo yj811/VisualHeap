@@ -28,7 +28,12 @@ public abstract class Vertex {
 	 */
 	public abstract Collection<ObjectReference> getChildren();
 
- 
-	public abstract String createInformation();
+	/**
+	 * called when the vertex is clicked on
+	 * 
+	 * i.e. display some object information for a ObjectReferenceVertex
+	 * @param game the game object this vertex is displayed in
+	 */
+	public abstract void select(Game game);
 	
 }

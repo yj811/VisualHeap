@@ -11,6 +11,8 @@ import org.visualheap.debugger.Debugger;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
+import com.jme3.font.BitmapText;
+import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.sun.jdi.Field;
@@ -56,7 +58,6 @@ public class ObjectReferenceVertex extends Vertex implements Savable {
         
 	}
 	
-	@Override
 	public String createInformation() {
 		String result = "Type: " + objRef.type().name() + "\n";
 		
@@ -85,6 +86,11 @@ public class ObjectReferenceVertex extends Vertex implements Savable {
 	public void write(JmeExporter arg0) throws IOException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void select(Game game) {
+		game.setObjInfo(createInformation());
 	}
 	
 }

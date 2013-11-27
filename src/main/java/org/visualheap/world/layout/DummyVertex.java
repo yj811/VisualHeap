@@ -45,9 +45,9 @@ public class DummyVertex extends Vertex {
 	}
 
 	@Override
-	public String createInformation() {
-		// TODO Auto-generated method stub
-		return null;
+	public void select(Game game) {
+		// TODO display some stack frame related information?
 	}
+
 
 }

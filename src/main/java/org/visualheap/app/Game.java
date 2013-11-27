@@ -316,17 +316,22 @@ public class Game extends SimpleApplication implements ActionListener {
                 Vertex vertex = target.getUserData("vertex");
                 	
                 if(vertex != null) {
-	                objInfo = new BitmapText(guiFont, false);          
-	        		objInfo.setSize(guiFont.getCharSet().getRenderedSize());     
-	        		objInfo.setColor(ColorRGBA.Yellow);
-	        		objInfo.setText(vertex.createInformation());
-	        		objInfo.setLocalTranslation(0, 350, 0); 
-	        		guiNode.attachChild(objInfo);
+                	// tell the associated vertex it was clicked.
+	                vertex.select(this);
                 }
                 
                  
             }             
         }
+	}
+
+	public void setObjInfo(String info) {
+		objInfo = new BitmapText(guiFont, false);          
+		objInfo.setSize(guiFont.getCharSet().getRenderedSize());     
+		objInfo.setColor(ColorRGBA.Yellow);
+		objInfo.setText(info);
+		objInfo.setLocalTranslation(0, 350, 0); 
+		guiNode.attachChild(objInfo);
 	}
 
 	/**
