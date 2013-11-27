@@ -28,8 +28,8 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
  */
 public class ObjectReferenceVertex extends Vertex implements Savable {
 
-	ObjectReference objRef;
-	private Layout<Vertex, Edge> layout;
+	protected ObjectReference objRef;
+	protected Layout<Vertex, Edge> layout;
 
 	public ObjectReferenceVertex(ObjectReference ref, Layout<Vertex, Edge> layout) {
 		objRef = ref;

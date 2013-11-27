@@ -58,13 +58,17 @@ public class LayoutBuilder {
 	 */
 	private static void visitChildren(Graph<Vertex, Edge> graph, Layout<Vertex, Edge> layout, 
 			Vertex parent, int depth) {
-		if(depth != 0) {
-			for(ObjectReference child : parent.getChildren()) {
-				Vertex childVert = new ObjectReferenceVertex(child, layout);
-
-				graph.addEdge(new Edge(layout, parent, childVert), parent, childVert);
+		for(ObjectReference child : parent.getChildren()) {
+			Vertex childVert;
+			
+			if(depth == 0) {
+				childVert = new UnfollowedReferenceVertex(child, layout);
+			} else {
+				childVert = new ObjectReferenceVertex(child, layout);
 				visitChildren(graph, layout, childVert, depth - 1);
 			}
+
+			graph.addEdge(new Edge(layout, parent, childVert), parent, childVert);
 		}
 	}
 	

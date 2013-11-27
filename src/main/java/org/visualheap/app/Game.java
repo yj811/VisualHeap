@@ -92,6 +92,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Debugger d;
 	private Material greenGlowMat;
 	private Material magentaGlowMat;
+	private Material yellowGlowMat;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -172,6 +173,10 @@ public class Game extends SimpleApplication implements ActionListener {
 	    magentaGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    magentaGlowMat.setColor("Color", ColorRGBA.Blue);
 	    magentaGlowMat.setColor("GlowColor", ColorRGBA.Magenta);
+	    
+	    yellowGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+	    yellowGlowMat.setColor("Color", ColorRGBA.Blue);
+	    yellowGlowMat.setColor("GlowColor", ColorRGBA.Yellow);
 	    
 	    FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
 	    BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);        
@@ -381,6 +386,10 @@ public class Game extends SimpleApplication implements ActionListener {
 		return magentaGlowMat;
 	}
 
+	public Material getYellowGlowMaterial() {
+		return yellowGlowMat;
+	}
+	
 	public void addCollidable(Geometry child) {
 		collidables.attachChild(child);
 	}
@@ -409,5 +418,6 @@ public class Game extends SimpleApplication implements ActionListener {
         collidables.attachChild(blueq);
 	
 	}
+
 
 }
