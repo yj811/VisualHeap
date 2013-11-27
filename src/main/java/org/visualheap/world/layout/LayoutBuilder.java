@@ -2,6 +2,8 @@ package org.visualheap.world.layout;
 
 import java.awt.Dimension;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.sun.jdi.ObjectReference;
 
@@ -16,6 +18,18 @@ import edu.uci.ics.jung.graph.Graph;
  *
  */
 public class LayoutBuilder {
+	
+
+	/**
+	 * So that JUNG displays cyclic graphs correctly, we want to maintain a 
+	 * 1 - 1 mapping between ObjectReference's and ObjectReferenceVertex'es
+	 * (Otherwise the cycles in ObjectReferences refering to eachother won't
+	 * be reflected in the graph of ObjectReferenceVertex'es).
+	 * That's what this map does.
+	 */
+	private static Map<ObjectReference, ObjectReferenceVertex> objRefMapping
+		= new HashMap<ObjectReference, ObjectReferenceVertex>();
+	
 
 	/**
 	 * builds a graph of the heap to depth specified.
@@ -32,8 +46,11 @@ public class LayoutBuilder {
 		Vertex dummy = new DummyVertex(layout);
 		
 		for(ObjectReference ref : initialSet) {
-			Vertex vert = new ObjectReferenceVertex(ref, layout);
+			
+			ObjectReferenceVertex vert = getVertexFromObjRef(layout, ref);
+			
 			graph.addEdge(new Edge(layout, dummy, vert), dummy, vert);
+		//	System.out.println(graph.addVertex(new ObjectReferenceVertex(ref, layout)));
 			visitChildren(graph, layout, vert, 4);
 		}
 		
@@ -47,6 +64,26 @@ public class LayoutBuilder {
 		
 		
 		return layout;
+	}
+
+	/**
+	 * either creates a new ObjectReferenceVertex for this object reference,
+	 * or returns the old one if we have already created one.
+	 * @param layout layout for this Vertex to follow
+	 * @param ref ObjectReference to lookup
+	 * @return the ObjectReferenceVertex for this ObjectReference
+	 */
+	private static ObjectReferenceVertex getVertexFromObjRef(
+			Layout<Vertex, Edge> layout, ObjectReference ref) {
+		
+		ObjectReferenceVertex vert = objRefMapping.get(ref);
+		
+		if(vert == null) {
+			vert = new ObjectReferenceVertex(ref, layout);
+			objRefMapping.put(ref, vert);
+		}
+			
+		return vert;
 	}
 	
 	/**
@@ -64,7 +101,7 @@ public class LayoutBuilder {
 			if(depth == 0) {
 				childVert = new UnfollowedReferenceVertex(child, layout);
 			} else {
-				childVert = new ObjectReferenceVertex(child, layout);
+				childVert = getVertexFromObjRef(layout, child);
 				visitChildren(graph, layout, childVert, depth - 1);
 			}
 

@@ -65,6 +65,8 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	private static final String CLASSPATH = "build/classes/test";
 	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
+	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
+
 	
 	private static final float WALK_SPEED = 0.5f;
 	
@@ -136,7 +138,7 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 21, listener);
+		Debugger debugger = new Debugger(CLASSPATH, CYCLICREFERENCE, 18, listener);
 		game.setDebugger(debugger);
 			
     }
@@ -375,7 +377,6 @@ public class Game extends SimpleApplication implements ActionListener {
         }
 		player.setWalkDirection(walkDirection);
 		cam.setLocation(player.getPhysicsLocation());
-		System.out.println(cam.getLocation().toString());
 	}
 
 	public Material getGreenGlowMaterial() {
