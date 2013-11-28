@@ -52,7 +52,7 @@ public class LayoutBuilder {
 			
 			graph.addEdge(new Edge(layout, dummy, vert), dummy, vert);
 		//	System.out.println(graph.addVertex(new ObjectReferenceVertex(ref, layout)));
-			visitChildren(graph, layout, vert, 4);
+			visitChildren(graph, layout, vert, 0);
 		}
 		
 		// run the layout algorithm
@@ -94,7 +94,7 @@ public class LayoutBuilder {
 	 * @param parent Vertex to add children of
 	 * @param depth depth to search to
 	 */
-	private static void visitChildren(Graph<Vertex, Edge> graph, Layout<Vertex, Edge> layout, 
+	static void visitChildren(Graph<Vertex, Edge> graph, Layout<Vertex, Edge> layout, 
 			Vertex parent, int depth) {
 		for(Value child : parent.getChildren()) {
 			Vertex childVert = null;

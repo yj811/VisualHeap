@@ -77,6 +77,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private BulletAppState bulletAppState;
 	private CharacterControl player;
 	private Node collidables;
+	private Node nonCollidables;
 	private BitmapText objInfo;
 	private Geometry target;
 	private Graph<Vertex, Edge> graph;
@@ -122,7 +123,7 @@ public class Game extends SimpleApplication implements ActionListener {
 						Collection<ObjectReference> initialSet = getObjectReferencesFromStackFrame(sf);
 			
 						Layout<Vertex, Edge> layout 
-							= LayoutBuilder.fromObjectReferences(initialSet, 6);
+							= LayoutBuilder.fromObjectReferences(initialSet, 3);
 						
 						game.useLayout(layout);
 						game.setShowSettings(false);
@@ -141,13 +142,13 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, NULLREFERENCE, 11, listener);
+		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 21, listener);
 		game.setDebugger(debugger);
 			
     }
 	
 	private void setDebugger(Debugger debugger) {
-		this.d = debugger;		
+		this.d = debugger;
 	}
 	
 	
@@ -196,6 +197,10 @@ public class Game extends SimpleApplication implements ActionListener {
 		// will hold all collidable objects.
 		collidables = new Node();
 		rootNode.attachChild(collidables);
+		
+		// will hold everything else
+		nonCollidables = new Node();
+		rootNode.attachChild(nonCollidables);
 	
         // some initial physics setup
 	    bulletAppState = new BulletAppState();
@@ -237,6 +242,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		dl.setColor(ColorRGBA.White);
 		dl.setDirection(new Vector3f(2.8f, -2.8f, -2.8f).normalizeLocal());
 		rootNode.addLight(dl);
+		System.out.println("added light");
 	}
 
 	private void setupPlayer() {
@@ -252,6 +258,24 @@ public class Game extends SimpleApplication implements ActionListener {
 
 		// adding an object to the physics space makes it collidable
 		bulletAppState.getPhysicsSpace().add(player);
+	}
+	
+	/**
+	 * tell the Game that the graph has changed - it should update the 
+	 * graphics and rerun the layout algorithm to reflect that.
+	 */
+	public void rebuildWorld() {
+		
+		rootNode.detachChild(collidables);
+		collidables = new Node();
+		rootNode.attachChild(collidables);
+		rootNode.detachChild(nonCollidables);
+		nonCollidables = new Node();
+		rootNode.attachChild(nonCollidables);
+		constructWorld();
+		
+		layout.reset();
+		
 	}
 
 	/**
@@ -273,7 +297,7 @@ public class Game extends SimpleApplication implements ActionListener {
 			edge.createInWorld(this);
 		}
 		//rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
-		addGridSquare();		
+		addGridSquare();
 	}
 
 	/**
@@ -384,6 +408,7 @@ public class Game extends SimpleApplication implements ActionListener {
         }
 		player.setWalkDirection(walkDirection);
 		cam.setLocation(player.getPhysicsLocation());
+		
 	}
 
 	public Material getGreenGlowMaterial() {
@@ -407,7 +432,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	}
 
 	public void addNonCollidable(Geometry child) {
-		rootNode.attachChild(child);
+		nonCollidables.attachChild(child);
 	}
 	
 	public void addGridSquare() {
