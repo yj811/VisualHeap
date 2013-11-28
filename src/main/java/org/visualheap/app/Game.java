@@ -66,6 +66,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private static final String CLASSPATH = "build/classes/test";
 	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
+	private static final String TRIPLECYCLE = "debugger.testprogs.TripleCycle";
 
 	
 	private static final float WALK_SPEED = 0.5f;
