@@ -1,11 +1,11 @@
 package org.visualheap.world.layout;
 
+
 import java.util.Collection;
 
 import org.visualheap.app.Game;
 
-import com.sun.jdi.Field;
-import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Value;
 
 /**
  * represents a vertex we will want do draw in the world 
@@ -26,7 +26,7 @@ public abstract class Vertex {
 	 * get children (of an object reference)
 	 * @return
 	 */
-	public abstract Collection<ObjectReference> getChildren();
+	public abstract Collection<Value> getChildren();
 
 	/**
 	 * called when the vertex is clicked on

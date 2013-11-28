@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Value;
 
 import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -95,17 +96,32 @@ public class LayoutBuilder {
 	 */
 	private static void visitChildren(Graph<Vertex, Edge> graph, Layout<Vertex, Edge> layout, 
 			Vertex parent, int depth) {
-		for(ObjectReference child : parent.getChildren()) {
+		for(Value child : parent.getChildren()) {
 			Vertex childVert;
 			
-			if(depth == 0) {
-				childVert = new UnfollowedReferenceVertex(child, layout);
-			} else {
-				childVert = getVertexFromObjRef(layout, child);
-				visitChildren(graph, layout, childVert, depth - 1);
-			}
+			if(child instanceof ObjectReference) {
+				ObjectReference childObjRef = (ObjectReference)child;
+				if(depth == 0) {
+					// stopped searching, mark reference as unfollowed.
+					childVert = new UnfollowedReferenceVertex(childObjRef, layout);
+				} else {
+					
+					// try to find an existing vertex for this reference
+					ObjectReferenceVertex vert = objRefMapping.get(childObjRef);
+					
+					if(vert == null) {
+						// no pre-existing vertex, make a new one
+						vert = new ObjectReferenceVertex(childObjRef, layout);
+						objRefMapping.put(childObjRef, vert);
+						// explore successors of this vertex.
+						visitChildren(graph, layout, vert, depth - 1);
+					}
+					childVert = vert;
+				}
 
-			graph.addEdge(new Edge(layout, parent, childVert), parent, childVert);
+				graph.addEdge(new Edge(layout, parent, childVert), parent, childVert);
+
+			}
 		}
 	}
 	

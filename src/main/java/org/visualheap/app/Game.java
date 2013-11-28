@@ -120,7 +120,7 @@ public class Game extends SimpleApplication implements ActionListener {
 						Collection<ObjectReference> initialSet = getObjectReferencesFromStackFrame(sf);
 			
 						Layout<Vertex, Edge> layout 
-							= LayoutBuilder.fromObjectReferences(initialSet, 4);
+							= LayoutBuilder.fromObjectReferences(initialSet, 6);
 						
 						game.useLayout(layout);
 						game.setShowSettings(false);
@@ -139,7 +139,7 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, CYCLICREFERENCE, 18, listener);
+		Debugger debugger = new Debugger(CLASSPATH, TRIPLECYCLE, 20, listener);
 		game.setDebugger(debugger);
 			
     }

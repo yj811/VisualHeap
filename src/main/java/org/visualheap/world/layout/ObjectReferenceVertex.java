@@ -4,6 +4,7 @@ package org.visualheap.world.layout;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Vector;
 
 import org.visualheap.app.Game;
 import org.visualheap.debugger.Debugger;
@@ -17,6 +18,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Type;
+import com.sun.jdi.Value;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 
@@ -72,8 +75,14 @@ public class ObjectReferenceVertex extends Vertex implements Savable {
 	 * get children of object reference.
 	 */
 	@Override
-	public Collection<ObjectReference> getChildren() {
-		return Debugger.getObjectReferences(objRef);
+	public Collection<Value> getChildren() {
+		Collection<Value> values = new Vector<Value>();
+		
+		for(Field f : objRef.referenceType().fields()) {
+			values.add(objRef.getValue(f));
+		}
+		
+		return values;
 	}
 
 	@Override

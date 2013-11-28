@@ -7,9 +7,10 @@ import org.visualheap.app.Game;
 
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import com.sun.jdi.ObjectReference;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
+
+import com.sun.jdi.Value;
 
 /**
  * A vertex with no inner ObjectReference.
@@ -39,7 +40,7 @@ public class DummyVertex extends Vertex {
 	}
 
 	@Override
-	public Collection<ObjectReference> getChildren() {
+	public Collection<Value> getChildren() {
 		// TODO Auto-generated method stub
 		return null;
 	}
