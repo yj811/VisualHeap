@@ -1,37 +1,47 @@
 package org.visualheap.world.layout;
 
 import java.awt.geom.Point2D;
-import java.io.IOException;
 import java.util.Collection;
 
 import org.visualheap.app.Game;
 
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import com.sun.jdi.ObjectReference;
+import com.sun.jdi.Value;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
 
-public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
+public class NullReferenceVertex extends Vertex {
+	
+	private Layout<Vertex, Edge> layout;
 
-	public UnfollowedReferenceVertex(ObjectReference ref, 
-			Layout<Vertex, Edge> layout) {
-		super(ref, layout);
+	public NullReferenceVertex(Layout<Vertex, Edge> layout) {
+		this.layout = layout;
 	}
 
 	@Override
 	public void createInWorld(Game game) {
+		
 		Box box = new Box(1,1,1);
-        Geometry obj = new Geometry("Box", box );
-        obj.setMaterial(game.getYellowGlowMaterial());
+		
+		
+		
+        Geometry obj = new Geometry("box", box );
+        obj.setMaterial(game.getRedGlowMaterial());
+        obj.setUserData("vertex", this);
         
         Point2D location = layout.transform(this);
         
         obj.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
         // make obj visible on scene and collidable
         game.addCollidable(obj); 
+        
+	}
+
+	@Override
+	public Collection<Value> getChildren() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

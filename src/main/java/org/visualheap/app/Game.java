@@ -66,6 +66,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private static final String CLASSPATH = "build/classes/test";
 	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
+	private static final String NULLREFERENCE = "debugger.testprogs.NullReference";
 	private static final String TRIPLECYCLE = "debugger.testprogs.TripleCycle";
 
 	
@@ -96,6 +97,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Material greenGlowMat;
 	private Material magentaGlowMat;
 	private Material yellowGlowMat;
+	private Material redGlowMat;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -139,7 +141,7 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 		};
 		
-		Debugger debugger = new Debugger(CLASSPATH, TRIPLECYCLE, 20, listener);
+		Debugger debugger = new Debugger(CLASSPATH, NULLREFERENCE, 11, listener);
 		game.setDebugger(debugger);
 			
     }
@@ -180,6 +182,10 @@ public class Game extends SimpleApplication implements ActionListener {
 	    yellowGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    yellowGlowMat.setColor("Color", ColorRGBA.Blue);
 	    yellowGlowMat.setColor("GlowColor", ColorRGBA.Yellow);
+	    
+	    redGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+	    redGlowMat.setColor("Color", ColorRGBA.Blue);
+	    redGlowMat.setColor("GlowColor", ColorRGBA.Red);
 	    
 	    FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
 	    BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);        
@@ -390,6 +396,10 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	public Material getYellowGlowMaterial() {
 		return yellowGlowMat;
+	}
+
+	public Material getRedGlowMaterial() {
+		return redGlowMat;
 	}
 	
 	public void addCollidable(Geometry child) {

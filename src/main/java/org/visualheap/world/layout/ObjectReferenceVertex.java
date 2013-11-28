@@ -2,15 +2,12 @@ package org.visualheap.world.layout;
 
 
 import java.awt.geom.Point2D;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Vector;
 
 import org.visualheap.app.Game;
 import org.visualheap.debugger.Debugger;
 
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
 import com.jme3.font.BitmapText;
 import com.jme3.math.ColorRGBA;
@@ -29,7 +26,7 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
  * @author oliver
  *
  */
-public class ObjectReferenceVertex extends Vertex implements Savable {
+public class ObjectReferenceVertex extends Vertex {
 
 	protected ObjectReference objRef;
 	protected Layout<Vertex, Edge> layout;
@@ -83,18 +80,6 @@ public class ObjectReferenceVertex extends Vertex implements Savable {
 		}
 		
 		return values;
-	}
-
-	@Override
-	public void read(JmeImporter arg0) throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void write(JmeExporter arg0) throws IOException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

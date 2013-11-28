@@ -97,9 +97,15 @@ public class LayoutBuilder {
 	private static void visitChildren(Graph<Vertex, Edge> graph, Layout<Vertex, Edge> layout, 
 			Vertex parent, int depth) {
 		for(Value child : parent.getChildren()) {
-			Vertex childVert;
+			Vertex childVert = null;
 			
-			if(child instanceof ObjectReference) {
+			if(child == null) {
+				// field of object was a null reference
+				
+				childVert = new NullReferenceVertex(layout);
+				
+			} else if(child instanceof ObjectReference) {
+				// field was an ObjectReference
 				ObjectReference childObjRef = (ObjectReference)child;
 				if(depth == 0) {
 					// stopped searching, mark reference as unfollowed.
@@ -119,8 +125,10 @@ public class LayoutBuilder {
 					childVert = vert;
 				}
 
+			}
+			
+			if(childVert != null) {
 				graph.addEdge(new Edge(layout, parent, childVert), parent, childVert);
-
 			}
 		}
 	}

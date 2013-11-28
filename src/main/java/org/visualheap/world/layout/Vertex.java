@@ -1,10 +1,14 @@
 package org.visualheap.world.layout;
 
 
+import java.io.IOException;
 import java.util.Collection;
 
 import org.visualheap.app.Game;
 
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.Savable;
 import com.sun.jdi.Value;
 
 /**
@@ -13,7 +17,7 @@ import com.sun.jdi.Value;
  * @author oliver
  *
  */
-public abstract class Vertex {
+public abstract class Vertex implements Savable {
 
 	/**
 	 * add this object to the game world.
@@ -35,5 +39,18 @@ public abstract class Vertex {
 	 * @param game the game object this vertex is displayed in
 	 */
 	public abstract void select(Game game);
+	
+	// make this savable
+	@Override
+	public void read(JmeImporter arg0) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void write(JmeExporter arg0) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }
