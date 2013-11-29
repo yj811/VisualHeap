@@ -108,7 +108,7 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 			@Override
 			public void onBreakpoint(final StackFrame sf) {
-				game.beginGame(getObjectReferencesFromStackFrame(sf));
+				game.beginGame(getObjectReferencesFromStackFrame(sf), game.d);
 				
 			}
 			
@@ -116,10 +116,10 @@ public class Game extends SimpleApplication implements ActionListener {
 		
 		Debugger debugger = new Debugger(CLASSPATH, NULLREFERENCE, 11, listener);
 		game.setDebugger(debugger);
-			
     }
 	
-	public void beginGame(final Collection<ObjectReference> initialSet) {
+	public void beginGame(final Collection<ObjectReference> initialSet, Debugger debugger) {
+	    setDebugger(debugger);
 	    final ExecutorService es =  Executors.newCachedThreadPool();
         /*
          * If the game is started in this thread it blocks the event-thread

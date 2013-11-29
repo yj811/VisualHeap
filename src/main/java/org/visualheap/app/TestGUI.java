@@ -108,6 +108,9 @@ public class TestGUI extends NullListener {
         btnResume.setEnabled(true);
         state = GUI_STATE.SUSPENDED;
         btnResume.setText("Resume");
+        
+        Game test = new Game();
+        test.beginGame(getObjectReferencesFromStackFrame(sf), debugger);
     }
 
     public void onStep(StackFrame sf) {
