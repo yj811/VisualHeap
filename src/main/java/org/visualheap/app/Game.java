@@ -108,35 +108,8 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 			@Override
 			public void onBreakpoint(final StackFrame sf) {
+				game.beginGame(getObjectReferencesFromStackFrame(sf));
 				
-				final ExecutorService es =  Executors.newCachedThreadPool();
-				/*
-				 * If the game is started in this thread it blocks the event-thread
-				 * Perhaps we should start all event handlers in their own threads?
-				 */
-				es.execute(new Runnable() {
-
-					@Override
-					public void run() {
-						
-						Collection<ObjectReference> initialSet = getObjectReferencesFromStackFrame(sf);
-			
-						Layout<Vertex, Edge> layout 
-							= LayoutBuilder.fromObjectReferences(initialSet, 6);
-						
-						game.useLayout(layout);
-						game.setShowSettings(false);
-						game.start();
-					}
-					
-				});
-				
-				es.shutdown();
-				try {
-					es.awaitTermination(1, TimeUnit.MICROSECONDS);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
 			}
 			
 		};
@@ -144,6 +117,35 @@ public class Game extends SimpleApplication implements ActionListener {
 		Debugger debugger = new Debugger(CLASSPATH, NULLREFERENCE, 11, listener);
 		game.setDebugger(debugger);
 			
+    }
+	
+	public void beginGame(final Collection<ObjectReference> initialSet) {
+	    final ExecutorService es =  Executors.newCachedThreadPool();
+        /*
+         * If the game is started in this thread it blocks the event-thread
+         * Perhaps we should start all event handlers in their own threads?
+         */
+        es.execute(new Runnable() {
+
+            @Override
+            public void run() {
+    
+                Layout<Vertex, Edge> layout 
+                    = LayoutBuilder.fromObjectReferences(initialSet, 6);
+                
+                useLayout(layout);
+                setShowSettings(false);
+                start();
+            }
+            
+        });
+        
+        es.shutdown();
+        try {
+            es.awaitTermination(1, TimeUnit.MICROSECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 	
 	private void setDebugger(Debugger debugger) {
