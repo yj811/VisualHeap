@@ -34,16 +34,15 @@ import java.io.InputStreamReader;
 
 public class TestGUI extends NullListener {
 
-    // variables --are they though?
+    //Variables
     private volatile Debugger debugger;
     private volatile GUI_STATE state;
     private volatile StringBuilder finalPath;
-    private final JFileChooser fc = new JFileChooser();
-
     private InputStreamThread istConsoleOutput;
     private String classPath;
     private String className;
-
+    
+    //Swing Components
     private JFrame frame;
     private JTextField edtClassPath;
     private JTextField edtClassName;
@@ -55,6 +54,11 @@ public class TestGUI extends NullListener {
     private JTextArea taConsoleOutput;
     private BreakpointTableModel tableModel;
     private JPanel paneVisual;
+    
+    //Constants
+    private final JFileChooser fc = new JFileChooser();
+
+    
 
     private enum GUI_STATE {
         UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED
