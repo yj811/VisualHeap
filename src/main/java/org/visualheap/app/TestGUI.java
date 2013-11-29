@@ -1,6 +1,7 @@
 package org.visualheap.app;
 
 import java.util.Vector;
+
 import com.sun.jdi.StackFrame;
 
 import org.visualheap.debugger.Debugger;
@@ -27,6 +28,8 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import java.io.File;
 import java.io.BufferedReader;
@@ -41,7 +44,9 @@ public class TestGUI extends NullListener {
     private InputStreamThread istConsoleOutput;
     private String classPath;
     private String className;
-    
+    private Game visualiser;
+    private StackFrame currentStackFrame;
+
     //Swing Components
     private JFrame frame;
     private JTextField edtClassPath;
@@ -51,14 +56,13 @@ public class TestGUI extends NullListener {
     private JButton btnStep;
     private JButton btnResume;
     private JButton btnNewBreakpoint;
+    private JButton btnVisualise;
     private JTextArea taConsoleOutput;
     private BreakpointTableModel tableModel;
     private JPanel paneVisual;
-    
+
     //Constants
     private final JFileChooser fc = new JFileChooser();
-
-    
 
     private enum GUI_STATE {
         UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED
@@ -107,25 +111,32 @@ public class TestGUI extends NullListener {
     }
 
     public void onBreakpoint(StackFrame sf) {
+        currentStackFrame = sf;
         lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
         btnStep.setEnabled(true);
         btnResume.setEnabled(true);
         state = GUI_STATE.SUSPENDED;
         btnResume.setText("Resume");
-        
-        Game test = new Game();
-        test.beginGame(getObjectReferencesFromStackFrame(sf), debugger);
+        btnVisualise.setEnabled(true);
+
+
     }
 
     public void onStep(StackFrame sf) {
         if (state.equals(GUI_STATE.FINISHED)) {
             debugger.resume();
         } else {
+            currentStackFrame = sf;
             lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
             btnStep.setEnabled(true);
             btnResume.setEnabled(true);
             state = GUI_STATE.SUSPENDED;
             btnResume.setText("Resume");
+
+            if (visualiser.isRunning()) {
+                //TODO: If there is time, update the visualiser window after each step
+                visualiser.sync(null);
+            }
         }
     }
 
@@ -226,13 +237,21 @@ public class TestGUI extends NullListener {
         }
     }
 
+    private class VisualiseButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (visualiser == null || !visualiser.isRunning() ) {
+                visualiser = new Game();
+                visualiser.beginGame(getObjectReferencesFromStackFrame(currentStackFrame), debugger);
+            }
+        }
+    }
+
     private class ResumeButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (state.equals(GUI_STATE.LOADED)) {
                 //Load breakpoints to the debugger;
                 int size = tableModel.getRowCount();
                 for (int i = 0; i < size; i++) {
-                    @SuppressWarnings("unchecked")
                     Vector<?> row = (Vector<?>)tableModel.getDataVector().elementAt(i);
                     if (!row.elementAt(0).equals(null) && !row.elementAt(1).equals(null)) {
                         debugger.addBreakpoint((String)row.elementAt(1), (Integer)row.elementAt(0));
@@ -258,6 +277,14 @@ public class TestGUI extends NullListener {
         frame.setBounds(100, 100, 450, 393);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout(0, 0));
+        
+        frame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                if (visualiser != null && visualiser.isRunning()) {
+                    visualiser.stop();
+                }
+            }
+        });
 
         JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         frame.getContentPane().add(tabbedPane);
@@ -381,6 +408,10 @@ public class TestGUI extends NullListener {
 
         lblLineNo = new JLabel("Line Number: 0");
         paneDebugControls.add(lblLineNo);
+
+        btnVisualise = new JButton("Visualise");
+        paneOutputs.add(btnVisualise, BorderLayout.SOUTH);
+        btnVisualise.addActionListener(new VisualiseButtonListener());
 
         paneVisual = new JPanel();
         tabbedPane.addTab("Visual", null, paneVisual, null);
