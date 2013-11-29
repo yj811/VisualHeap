@@ -57,6 +57,8 @@ public class TestGUI extends NullListener {
     private JButton btnResume;
     private JButton btnNewBreakpoint;
     private JButton btnVisualise;
+    private JButton btnRemoveBreakpoint;
+    private JButton btnClasspath;
     private JTextArea taConsoleOutput;
     private BreakpointTableModel tableModel;
     private JPanel paneVisual;
@@ -75,12 +77,14 @@ public class TestGUI extends NullListener {
     public TestGUI() {
         finalPath = new StringBuilder();
         tableModel = new BreakpointTableModel();
+        state = GUI_STATE.UNLOADED;
         initialize();
     }
 
     public TestGUI(Debugger debugger) {
         this.debugger = debugger;
         state = GUI_STATE.UNLOADED;
+        
         finalPath = new StringBuilder();
         tableModel = new BreakpointTableModel();
     }
@@ -113,27 +117,23 @@ public class TestGUI extends NullListener {
     public void onBreakpoint(StackFrame sf) {
         currentStackFrame = sf;
         lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
-        btnStep.setEnabled(true);
-        btnResume.setEnabled(true);
         state = GUI_STATE.SUSPENDED;
-        btnResume.setText("Resume");
-        btnVisualise.setEnabled(true);
-
+        setButtonsByState();
 
     }
 
     public void onStep(StackFrame sf) {
         if (state.equals(GUI_STATE.FINISHED)) {
             debugger.resume();
+            btnClasspath.setEnabled(true);
         } else {
             currentStackFrame = sf;
             lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
-            btnStep.setEnabled(true);
-            btnResume.setEnabled(true);
+            
             state = GUI_STATE.SUSPENDED;
-            btnResume.setText("Resume");
+            setButtonsByState();
 
-            if (visualiser.isRunning()) {
+            if (visualiser != null && visualiser.isRunning()) {
                 //TODO: If there is time, update the visualiser window after each step
                 visualiser.sync(null);
             }
@@ -145,12 +145,65 @@ public class TestGUI extends NullListener {
         btnStep.setEnabled(false);
         btnResume.setEnabled(false);
         state = GUI_STATE.UNLOADED;
+        setButtonsByState();
         prepareVM();
     }
 
     @Override
     public void exitedMain() {
         state = GUI_STATE.FINISHED;
+        
+    }
+    
+    private void setButtonsByState() {
+        switch (state) {
+        case FINISHED:
+            btnNewBreakpoint.setEnabled(true);
+            btnRemoveBreakpoint.setEnabled(true);
+            btnClasspath.setEnabled(true);
+            btnVisualise.setEnabled(false);
+            btnStep.setEnabled(false);
+            btnResume.setEnabled(false);
+           
+            break;
+        case LOADED:
+            btnNewBreakpoint.setEnabled(true);
+            btnRemoveBreakpoint.setEnabled(true);
+            btnClasspath.setEnabled(true);
+            btnStep.setEnabled(false);
+            btnResume.setEnabled(true);
+            btnResume.setText("Run");
+            btnVisualise.setEnabled(false);
+            break;
+        case STARTED:
+            btnResume.setEnabled(false);
+            btnNewBreakpoint.setEnabled(false);
+            btnRemoveBreakpoint.setEnabled(false);
+            btnClasspath.setEnabled(false);
+            btnStep.setEnabled(false);
+            btnVisualise.setEnabled(false);
+            break;
+        case SUSPENDED:
+            btnStep.setEnabled(true);
+            btnResume.setEnabled(true);
+            btnNewBreakpoint.setEnabled(false);
+            btnClasspath.setEnabled(false);
+            btnRemoveBreakpoint.setEnabled(false);
+            btnResume.setText("Resume");
+            btnVisualise.setEnabled(true);
+            break;
+        case UNLOADED:
+            btnStep.setEnabled(false);
+            btnResume.setEnabled(false);
+            btnNewBreakpoint.setEnabled(false);
+            btnRemoveBreakpoint.setEnabled(false);
+            btnClasspath.setEnabled(true);
+            btnVisualise.setEnabled(false);
+            break;
+        default:
+            break;
+        
+        }
     }
 
     private void prepareVM() {
@@ -169,11 +222,10 @@ public class TestGUI extends NullListener {
         debugger.addListener(this);
         istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
         istConsoleOutput.start();
-        btnNewBreakpoint.setEnabled(true);
-        btnStep.setEnabled(false);
-        btnResume.setEnabled(true);
-        btnResume.setText("Run");
+        
+        
         state = GUI_STATE.LOADED;
+        setButtonsByState();
     }
 
     private class PathFieldListener implements DocumentListener {
@@ -200,6 +252,9 @@ public class TestGUI extends NullListener {
             File f = new File(finalPath.toString());
             if(f.exists()) { 
                 prepareVM();
+            } else {
+                state = GUI_STATE.UNLOADED;
+                setButtonsByState();
             }
         }
     } 
@@ -260,9 +315,8 @@ public class TestGUI extends NullListener {
             }
 
             state = GUI_STATE.STARTED;
-            btnResume.setEnabled(false);
-            btnNewBreakpoint.setEnabled(false);
-            btnStep.setEnabled(false);
+            setButtonsByState();
+            
             debugger.resume();
         }
     }
@@ -301,7 +355,7 @@ public class TestGUI extends NullListener {
         paneConfigure.add(edtClassPath);
         edtClassPath.setColumns(10);
 
-        JButton btnClasspath = new JButton("Select Classpath");
+        btnClasspath = new JButton("Select Classpath");
         btnClasspath.addActionListener(new ClassPathButtonListener());
         sl_paneConfigure.putConstraint(SpringLayout.NORTH, btnClasspath, 29, SpringLayout.NORTH, paneConfigure);
         sl_paneConfigure.putConstraint(SpringLayout.EAST, btnClasspath, -29, SpringLayout.EAST, paneConfigure);
@@ -324,7 +378,7 @@ public class TestGUI extends NullListener {
         btnNewBreakpoint.addActionListener(new NewBreakpointButtonListener());
         paneConfigure.add(btnNewBreakpoint);
 
-        JButton btnRemoveBreakpoint = new JButton("Delete Breakpoint");
+        btnRemoveBreakpoint = new JButton("Delete Breakpoint");
         sl_paneConfigure.putConstraint(SpringLayout.NORTH, btnRemoveBreakpoint, 0, SpringLayout.NORTH, btnNewBreakpoint);
         sl_paneConfigure.putConstraint(SpringLayout.WEST, btnRemoveBreakpoint, 0, SpringLayout.WEST, edtClassName);
         btnRemoveBreakpoint.addActionListener(new RemoveBreakpointButtonListener());
@@ -422,6 +476,8 @@ public class TestGUI extends NullListener {
 
         edtClassPath.setText(classPath);
         edtClassName.setText(className);
+        
+        setButtonsByState();
     }
 
     private class BreakpointTableModel extends DefaultTableModel {
