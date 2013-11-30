@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.visualheap.app.Game;
+
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 
@@ -14,7 +16,6 @@ import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 
 /**
- * not a real class, just wraps the two static functions you see here.
  * @author oliver
  *
  */
@@ -28,9 +29,11 @@ public class LayoutBuilder {
 	 * be reflected in the graph of ObjectReferenceVertex'es).
 	 * That's what this map does.
 	 */
-	private static Map<ObjectReference, ObjectReferenceVertex> objRefMapping
+	private Map<ObjectReference, ObjectReferenceVertex> objRefMapping
 		= new HashMap<ObjectReference, ObjectReferenceVertex>();
 	
+	private FRLayout<Vertex, Edge> layout;
+    private Graph<Vertex, Edge> graph;
 
 	/**
 	 * builds a graph of the heap to depth specified.
@@ -39,33 +42,13 @@ public class LayoutBuilder {
 	 * @param depth depth to search to (unimplemented)
 	 * @return returns a graph layout
 	 */
-	public static Layout<Vertex, Edge> fromObjectReferences(Collection<ObjectReference> initialSet, int depth) {
+	public static LayoutBuilder fromObjectReferences(Collection<ObjectReference> initialSet, int depth) {
 		
-		// construct the graph
-		Graph<Vertex, Edge> graph = new DirectedSparseGraph<Vertex, Edge>();
-		FRLayout<Vertex, Edge> layout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
-		Vertex dummy = new DummyVertex(layout);
-		
-		for(ObjectReference ref : initialSet) {
-			
-			ObjectReferenceVertex vert = getVertexFromObjRef(layout, ref);
-			
-			graph.addEdge(new Edge(layout, dummy, vert), dummy, vert);
-		//	System.out.println(graph.addVertex(new ObjectReferenceVertex(ref, layout)));
-			visitChildren(graph, layout, vert, 0);
-		}
-		
-		// run the layout algorithm
-		
-		layout.initialize();
-		while(!layout.done()) {
-			layout.step();
-		}
-		
-		
-		
-		return layout;
+	    return new LayoutBuilder(initialSet, depth);
+	    
 	}
+	    
+		
 
 	/**
 	 * either creates a new ObjectReferenceVertex for this object reference,
@@ -74,7 +57,7 @@ public class LayoutBuilder {
 	 * @param ref ObjectReference to lookup
 	 * @return the ObjectReferenceVertex for this ObjectReference
 	 */
-	private static ObjectReferenceVertex getVertexFromObjRef(
+	private ObjectReferenceVertex getVertexFromObjRef(
 			Layout<Vertex, Edge> layout, ObjectReference ref) {
 		
 		ObjectReferenceVertex vert = objRefMapping.get(ref);
@@ -90,12 +73,10 @@ public class LayoutBuilder {
 	/**
 	 * adds children of parent to graph so long as depth > 0
 	 * @param graph graph to add children to
-	 * @param layout layout (needed to construct Vertex / Edge classes)
 	 * @param parent Vertex to add children of
 	 * @param depth depth to search to
 	 */
-	static void visitChildren(Graph<Vertex, Edge> graph, Layout<Vertex, Edge> layout, 
-			Vertex parent, int depth) {
+	void visitChildren(Graph<Vertex, Edge> graph, Vertex parent, int depth) {
 		for(Value child : parent.getChildren()) {
 			Vertex childVert = null;
 			
@@ -109,7 +90,7 @@ public class LayoutBuilder {
 				ObjectReference childObjRef = (ObjectReference)child;
 				if(depth == 0) {
 					// stopped searching, mark reference as unfollowed.
-					childVert = new UnfollowedReferenceVertex(childObjRef, layout);
+					childVert = new UnfollowedReferenceVertex(childObjRef, layout, this);
 				} else {
 					
 					// try to find an existing vertex for this reference
@@ -120,7 +101,7 @@ public class LayoutBuilder {
 						vert = new ObjectReferenceVertex(childObjRef, layout);
 						objRefMapping.put(childObjRef, vert);
 						// explore successors of this vertex.
-						visitChildren(graph, layout, vert, depth - 1);
+						visitChildren(graph, vert, depth - 1);
 					}
 					childVert = vert;
 				}
@@ -133,9 +114,59 @@ public class LayoutBuilder {
 		}
 	}
 	
-	private LayoutBuilder() {
-		
-	}
-	
+	private LayoutBuilder(Collection<ObjectReference> initialSet, int depth) {
+        graph = new DirectedSparseGraph<Vertex, Edge>();
+        layout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
+        
+     // construct the graph
+        Vertex dummy = new DummyVertex(layout);
+        
+        for(ObjectReference ref : initialSet) {
+            
+            ObjectReferenceVertex vert = getVertexFromObjRef(layout, ref);
+            
+            graph.addEdge(new Edge(layout, dummy, vert), dummy, vert);
+            visitChildren(graph, vert, depth - 1);
+        }
+        
+        runLayoutAlgorithm();
+        
+    }
+
+	/**
+	 * Steps the layout algorithm to completion.
+	 */
+    public void runLayoutAlgorithm() {
+        // run the layout algorithm
+        
+        layout.initialize();
+        while(!layout.done()) {
+            layout.step();
+        }
+    }
+    
+    /**
+     * Performs one step of the layout algorithm.
+     */
+    public void stepLayoutAlgorithm() {
+        if(!layout.done()) {
+            layout.step();
+        }
+    }
+
+    /**
+     * Iterates through all objects in the graph, creating objects in the 3d
+     * world corresponding to each vertex and edge
+     */
+    public void displayGraph(Game game) {
+        // draw the vertices
+        for (Vertex vertex : graph.getVertices()) {
+            vertex.createInWorld(game);
+        }
+        
+        for (Edge edge : graph.getEdges()) {
+            edge.createInWorld(game);
+        }
+    }
 
 }

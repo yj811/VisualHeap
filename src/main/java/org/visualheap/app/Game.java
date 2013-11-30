@@ -65,7 +65,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	
 	private static final float WALK_SPEED = 0.5f;
 	
-	private Layout<Vertex, Edge> layout;
+	private LayoutBuilder layoutBuilder;
 	private Material matBrick;
 	private BulletAppState bulletAppState;
 	private CharacterControl player;
@@ -109,7 +109,7 @@ public class Game extends SimpleApplication implements ActionListener {
 
         };
 
-        Debugger debugger = new Debugger(CLASSPATH, NULLREFERENCE, 11, listener);
+        Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 21, listener);
         game.setDebugger(debugger);
     }
     
@@ -131,10 +131,10 @@ public class Game extends SimpleApplication implements ActionListener {
 			@Override
 			public void run() {
 				
-				Layout<Vertex, Edge> layout 
+				LayoutBuilder lb
 					= LayoutBuilder.fromObjectReferences(initialSet, 3);
 				
-        useLayout(layout);
+        useLayoutBuilder(lb);
         setShowSettings(false);
         start();
         
@@ -155,8 +155,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	}
 	
 	
-	private void useLayout(Layout<Vertex, Edge> layout) {
-		this.layout = layout;
+	private void useLayoutBuilder(LayoutBuilder lb) {
+		this.layoutBuilder = lb;
 	}
 	
 
@@ -277,30 +277,15 @@ public class Game extends SimpleApplication implements ActionListener {
 		rootNode.attachChild(nonCollidables);
 		constructWorld();
 		
-		layout.reset();
-		
 	}
 
-	/**
-	 * Iterates through all objects in the graph, creating objects in the 3d
-	 * world corresponding to each vertex and edge
-	 */
+	
 	private void constructWorld() {
-
-		graph = layout.getGraph();
-
-		System.out.println(graph.getVertexCount() + " objects");
 		
-		// draw the vertices
-		for (Vertex vertex : graph.getVertices()) {
-			vertex.createInWorld(this);
-		}
-		
-		for (Edge edge : graph.getEdges()) {
-			edge.createInWorld(this);
-		}
-		//rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
-		addGridSquare();
+	    // put the vertices in the world.
+	    layoutBuilder.displayGraph(this);
+	    
+	    addGridSquare();
 	}
 
 	/**

@@ -18,9 +18,12 @@ import edu.uci.ics.jung.graph.Graph;
 
 public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 
-	public UnfollowedReferenceVertex(ObjectReference ref, 
-			Layout<Vertex, Edge> layout) {
+	private LayoutBuilder layoutBuilder;
+
+    public UnfollowedReferenceVertex(ObjectReference ref, 
+			Layout<Vertex, Edge> layout, LayoutBuilder layoutBuilder) {
 		super(ref, layout);
+		this.layoutBuilder = layoutBuilder;
 	}
 
 	@Override
@@ -53,7 +56,7 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 		graph.removeVertex(this);
 		
 		// add children to layout.
-		LayoutBuilder.visitChildren(graph, layout, newVert, 0);
+		layoutBuilder.visitChildren(graph, newVert, 0);
 		
 		game.rebuildWorld();
 		
