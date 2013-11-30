@@ -12,29 +12,20 @@ import com.sun.jdi.Value;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 
 public class NullReferenceVertex extends Vertex {
-	
-	private Layout<Vertex, Edge> layout;
 
 	public NullReferenceVertex(Layout<Vertex, Edge> layout) {
-		this.layout = layout;
+		super(layout);
 	}
 
 	@Override
 	public void createInWorld(Game game) {
 		
-		Box box = new Box(1,1,1);
-		
-		
-		
-        Geometry obj = new Geometry("box", box );
-        obj.setMaterial(game.getRedGlowMaterial());
-        obj.setUserData("vertex", this);
+        geo.setMaterial(game.getRedGlowMaterial());
+        geo.setUserData("vertex", this);
         
-        Point2D location = layout.transform(this);
-        
-        obj.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
+        updatePosition();
         // make obj visible on scene and collidable
-        game.addCollidable(obj); 
+        game.addCollidable(geo); 
         
 	}
 
@@ -49,5 +40,11 @@ public class NullReferenceVertex extends Vertex {
 		// TODO Auto-generated method stub
 
 	}
+
+    @Override
+    protected Geometry createGeometry() {
+        Box box = new Box(1,1,1);
+        return new Geometry("box", box );
+    }
 
 }

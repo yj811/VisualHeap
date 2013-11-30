@@ -28,16 +28,12 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 
 	@Override
 	public void createInWorld(Game game) {
-		Box box = new Box(1,1,1);
-        Geometry obj = new Geometry("Box", box );
-        obj.setMaterial(game.getYellowGlowMaterial());
-        obj.setUserData("vertex", this);
+        geo.setMaterial(game.getYellowGlowMaterial());
+        geo.setUserData("vertex", this);
         
-        Point2D location = layout.transform(this);
-        
-        obj.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
+        updatePosition();
         // make obj visible on scene and collidable
-        game.addCollidable(obj); 
+        game.addCollidable(geo); 
 	}
 
 	@Override

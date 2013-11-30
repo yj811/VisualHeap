@@ -19,11 +19,9 @@ import com.sun.jdi.Value;
  *
  */
 public class DummyVertex extends Vertex {
-	
-	private Layout<Vertex, Edge> layout;
 
 	public DummyVertex(Layout<Vertex, Edge> layout) {
-		this.layout = layout;
+		super(layout);
 	}
 
 	@Override
@@ -31,10 +29,6 @@ public class DummyVertex extends Vertex {
 		Box box = new Box(1,1,1);
         Geometry obj = new Geometry("Box", box );
         obj.setMaterial(game.getMagentaGlowMaterial());
-        
-        Point2D location = layout.transform(this);
-        
-        obj.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
         // make obj visible on scene and collidable
         game.addCollidable(obj); 
 	}
@@ -50,5 +44,10 @@ public class DummyVertex extends Vertex {
 		// TODO display some stack frame related information?
 	}
 
+    @Override
+    protected Geometry createGeometry() {
+        Box box = new Box(1,1,1);
+        return new Geometry("Box", box );
+    }
 
 }

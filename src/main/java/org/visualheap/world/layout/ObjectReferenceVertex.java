@@ -29,11 +29,10 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 public class ObjectReferenceVertex extends Vertex {
 
 	protected ObjectReference objRef;
-	protected Layout<Vertex, Edge> layout;
-
+	
 	public ObjectReferenceVertex(ObjectReference ref, Layout<Vertex, Edge> layout) {
-		objRef = ref;
-		this.layout = layout;
+	    super(layout);
+	    objRef = ref;
 	}
 
 	/**
@@ -41,20 +40,12 @@ public class ObjectReferenceVertex extends Vertex {
 	 */
 	@Override
 	public void createInWorld(Game game) {
-		
-		Box box = new Box(1,1,1);
-		
-		
-		
-        Geometry obj = new Geometry("box", box );
-        obj.setMaterial(game.getGreenGlowMaterial());
-        obj.setUserData("vertex", this);
+        geo.setMaterial(game.getGreenGlowMaterial());
+        geo.setUserData("vertex", this);
         
-        Point2D location = layout.transform(this);
-        
-        obj.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
+        updatePosition();
         // make obj visible on scene and collidable
-        game.addCollidable(obj); 
+        game.addCollidable(geo); 
         
 	}
 	
@@ -86,5 +77,11 @@ public class ObjectReferenceVertex extends Vertex {
 	public void select(Game game) {
 		game.setObjInfo(createInformation());
 	}
+
+    @Override
+    protected Geometry createGeometry() {
+        Box box = new Box(1,1,1);
+        return new Geometry("box", box );
+    }
 	
 }

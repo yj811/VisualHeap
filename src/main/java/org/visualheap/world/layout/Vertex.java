@@ -1,6 +1,7 @@
 package org.visualheap.world.layout;
 
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -9,7 +10,10 @@ import org.visualheap.app.Game;
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.Savable;
+import com.jme3.scene.Geometry;
 import com.sun.jdi.Value;
+
+import edu.uci.ics.jung.algorithms.layout.Layout;
 
 /**
  * represents a vertex we will want do draw in the world 
@@ -18,8 +22,24 @@ import com.sun.jdi.Value;
  *
  */
 public abstract class Vertex implements Savable {
+    
+    protected Layout<Vertex, Edge> layout;
+    protected Geometry geo;
+    
+    Vertex(Layout<Vertex, Edge> layout) {
+        this.layout = layout;
+        // construction of the geometry delegated to subclasses, so we can have
+        // different sizes / shapes etc.
+        geo = createGeometry();
+    }
 
-	/**
+    /**
+     * Construct the geometry for this Vertex.
+     * @return
+     */
+	protected abstract Geometry createGeometry();
+
+    /**
 	 * add this object to the game world.
 	 * drawing / adding to physics space should happen here.
 	 * @param game
@@ -39,6 +59,14 @@ public abstract class Vertex implements Savable {
 	 * @param game the game object this vertex is displayed in
 	 */
 	public abstract void select(Game game);
+	
+	/**
+	 * tell the Vertex to update it's position by asking the layout
+	 */
+	public void updatePosition() {
+        Point2D location = layout.transform(this);
+        geo.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
+    }
 	
 	// make this savable
 	@Override
