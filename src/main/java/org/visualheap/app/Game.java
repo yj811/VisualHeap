@@ -17,9 +17,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
-import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
@@ -34,7 +32,6 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Plane;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
@@ -43,13 +40,9 @@ import com.jme3.post.filters.BloomFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
-import com.jme3.scene.shape.Sphere;
 import com.jme3.texture.Texture;
-import com.jme3.util.SkyFactory;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.StackFrame;
-import com.sun.jdi.Value;
-
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 
@@ -99,6 +92,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Material magentaGlowMat;
 	private Material yellowGlowMat;
 	private Material redGlowMat;
+    private volatile boolean running;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -109,43 +103,52 @@ public class Game extends SimpleApplication implements ActionListener {
 			
 			@Override
 			public void onBreakpoint(final StackFrame sf) {
-				
-				final ExecutorService es =  Executors.newCachedThreadPool();
-				/*
-				 * If the game is started in this thread it blocks the event-thread
-				 * Perhaps we should start all event handlers in their own threads?
-				 */
-				es.execute(new Runnable() {
+                game.beginGame(getObjectReferencesFromStackFrame(sf), game.d);
 
-					@Override
-					public void run() {
-						
-						Collection<ObjectReference> initialSet = getObjectReferencesFromStackFrame(sf);
-			
-						Layout<Vertex, Edge> layout 
-							= LayoutBuilder.fromObjectReferences(initialSet, 3);
-						
-						game.useLayout(layout);
-						game.setShowSettings(false);
-						game.start();
-					}
-					
-				});
+            }
+
+        };
+
+        Debugger debugger = new Debugger(CLASSPATH, NULLREFERENCE, 11, listener);
+        game.setDebugger(debugger);
+    }
+    
+    public Game() {
+        super();
+        running = false;
+    }
 				
-				es.shutdown();
-				try {
-					es.awaitTermination(1, TimeUnit.MICROSECONDS);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+    public void beginGame(final Collection<ObjectReference> initialSet, Debugger debugger) {
+        setDebugger(debugger);
+        running = true;
+		final ExecutorService es =  Executors.newCachedThreadPool();
+		/*
+		 * If the game is started in this thread it blocks the event-thread
+		 * Perhaps we should start all event handlers in their own threads?
+		 */
+		es.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				
+				Layout<Vertex, Edge> layout 
+					= LayoutBuilder.fromObjectReferences(initialSet, 3);
+				
+        useLayout(layout);
+        setShowSettings(false);
+        start();
+        
 			}
 			
-		};
+		});
 		
-		Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 21, listener);
-		game.setDebugger(debugger);
-			
-    }
+		es.shutdown();
+		try {
+			es.awaitTermination(1, TimeUnit.MICROSECONDS);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	private void setDebugger(Debugger debugger) {
 		this.d = debugger;
@@ -342,6 +345,9 @@ public class Game extends SimpleApplication implements ActionListener {
         } else if (binding.equals("Quit")) {
         	//TODO: Change this to our expected behaviour when the user closes the game window
         	d.resume();
+
+            //This should remain the same
+            running = false;
         	this.stop();
         } else if (binding.equals("Select") && !isPressed) {
             CollisionResults results = new CollisionResults();
@@ -455,6 +461,26 @@ public class Game extends SimpleApplication implements ActionListener {
         collidables.attachChild(blueq);
 	
 	}
+
+
+    /**
+     * Returns whether this game object is currently running
+     * @return returns true if the game is running.
+     */
+    public boolean isRunning() {
+        return running;
+    }
+
+    /**
+     * Called when the debugger state has changed, so that the window can be updated,
+     * without creating a new one.
+     * Currently left unimplemented.
+     * @param object The object which should represent the changes to the heap
+     */
+    public void sync(Object object) {
+        //TODO: given an object representing the updates to the heap, update the user view.
+
+    }
 
 
 }

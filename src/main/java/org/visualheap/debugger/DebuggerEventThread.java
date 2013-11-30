@@ -135,7 +135,7 @@ class DebuggerEventThread extends Thread {
 		Location bpLoc = null;
 		for(Location line : validBreakpointLines) {
         	
-        	System.out.println(classType.name() + " line number " + line.lineNumber());
+        	//System.out.println(classType.name() + " line number " + line.lineNumber());
         	if(line.declaringType().equals(classType) && line.lineNumber() == bp.getLine()) {
         		bpLoc = line;
         	}
@@ -147,8 +147,10 @@ class DebuggerEventThread extends Thread {
 	    	bpReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 	    	bpReq.enable();
 		} else {
-			System.err.println("couldn't set breakpoint");
-			throw new RuntimeException("couldn't set breakpoint");
+			//TODO pass a message to listeners which informs them of the invalid breakpoint.
+		    
+		    //Terminate the virtual machine.
+			vm.exit(0);
 		}
 	}
 
