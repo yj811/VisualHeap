@@ -400,6 +400,8 @@ public class Game extends SimpleApplication implements ActionListener {
 		player.setWalkDirection(walkDirection);
 		cam.setLocation(player.getPhysicsLocation());
 		
+		layoutBuilder.stepLayoutAlgorithm();
+		
 	}
 
 	public Material getGreenGlowMaterial() {

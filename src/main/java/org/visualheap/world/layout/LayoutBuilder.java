@@ -34,6 +34,9 @@ public class LayoutBuilder {
 	
 	private FRLayout<Vertex, Edge> layout;
     private Graph<Vertex, Edge> graph;
+    
+    // has the graph changed since we last completed the layout algo?
+    private boolean layoutUpToDate = true;
 
 	/**
 	 * builds a graph of the heap to depth specified.
@@ -109,6 +112,7 @@ public class LayoutBuilder {
 			}
 			
 			if(childVert != null) {
+			    layoutUpToDate = false;
 				graph.addEdge(new Edge(layout, parent, childVert), parent, childVert);
 			}
 		}
@@ -125,6 +129,7 @@ public class LayoutBuilder {
             
             ObjectReferenceVertex vert = getVertexFromObjRef(layout, ref);
             
+            layoutUpToDate = false;
             graph.addEdge(new Edge(layout, dummy, vert), dummy, vert);
             visitChildren(graph, vert, depth - 1);
         }
@@ -143,14 +148,26 @@ public class LayoutBuilder {
         while(!layout.done()) {
             layout.step();
         }
+        layoutUpToDate = true;
     }
     
     /**
-     * Performs one step of the layout algorithm.
+     * Performs one step of the layout algorithm if it isn't up to date
      */
     public void stepLayoutAlgorithm() {
+        
+        if(!layoutUpToDate && layout.done()) {
+            // layout thinks it is up to date, but it isn't
+            // happens on the first step after a change.
+            layout.initialize();
+        }
+        
         if(!layout.done()) {
             layout.step();
+        }
+        
+        if(layout.done()) {
+            layoutUpToDate = true;
         }
     }
 

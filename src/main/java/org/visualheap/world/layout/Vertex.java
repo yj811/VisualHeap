@@ -35,7 +35,7 @@ public abstract class Vertex implements Savable {
 
     /**
      * Construct the geometry for this Vertex.
-     * @return
+     * @return desired geometry
      */
 	protected abstract Geometry createGeometry();
 
