@@ -55,7 +55,9 @@ public class ObjectReferenceVertex extends Vertex {
 	
 	public String createInformation() {
 		String result = "Type: " + objRef.type().name() + "\n";
-		
+        // Results in null pointer exception currently
+        //result += "Size: " + ObjectSizeFetcher.getObjectSize(objRef);
+
 		for(Field f : objRef.referenceType().allFields()) {	
 			result += f.name() + "\t" + objRef.getValue(f) + "\n";
 		}

@@ -105,7 +105,7 @@ public class Game extends SimpleApplication implements ActionListener {
             }
         };
 
-        Debugger debugger = new Debugger(CLASSPATH, MULTITYPES, 13, listener);
+        Debugger debugger = new Debugger(CLASSPATH, MULTITYPES, 23, listener);
         game.setDebugger(debugger);
     }
     
