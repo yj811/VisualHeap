@@ -57,6 +57,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
 	private static final String NULLREFERENCE = "debugger.testprogs.NullReference";
 	private static final String TRIPLECYCLE = "debugger.testprogs.TripleCycle";
+    private static final String MULTITYPES = "debugger.testprogs.MultipleTypes";
 
 	private static final float WALK_SPEED = 0.5f;
 	
@@ -97,7 +98,6 @@ public class Game extends SimpleApplication implements ActionListener {
 
 		DebugListener listener = new NullListener() {
 			
-			
 			@Override
 			public void onBreakpoint(final StackFrame sf) {
                 game.beginGame(getObjectReferencesFromStackFrame(sf), game.d);
@@ -105,7 +105,7 @@ public class Game extends SimpleApplication implements ActionListener {
             }
         };
 
-        Debugger debugger = new Debugger(CLASSPATH, TRIPLECYCLE, 16, listener);
+        Debugger debugger = new Debugger(CLASSPATH, MULTITYPES, 13, listener);
         game.setDebugger(debugger);
     }
     
