@@ -24,9 +24,9 @@ public class LayoutBuilder {
 
 	/**
 	 * So that JUNG displays cyclic graphs correctly, we want to maintain a 
-	 * 1 - 1 mapping between ObjectReference's and ObjectReferenceVertex'es
-	 * (Otherwise the cycles in ObjectReferences refering to eachother won't
-	 * be reflected in the graph of ObjectReferenceVertex'es).
+	 * 1 - 1 mapping between ObjectReference's and ObjectReferenceVertex's
+	 * (Otherwise the cycles in ObjectReferences referring to each other won't
+	 * be reflected in the graph of ObjectReferenceVertex's).
 	 * That's what this map does.
 	 */
 	private Map<ObjectReference, ObjectReferenceVertex> objRefMapping

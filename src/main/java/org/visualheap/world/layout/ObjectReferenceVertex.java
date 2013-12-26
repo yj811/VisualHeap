@@ -1,24 +1,18 @@
 package org.visualheap.world.layout;
 
 
-import java.awt.geom.Point2D;
-import java.util.Collection;
-import java.util.Vector;
-
-import org.visualheap.app.Game;
-import org.visualheap.debugger.Debugger;
-
-import com.jme3.export.Savable;
-import com.jme3.font.BitmapText;
-import com.jme3.math.ColorRGBA;
+import com.jme3.material.Material;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
-import com.sun.jdi.Type;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Value;
-
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import org.visualheap.app.Game;
+
+import java.util.Collection;
+import java.util.Vector;
 
 /**
  * Represents an object reference that we want to display in the world.
@@ -40,7 +34,17 @@ public class ObjectReferenceVertex extends Vertex {
 	 */
 	@Override
 	public void createInWorld(Game game) {
-        geo.setMaterial(game.getGreenGlowMaterial());
+        ReferenceType type = objRef.referenceType();
+        Material material;
+
+        if(game.getMaterialHashMap().containsKey(type)) {
+            material = (Material)game.getMaterialHashMap().get(type);
+        } else {
+            //material = game.getGreenGlowMaterial();
+            material = game.createNewMaterial(type);
+        }
+
+        geo.setMaterial(material);
         geo.setUserData("vertex", this);
         
         updatePosition();

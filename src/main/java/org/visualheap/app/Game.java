@@ -1,18 +1,6 @@
 package org.visualheap.app;
 
 
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import org.visualheap.debugger.DebugListener;
-import org.visualheap.debugger.Debugger;
-import org.visualheap.debugger.NullListener;
-import org.visualheap.world.layout.Edge;
-import org.visualheap.world.layout.LayoutBuilder;
-import org.visualheap.world.layout.Vertex;
-
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
@@ -30,11 +18,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
-import com.jme3.math.Ray;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.math.*;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.scene.Geometry;
@@ -42,12 +26,24 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
+import org.visualheap.debugger.DebugListener;
+import org.visualheap.debugger.Debugger;
+import org.visualheap.debugger.NullListener;
+import org.visualheap.world.layout.Edge;
+import org.visualheap.world.layout.LayoutBuilder;
+import org.visualheap.world.layout.Vertex;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
- * 
+ *
  * See http://hub.jmonkeyengine.org/wiki/doku.php/jme3:beginner:hello_collision
  * 
  * @author oliver, kinda.
@@ -62,7 +58,6 @@ public class Game extends SimpleApplication implements ActionListener {
 	private static final String NULLREFERENCE = "debugger.testprogs.NullReference";
 	private static final String TRIPLECYCLE = "debugger.testprogs.TripleCycle";
 
-	
 	private static final float WALK_SPEED = 0.5f;
 	
 	private LayoutBuilder layoutBuilder;
@@ -94,6 +89,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Material redGlowMat;
     private volatile boolean running;
 
+    private HashMap<ReferenceType, Material> materialHashMap;
+
 	// start a new game.
 	public static void main(String[] args) {
 		final Game game = new Game();
@@ -106,10 +103,9 @@ public class Game extends SimpleApplication implements ActionListener {
                 game.beginGame(getObjectReferencesFromStackFrame(sf), game.d);
 
             }
-
         };
 
-        Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 21, listener);
+        Debugger debugger = new Debugger(CLASSPATH, TRIPLECYCLE, 16, listener);
         game.setDebugger(debugger);
     }
     
@@ -130,16 +126,13 @@ public class Game extends SimpleApplication implements ActionListener {
 
 			@Override
 			public void run() {
-				
 				LayoutBuilder lb
 					= LayoutBuilder.fromObjectReferences(initialSet, 3);
 				
-        useLayoutBuilder(lb);
-        setShowSettings(false);
-        start();
-        
+                useLayoutBuilder(lb);
+                setShowSettings(false);
+                start();
 			}
-			
 		});
 		
 		es.shutdown();
@@ -190,7 +183,12 @@ public class Game extends SimpleApplication implements ActionListener {
 	    redGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    redGlowMat.setColor("Color", ColorRGBA.Blue);
 	    redGlowMat.setColor("GlowColor", ColorRGBA.Red);
-	    
+
+        materialHashMap = new HashMap<ReferenceType, Material>();
+        materialHashMap.put(null, magentaGlowMat);
+        materialHashMap.put(null, yellowGlowMat);
+        materialHashMap.put(null, redGlowMat);
+
 	    FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
 	    BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);        
 	    fpp.addFilter(bloom);
@@ -419,6 +417,27 @@ public class Game extends SimpleApplication implements ActionListener {
 	public Material getRedGlowMaterial() {
 		return redGlowMat;
 	}
+
+    public HashMap getMaterialHashMap() {
+        return materialHashMap;
+    }
+
+    public Material createNewMaterial(ReferenceType type) {
+        ColorRGBA color = ColorRGBA.randomColor();
+        System.out.println(color.asIntRGBA());
+
+        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", ColorRGBA.Blue);
+        material.setColor("GlowColor", color);
+
+        while (materialHashMap.containsValue(material)) {
+            material.setColor("GlowColor", ColorRGBA.randomColor());
+        }
+
+        materialHashMap.put(type, material);
+
+        return material;
+    }
 	
 	public void addCollidable(Geometry child) {
 		collidables.attachChild(child);
