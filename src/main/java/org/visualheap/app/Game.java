@@ -169,19 +169,19 @@ public class Game extends SimpleApplication implements ActionListener {
 	  	matBrick.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
 
 	    greenGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	    greenGlowMat.setColor("Color", ColorRGBA.Blue);
+	    greenGlowMat.setColor("Color", ColorRGBA.Green);
 	    greenGlowMat.setColor("GlowColor", ColorRGBA.Green);
 	    
 	    magentaGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	    magentaGlowMat.setColor("Color", ColorRGBA.Blue);
+	    magentaGlowMat.setColor("Color", ColorRGBA.Magenta);
 	    magentaGlowMat.setColor("GlowColor", ColorRGBA.Magenta);
 	    
 	    yellowGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	    yellowGlowMat.setColor("Color", ColorRGBA.Blue);
+	    yellowGlowMat.setColor("Color", ColorRGBA.Yellow);
 	    yellowGlowMat.setColor("GlowColor", ColorRGBA.Yellow);
 	    
 	    redGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	    redGlowMat.setColor("Color", ColorRGBA.Blue);
+	    redGlowMat.setColor("Color", ColorRGBA.Red);
 	    redGlowMat.setColor("GlowColor", ColorRGBA.Red);
 
         materialHashMap = new HashMap<ReferenceType, Material>();
@@ -424,14 +424,16 @@ public class Game extends SimpleApplication implements ActionListener {
 
     public Material createNewMaterial(ReferenceType type) {
         ColorRGBA color = ColorRGBA.randomColor();
-        System.out.println(color.asIntRGBA());
 
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", ColorRGBA.Blue);
+        material.setColor("Color", color);
         material.setColor("GlowColor", color);
 
+        // Could be improved to check for colours similar to used colours too
         while (materialHashMap.containsValue(material)) {
-            material.setColor("GlowColor", ColorRGBA.randomColor());
+            color = ColorRGBA.randomColor();
+            material.setColor("Color", color);
+            material.setColor("GlowColor", color);
         }
 
         materialHashMap.put(type, material);
