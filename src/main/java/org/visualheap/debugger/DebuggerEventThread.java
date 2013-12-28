@@ -350,13 +350,11 @@ class DebuggerEventThread extends Thread {
     private void checkBreakpoints() {
 		// TODO Auto-generated method stub
     	if (invalidBreakpoints.size() > 0) {
-    			//Terminate the virtual machine.
-    		for (Breakpoint bp : invalidBreakpoints) {
-    			System.out.println("Invalid - " + bp.getLine() + ":"+ bp.getClassName());
-    		}
+    			//Terminate the virtual machine
     		
 			vm.exit(0);
-			System.out.println("Terminated");
+			listener.onInvalidBreakpointEvent(Collections.unmodifiableList(invalidBreakpoints));
+			
     	}
 	}
 
