@@ -51,6 +51,7 @@ import java.util.Vector;
  *
  * @author Robert Field
  * @author Oliver Myerscough
+ * @author Aviv Beeri
  */
 class DebuggerEventThread extends Thread {
 
@@ -63,6 +64,7 @@ class DebuggerEventThread extends Thread {
 	
 	private List<Breakpoint> breakpointsToAdd = new Vector<Breakpoint>();
 	private List<Location> validBreakpointLines = new Vector<Location>();
+	private List<Breakpoint> invalidBreakpoints = new Vector<Breakpoint>();
 
 	private ThreadReference lastBreakpointedThread;
     private String lastBreakpointedClassName;
@@ -138,6 +140,7 @@ class DebuggerEventThread extends Thread {
         	//System.out.println(classType.name() + " line number " + line.lineNumber());
         	if(line.declaringType().equals(classType) && line.lineNumber() == bp.getLine()) {
         		bpLoc = line;
+        		
         	}
         }
 		
@@ -148,9 +151,8 @@ class DebuggerEventThread extends Thread {
 	    	bpReq.enable();
 		} else {
 			//TODO pass a message to listeners which informs them of the invalid breakpoint.
+		    invalidBreakpoints.add(bp);
 		    
-		    //Terminate the virtual machine.
-			vm.exit(0);
 		}
 	}
 
@@ -185,6 +187,11 @@ class DebuggerEventThread extends Thread {
         ClassPrepareRequest cpr = mgr.createClassPrepareRequest();
         cpr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         cpr.enable();
+        
+        MethodEntryRequest mer = mgr.createMethodEntryRequest();
+        mer.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+        //mer.addThreadFilter(vm.allThreads().get(0));
+        mer.enable();
 
     }
    
@@ -215,13 +222,21 @@ class DebuggerEventThread extends Thread {
         	threadDeathEvent((ThreadDeathEvent)event);
         } else if (event instanceof MethodExitEvent) {
             methodExitEvent((MethodExitEvent)event);
+        } else if (event instanceof MethodEntryEvent) {
+            methodEntryEvent((MethodEntryEvent)event);
         } else {
             throw new Error("Unexpected event type " + event.toString());
         }
         return shouldResume;
     }
 
-    private void threadDeathEvent(ThreadDeathEvent event) {
+    private void methodEntryEvent(MethodEntryEvent event) {
+		if (event.method().name().equals("main")) {
+			checkBreakpoints();
+		}
+	}
+
+	private void threadDeathEvent(ThreadDeathEvent event) {
     	System.out.println("thread death");	
 	}
     private void methodExitEvent(MethodExitEvent event) {
@@ -332,7 +347,20 @@ class DebuggerEventThread extends Thread {
     
     }
 
-    private void exceptionEvent(ExceptionEvent event) {
+    private void checkBreakpoints() {
+		// TODO Auto-generated method stub
+    	if (invalidBreakpoints.size() > 0) {
+    			//Terminate the virtual machine.
+    		for (Breakpoint bp : invalidBreakpoints) {
+    			System.out.println("Invalid - " + bp.getLine() + ":"+ bp.getClassName());
+    		}
+    		
+			vm.exit(0);
+			System.out.println("Terminated");
+    	}
+	}
+
+	private void exceptionEvent(ExceptionEvent event) {
    
     }
 
