@@ -72,4 +72,12 @@ public class AggregatingDebugListener implements DebugListener {
 		}
 	}
 
+@Override
+public void onInvalidBreakpointEvent(List<Breakpoint> bps) {
+	for(DebugListener listener : listeners) {
+		listener.onInvalidBreakpointEvent(bps);
+	}
+	
+}
+
 }
