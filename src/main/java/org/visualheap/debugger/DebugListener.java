@@ -24,4 +24,6 @@ public interface DebugListener {
     void vmDeath();
 
     void exitedMain();
+
+    void onInvalidBreakpointEvent(List<Breakpoint> bps);
 }
