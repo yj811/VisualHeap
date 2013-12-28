@@ -35,7 +35,7 @@ public class NullListener implements DebugListener {
 		System.out.println("NullListener: vmDeath");
 	}
 	
-  @Override
+    @Override
 	public void exitedMain() {
 		System.out.println("NullListener: Exited main");
 	}
@@ -62,5 +62,10 @@ public class NullListener implements DebugListener {
 		}
 		return objRefs;
 	}
-
+    
+    @Override
+    public void onInvalidBreakpointEvent(List<Breakpoint> bps) {
+    	
+    }
+    
 }
