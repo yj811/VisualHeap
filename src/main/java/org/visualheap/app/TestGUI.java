@@ -106,7 +106,6 @@ public class TestGUI extends NullListener {
 				try {
 					initialize();
 					frame.setVisible(true);
-					//game.start();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -144,40 +143,59 @@ public class TestGUI extends NullListener {
 	}
 
 	@Override
-	public void onBreakpoint(StackFrame sf) {
-		currentStackFrame = sf;
-		lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
-		state = GUI_STATE.SUSPENDED;
-		setButtonsByState();
+	public void onBreakpoint(final StackFrame sf) {
+		SwingUtilities.invokeLater(new Runnable () {
+
+			@Override
+			public void run() {
+				currentStackFrame = sf;
+				lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+				state = GUI_STATE.SUSPENDED;
+				setButtonsByState();
+			}
+		});
 
 	}
 
 	@Override
-	public void onStep(StackFrame sf) {
-		if (state.equals(GUI_STATE.FINISHED)) {
-			debugger.resume();
-			btnClasspath.setEnabled(true);
-		} else {
-			currentStackFrame = sf;
-			lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+	public void onStep(final StackFrame sf) {
+		SwingUtilities.invokeLater(new Runnable () {
 
-			state = GUI_STATE.SUSPENDED;
-			setButtonsByState();
+			@Override
+			public void run() {
+				if (state.equals(GUI_STATE.FINISHED)) {
+					debugger.resume();
+					btnClasspath.setEnabled(true);
+				} else {
+					currentStackFrame = sf;
+					lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
 
-			if (visualiser != null && visualiser.isRunning()) {
-				//TODO: If there is time, update the visualiser window after each step
-				visualiser.sync(null);
+					state = GUI_STATE.SUSPENDED;
+					setButtonsByState();
+
+					if (visualiser != null && visualiser.isRunning()) {
+						//TODO: If there is time, update the visualiser window after each step
+						visualiser.sync(null);
+					}
+				}
 			}
-		}
+		});
 	}
 
 	@Override
 	public void vmDeath() {
-		btnStep.setEnabled(false);
-		btnResume.setEnabled(false);
-		state = GUI_STATE.UNLOADED;
-		setButtonsByState();
-		prepareVM();
+		SwingUtilities.invokeLater(new Runnable () {
+
+			@Override
+			public void run() {
+				btnStep.setEnabled(false);
+				btnResume.setEnabled(false);
+				state = GUI_STATE.UNLOADED;
+				setButtonsByState();
+				prepareVM();
+
+			}
+		});
 	}
 
 	@Override
