@@ -38,10 +38,11 @@ public class ObjectReferenceVertex extends Vertex {
         Material material;
 
         // Set colour
-        if(game.getMaterialHashMap().containsKey(type)) {
+        if (type.isStatic()) {
+            material = game.getGreenGlowMaterial();
+        } else if (game.getMaterialHashMap().containsKey(type)) {
             material = (Material)game.getMaterialHashMap().get(type);
         } else {
-            //material = game.getGreenGlowMaterial();
             material = game.createNewMaterial(type);
         }
 
@@ -66,20 +67,10 @@ public class ObjectReferenceVertex extends Vertex {
 	}
 	
 	public String createInformation() {
-        ReferenceType refType = objRef.referenceType();
+        ReferenceType type = objRef.referenceType();
+		String result = "Type: " + type.name() + "\n";
 
-		String result = "Type: " + refType.name() + "\n";
-
-        // Results in null pointer exception currently
-        if(refType.name().equals("java.util.LinkedList")) {
-            Field f = refType.fieldByName("size");
-            result += "Found size: " + objRef.getValue(f);
-        } else {
-            System.out.println("Not linked list: "+refType.name());
-        }
-        //result += "Size: " + ObjectSizeFetcher.getObjectSize(objRef);
-
-		for(Field f : refType.allFields()) {
+		for(Field f : type.allFields()) {
 			result += f.name() + "\t" + objRef.getValue(f) + "\n";
 		}
 		

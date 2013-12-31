@@ -19,9 +19,6 @@ public class Array {
 		outerArray.sum();
 		
 		System.out.println("after");
-    
-		
-		
 	}
 	
 	public int sum() {
