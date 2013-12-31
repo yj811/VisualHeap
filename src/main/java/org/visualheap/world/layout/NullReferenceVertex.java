@@ -1,15 +1,12 @@
 package org.visualheap.world.layout;
 
-import java.awt.geom.Point2D;
-import java.util.Collection;
-
-import org.visualheap.app.Game;
-
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.sun.jdi.Value;
-
 import edu.uci.ics.jung.algorithms.layout.Layout;
+import org.visualheap.app.Game;
+
+import java.util.Collection;
 
 public class NullReferenceVertex extends Vertex {
 
@@ -25,9 +22,14 @@ public class NullReferenceVertex extends Vertex {
         
         updatePosition();
         // make obj visible on scene and collidable
-        game.addCollidable(geo); 
-        
+        game.addCollidable(geo);
 	}
+
+    public String createInformation() {
+        String result = "Null reference";
+
+        return result;
+    }
 
 	@Override
 	public Collection<Value> getChildren() {
@@ -37,8 +39,7 @@ public class NullReferenceVertex extends Vertex {
 
 	@Override
 	public void select(Game game) {
-		// TODO Auto-generated method stub
-
+        game.setObjInfo(createInformation());
 	}
 
     @Override
