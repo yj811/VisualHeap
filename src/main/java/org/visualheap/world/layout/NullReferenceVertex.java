@@ -1,7 +1,7 @@
 package org.visualheap.world.layout;
 
 import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 import com.sun.jdi.Value;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import org.visualheap.app.Game;
@@ -42,8 +42,8 @@ public class NullReferenceVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(1,1,1);
-        return new Geometry("box", box );
+        Sphere sphere = new Sphere(32, 32, 1f);
+        return new Geometry("sphere", sphere);
     }
 
 }

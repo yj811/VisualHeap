@@ -37,6 +37,7 @@ public class ObjectReferenceVertex extends Vertex {
         ReferenceType type = objRef.referenceType();
         Material material;
 
+        // Set colour
         if(game.getMaterialHashMap().containsKey(type)) {
             material = (Material)game.getMaterialHashMap().get(type);
         } else {
@@ -44,15 +45,13 @@ public class ObjectReferenceVertex extends Vertex {
             material = game.createNewMaterial(type);
         }
 
-        ReferenceType refType = objRef.referenceType();
+        // Set size
         int size = 1;
-
-        if (refType.fieldByName("size") != null) {
-            Field f = refType.fieldByName("size");
+        if (type.fieldByName("size") != null) {
+            Field f = type.fieldByName("size");
             size = Integer.parseInt(objRef.getValue(f).toString());
             size = (size == 0) ? 1 : size;
         }
-
         // Results in null pointer exception currently
         //result += "Size: " + ObjectSizeFetcher.getObjectSize(objRef);
 
