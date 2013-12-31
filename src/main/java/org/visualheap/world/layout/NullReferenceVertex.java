@@ -16,7 +16,6 @@ public class NullReferenceVertex extends Vertex {
 
 	@Override
 	public void createInWorld(Game game) {
-		
         geo.setMaterial(game.getRedGlowMaterial());
         geo.setUserData("vertex", this);
         
@@ -27,7 +26,6 @@ public class NullReferenceVertex extends Vertex {
 
     public String createInformation() {
         String result = "Null reference";
-
         return result;
     }
 

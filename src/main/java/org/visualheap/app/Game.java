@@ -53,6 +53,7 @@ import java.util.concurrent.TimeUnit;
 public class Game extends SimpleApplication implements ActionListener {
 
 	private static final String CLASSPATH = "build/classes/test";
+    private static final String ARRAY = "debugger.testprogs.Array";
 	private static final String TREEREFERENCE = "debugger.testprogs.TreeReference";
 	private static final String CYCLICREFERENCE = "debugger.testprogs.CyclicReference";
 	private static final String NULLREFERENCE = "debugger.testprogs.NullReference";
@@ -105,7 +106,7 @@ public class Game extends SimpleApplication implements ActionListener {
             }
         };
 
-        Debugger debugger = new Debugger(CLASSPATH, MULTITYPES, 23, listener);
+        Debugger debugger = new Debugger(CLASSPATH, ARRAY, 19, listener);
         game.setDebugger(debugger);
     }
     

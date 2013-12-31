@@ -44,6 +44,19 @@ public class ObjectReferenceVertex extends Vertex {
             material = game.createNewMaterial(type);
         }
 
+        ReferenceType refType = objRef.referenceType();
+        int size = 1;
+
+        if (refType.fieldByName("size") != null) {
+            Field f = refType.fieldByName("size");
+            size = Integer.parseInt(objRef.getValue(f).toString());
+            size = (size == 0) ? 1 : size;
+        }
+
+        // Results in null pointer exception currently
+        //result += "Size: " + ObjectSizeFetcher.getObjectSize(objRef);
+
+        geo.setLocalScale(size);
         geo.setMaterial(material);
         geo.setUserData("vertex", this);
         
@@ -54,11 +67,20 @@ public class ObjectReferenceVertex extends Vertex {
 	}
 	
 	public String createInformation() {
-		String result = "Type: " + objRef.type().name() + "\n";
+        ReferenceType refType = objRef.referenceType();
+
+		String result = "Type: " + refType.name() + "\n";
+
         // Results in null pointer exception currently
+        if(refType.name().equals("java.util.LinkedList")) {
+            Field f = refType.fieldByName("size");
+            result += "Found size: " + objRef.getValue(f);
+        } else {
+            System.out.println("Not linked list: "+refType.name());
+        }
         //result += "Size: " + ObjectSizeFetcher.getObjectSize(objRef);
 
-		for(Field f : objRef.referenceType().allFields()) {	
+		for(Field f : refType.allFields()) {
 			result += f.name() + "\t" + objRef.getValue(f) + "\n";
 		}
 		
