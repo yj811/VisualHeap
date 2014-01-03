@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.visualheap.app.Game;
 
+import com.jme3.scene.Geometry;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 
@@ -184,6 +185,12 @@ public class LayoutBuilder {
         for (Edge edge : graph.getEdges()) {
             edge.createInWorld(game);
         }
+    }
+
+
+
+    void setPosition(Vertex v, double x, double y) {
+        layout.setLocation(v, x, y);
     }
 
 }

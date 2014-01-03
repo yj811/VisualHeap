@@ -9,6 +9,7 @@ import org.visualheap.app.Game;
 
 import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.sun.jdi.ObjectReference;
@@ -50,6 +51,9 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 			graph.addEdge(new Edge(layout, start, newVert), start, newVert);
 		}
 		graph.removeVertex(this);
+		
+		Vector3f myPos = geo.getLocalTranslation();
+		layoutBuilder.setPosition(newVert, myPos.x, myPos.y);
 		
 		// add children to layout.
 		layoutBuilder.visitChildren(graph, newVert, 0);
