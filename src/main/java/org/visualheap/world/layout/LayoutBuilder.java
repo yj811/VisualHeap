@@ -1,6 +1,7 @@
 package org.visualheap.world.layout;
 
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
 
 /**
  * @author oliver
@@ -33,7 +35,8 @@ public class LayoutBuilder {
 	private Map<ObjectReference, ObjectReferenceVertex> objRefMapping
 		= new HashMap<ObjectReference, ObjectReferenceVertex>();
 	
-	private FRLayout<Vertex, Edge> layout;
+	private ObservableCachingLayout<Vertex, Edge> layout;
+	private FRLayout<Vertex, Edge> frLayout;
     private Graph<Vertex, Edge> graph;
     
     // has the graph changed since we last completed the layout algo?
@@ -121,7 +124,8 @@ public class LayoutBuilder {
 	
 	private LayoutBuilder(Collection<ObjectReference> initialSet, int depth) {
         graph = new DirectedSparseGraph<Vertex, Edge>();
-        layout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
+        frLayout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
+        layout = new ObservableCachingLayout<Vertex, Edge>(frLayout);
         
      // construct the graph
         Vertex dummy = new DummyVertex(layout);
@@ -190,7 +194,7 @@ public class LayoutBuilder {
 
 
     void setPosition(Vertex v, double x, double y) {
-        layout.setLocation(v, x, y);
+        layout.setLocation(v, new Point2D.Double(x, y));
     }
 
 }
