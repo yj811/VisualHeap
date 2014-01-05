@@ -27,10 +27,10 @@ public class DummyVertex extends Vertex {
 	@Override
 	public void createInWorld(Game game) {
 		Box box = new Box(1,1,1);
-        Geometry obj = new Geometry("Box", box );
-        obj.setMaterial(game.getMagentaGlowMaterial());
+        geo = new Geometry("Box", box );
+        geo.setMaterial(game.getMagentaGlowMaterial());
         // make obj visible on scene and collidable
-        game.addCollidable(obj); 
+        game.addCollidable(geo); 
 	}
 
 	@Override
