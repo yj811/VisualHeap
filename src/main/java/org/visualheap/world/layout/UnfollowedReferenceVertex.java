@@ -19,12 +19,8 @@ import edu.uci.ics.jung.graph.Graph;
 
 public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 
-	private LayoutBuilder layoutBuilder;
-
-    public UnfollowedReferenceVertex(ObjectReference ref, 
-			Layout<Vertex, Edge> layout, LayoutBuilder layoutBuilder) {
-		super(ref, layout);
-		this.layoutBuilder = layoutBuilder;
+    public UnfollowedReferenceVertex(ObjectReference ref, LayoutBuilder lb) {
+		super(ref, lb);
 	}
 
 	@Override
@@ -42,23 +38,17 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 		
 		System.out.println("click unfollowed reference");
 		
-		Graph<Vertex, Edge> graph = layout.getGraph();
-		
 		// replace this vertex in the graph with an ObjectRefernceVertex
-		ObjectReferenceVertex newVert = new ObjectReferenceVertex(objRef, layout);
-		for(Edge e : graph.getInEdges(this)) {
-			Vertex start = e.start;
-			graph.addEdge(new Edge(layout, start, newVert), start, newVert);
-		}
-		graph.removeVertex(this);
+		ObjectReferenceVertex newVert = new ObjectReferenceVertex(objRef, lb);
+		lb.replace(this, newVert);
+		/*
+		*/
 		
 		Vector3f myPos = geo.getLocalTranslation();
-		layoutBuilder.setPosition(newVert, myPos.x, myPos.y);
+		lb.setPosition(newVert, myPos.x, myPos.y);
 		
 		// add children to layout.
-		layoutBuilder.visitChildren(graph, newVert, 0);
-		
-		game.rebuildWorld();
+		lb.visitChildren(newVert, 0);
 		
 	}
 

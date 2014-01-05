@@ -20,8 +20,8 @@ import com.sun.jdi.Value;
  */
 public class DummyVertex extends Vertex {
 
-	public DummyVertex(Layout<Vertex, Edge> layout) {
-		super(layout);
+	public DummyVertex(LayoutBuilder lb) {
+		super(lb);
 	}
 
 	@Override

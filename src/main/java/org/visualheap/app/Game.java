@@ -66,8 +66,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Material matBrick;
 	private BulletAppState bulletAppState;
 	private CharacterControl player;
-	private Node collidables;
-	private Node nonCollidables;
+	private Node collidables = new Node();
+	private Node nonCollidables = new Node();
 	private BitmapText objInfo;
 	private Geometry target;
 	private Graph<Vertex, Edge> graph;
@@ -92,6 +92,7 @@ public class Game extends SimpleApplication implements ActionListener {
     private volatile boolean running;
 
     private HashMap<ReferenceType, Material> materialHashMap;
+    private Collection<ObjectReference> referencesOnStack;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -106,7 +107,7 @@ public class Game extends SimpleApplication implements ActionListener {
             }
         };
 
-        Debugger debugger = new Debugger(CLASSPATH, ARRAY, 19, listener);
+        Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 21, listener);
         game.setDebugger(debugger);
     }
     
@@ -127,10 +128,7 @@ public class Game extends SimpleApplication implements ActionListener {
 
 			@Override
 			public void run() {
-				LayoutBuilder lb
-					= LayoutBuilder.fromObjectReferences(initialSet, 3);
-				
-                useLayoutBuilder(lb);
+			    setReferencesOnStack(initialSet);
                 setShowSettings(false);
                 start();
 			}
@@ -148,12 +146,10 @@ public class Game extends SimpleApplication implements ActionListener {
 		this.d = debugger;
 	}
 	
-	
-	private void useLayoutBuilder(LayoutBuilder lb) {
-		this.layoutBuilder = lb;
+	private void setReferencesOnStack(Collection<ObjectReference> referencesOnStack) {
+	    this.referencesOnStack = referencesOnStack;
+	    
 	}
-	
-
 
 	/**
 	 * Executed by JME when the game starts up.
@@ -197,11 +193,9 @@ public class Game extends SimpleApplication implements ActionListener {
 
 		
 		// will hold all collidable objects.
-		collidables = new Node();
 		rootNode.attachChild(collidables);
 		
 		// will hold everything else
-		nonCollidables = new Node();
 		rootNode.attachChild(nonCollidables);
 	
         // some initial physics setup
@@ -209,6 +203,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	    stateManager.attach(bulletAppState);
 		
 		constructWorld();
+
+		layoutBuilder = LayoutBuilder.fromObjectReferences(referencesOnStack, this, 1);
 		
 		setupCrossHairs();
 		setupPlayer();
@@ -265,7 +261,6 @@ public class Game extends SimpleApplication implements ActionListener {
 	/**
 	 * tell the Game that the graph has changed - it should update the 
 	 * graphics and rerun the layout algorithm to reflect that.
-	 */
 	public void rebuildWorld() {
 		
 		rootNode.detachChild(collidables);
@@ -277,12 +272,13 @@ public class Game extends SimpleApplication implements ActionListener {
 		constructWorld();
 		
 	}
+	 */
 
 	
 	private void constructWorld() {
 		
 	    // put the vertices in the world.
-	    layoutBuilder.displayGraph(this);
+	    // layoutBuilder.displayGraph(this);
 	    
 	    addGridSquare();
 	}
@@ -373,6 +369,9 @@ public class Game extends SimpleApplication implements ActionListener {
 	 */
 	@Override
 	public void simpleUpdate(float tpf) {
+	    
+	    layoutBuilder.stepLayoutAlgorithm();
+	    
 		camDir.set(cam.getDirection()).multLocal(WALK_SPEED);
 		camLeft.set(cam.getLeft()).multLocal(WALK_SPEED);
 		camUp.set(cam.getUp()).multLocal(WALK_SPEED);
@@ -489,6 +488,14 @@ public class Game extends SimpleApplication implements ActionListener {
     public void sync(Object object) {
         //TODO: given an object representing the updates to the heap, update the user view.
 
+    }
+
+    public void removeCollidable(Geometry geo) {
+        collidables.detachChild(geo);
+    }
+    
+    public void removeNonCollidable(Geometry geo) {
+        nonCollidables.detachChild(geo);
     }
 
 

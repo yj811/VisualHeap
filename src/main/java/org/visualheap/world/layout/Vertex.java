@@ -5,6 +5,9 @@ import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.visualheap.app.Game;
 
 import com.jme3.export.JmeExporter;
@@ -21,16 +24,25 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
  * @author oliver
  *
  */
-public abstract class Vertex implements Savable {
+public abstract class Vertex implements Savable, ChangeListener {
     
-    protected Layout<Vertex, Edge> layout;
+    protected LayoutBuilder lb;
     protected Geometry geo;
     
-    Vertex(Layout<Vertex, Edge> layout) {
-        this.layout = layout;
+    Vertex(LayoutBuilder lb) {
+        this.lb = lb;
         // construction of the geometry delegated to subclasses, so we can have
         // different sizes / shapes etc.
         geo = createGeometry();
+        lb.registerVertex(this);
+    }
+    
+    Vertex(LayoutBuilder lb, boolean register) {
+        this.lb = lb;
+        geo = createGeometry();
+        if(register) {
+            lb.registerVertex(this);
+        }
     }
 
     /**
@@ -64,7 +76,7 @@ public abstract class Vertex implements Savable {
 	 * tell the Vertex to update it's position by asking the layout
 	 */
 	public void updatePosition() {
-        Point2D location = layout.transform(this);
+        Point2D location = lb.getPosition(this); 
         geo.setLocalTranslation((float)location.getX(), 0, (float)location.getY());
     }
 	
@@ -80,5 +92,15 @@ public abstract class Vertex implements Savable {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	// implement ChangeListener
+	@Override
+	public void stateChanged(ChangeEvent e) {
+	    updatePosition();
+	}
+
+    void removeFromWorld(Game game) {
+        game.removeCollidable(geo);
+    }
 	
 }

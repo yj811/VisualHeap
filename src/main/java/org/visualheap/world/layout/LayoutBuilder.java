@@ -42,6 +42,8 @@ public class LayoutBuilder {
     // has the graph changed since we last completed the layout algo?
     private boolean layoutUpToDate = true;
 
+    private Game game;
+
 	/**
 	 * builds a graph of the heap to depth specified.
 	 * @param debugger a debugger object (doesn't need to be the main one...)
@@ -49,9 +51,10 @@ public class LayoutBuilder {
 	 * @param depth depth to search to (unimplemented)
 	 * @return returns a graph layout
 	 */
-	public static LayoutBuilder fromObjectReferences(Collection<ObjectReference> initialSet, int depth) {
+	public static LayoutBuilder fromObjectReferences(
+	        Collection<ObjectReference> initialSet, Game game, int depth) {
 		
-	    return new LayoutBuilder(initialSet, depth);
+	    return new LayoutBuilder(initialSet, game, depth);
 	    
 	}
 	    
@@ -70,34 +73,33 @@ public class LayoutBuilder {
 		ObjectReferenceVertex vert = objRefMapping.get(ref);
 		
 		if(vert == null) {
-			vert = new ObjectReferenceVertex(ref, layout);
+			vert = new ObjectReferenceVertex(ref, this);
 			objRefMapping.put(ref, vert);
 		}
-			
+		
 		return vert;
 	}
 	
 	/**
 	 * adds children of parent to graph so long as depth > 0
-	 * @param graph graph to add children to
 	 * @param parent Vertex to add children of
 	 * @param depth depth to search to
 	 */
-	void visitChildren(Graph<Vertex, Edge> graph, Vertex parent, int depth) {
+	void visitChildren(Vertex parent, int depth) {
 		for(Value child : parent.getChildren()) {
 			Vertex childVert = null;
 			
 			if(child == null) {
 				// field of object was a null reference
 				
-				childVert = new NullReferenceVertex(layout);
+				childVert = new NullReferenceVertex(this);
 				
 			} else if(child instanceof ObjectReference) {
 				// field was an ObjectReference
 				ObjectReference childObjRef = (ObjectReference)child;
 				if(depth == 0) {
 					// stopped searching, mark reference as unfollowed.
-					childVert = new UnfollowedReferenceVertex(childObjRef, layout, this);
+					childVert = new UnfollowedReferenceVertex(childObjRef, this);
 				} else {
 					
 					// try to find an existing vertex for this reference
@@ -105,10 +107,10 @@ public class LayoutBuilder {
 					
 					if(vert == null) {
 						// no pre-existing vertex, make a new one
-						vert = new ObjectReferenceVertex(childObjRef, layout);
+						vert = new ObjectReferenceVertex(childObjRef, this);
 						objRefMapping.put(childObjRef, vert);
 						// explore successors of this vertex.
-						visitChildren(graph, vert, depth - 1);
+						visitChildren(vert, depth - 1);
 					}
 					childVert = vert;
 				}
@@ -117,26 +119,27 @@ public class LayoutBuilder {
 			
 			if(childVert != null) {
 			    layoutUpToDate = false;
-				graph.addEdge(new Edge(layout, parent, childVert), parent, childVert);
+				graph.addEdge(new Edge(this, parent, childVert), parent, childVert);
 			}
 		}
 	}
 	
-	private LayoutBuilder(Collection<ObjectReference> initialSet, int depth) {
+	private LayoutBuilder(Collection<ObjectReference> initialSet, Game game, int depth) {
         graph = new DirectedSparseGraph<Vertex, Edge>();
         frLayout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
         layout = new ObservableCachingLayout<Vertex, Edge>(frLayout);
+        this.game = game;
         
      // construct the graph
-        Vertex dummy = new DummyVertex(layout);
+        Vertex dummy = new DummyVertex(this);
         
         for(ObjectReference ref : initialSet) {
             
             ObjectReferenceVertex vert = getVertexFromObjRef(layout, ref);
             
             layoutUpToDate = false;
-            graph.addEdge(new Edge(layout, dummy, vert), dummy, vert);
-            visitChildren(graph, vert, depth - 1);
+            graph.addEdge(new Edge(this, dummy, vert), dummy, vert);
+            visitChildren(vert, depth - 1);
         }
         
         runLayoutAlgorithm();
@@ -154,6 +157,10 @@ public class LayoutBuilder {
             layout.step();
         }
         layoutUpToDate = true;
+       
+        layout.clear(); // clear layout cache
+
+        layout.fireStateChanged();
     }
     
     /**
@@ -169,32 +176,44 @@ public class LayoutBuilder {
         
         if(!layout.done()) {
             layout.step();
+            layout.clear(); // clear cache
+            layout.fireStateChanged();
         }
         
         if(layout.done()) {
             layoutUpToDate = true;
         }
-    }
-
-    /**
-     * Iterates through all objects in the graph, creating objects in the 3d
-     * world corresponding to each vertex and edge
-     */
-    public void displayGraph(Game game) {
-        // draw the vertices
-        for (Vertex vertex : graph.getVertices()) {
-            vertex.createInWorld(game);
-        }
         
-        for (Edge edge : graph.getEdges()) {
-            edge.createInWorld(game);
-        }
     }
-
-
 
     void setPosition(Vertex v, double x, double y) {
         layout.setLocation(v, new Point2D.Double(x, y));
+    }
+    
+    Point2D getPosition(Vertex v) {
+        return layout.transform(v);
+    }
+    
+    void registerVertex(Vertex v) {
+        layout.addChangeListener(v);
+        v.createInWorld(game);
+    }
+
+    void registerEdge(Edge edge) {
+        layout.addChangeListener(edge);
+        edge.createInWorld(game);
+    }
+
+    void replace(Vertex oldVert, Vertex newVert) {
+		for(Edge e : graph.getInEdges(oldVert)) {
+			Vertex start = e.start;
+			graph.addEdge(new Edge(this, start, newVert), start, newVert);
+			e.removeFromWorld(game);
+		}
+		graph.removeVertex(oldVert);
+		layout.removeChangeListener(oldVert);
+		oldVert.removeFromWorld(game);
+        
     }
 
 }

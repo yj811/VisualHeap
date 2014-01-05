@@ -2,6 +2,9 @@ package org.visualheap.world.layout;
 
 import java.awt.geom.Point2D;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.visualheap.app.Game;
 
 import com.jme3.math.Vector3f;
@@ -18,16 +21,20 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
  * @author oliver
  *
  */
-public class Edge {
+public class Edge implements ChangeListener {
 	
-	protected Layout<Vertex, Edge> layout;
 	protected Vertex start;
 	protected Vertex end;
+    private Line line;
+    private LayoutBuilder lb;
+    private Geometry geo;
 
-	public Edge(Layout<Vertex, Edge> layout, Vertex start, Vertex end) {
-		this.layout = layout;
+	public Edge(LayoutBuilder lb, Vertex start, Vertex end) {
+	    this.lb = lb;
 		this.start = start;
 		this.end = end;
+		
+		lb.registerEdge(this);
 	}
 	
 	private Vector3f threedeeify(Point2D point) {
@@ -37,16 +44,27 @@ public class Edge {
 	
 	public void createInWorld(Game game) {
 		
-		Point2D startPoint = layout.transform(start);
-		Point2D endPoint = layout.transform(end);		
+		Point2D startPoint = lb.getPosition(start); 
+		Point2D endPoint = lb.getPosition(end);
 		
-		Line line = new Line(threedeeify(startPoint), threedeeify(endPoint));
+		line = new Line(threedeeify(startPoint), threedeeify(endPoint));
 		line.setLineWidth(5);
-		Geometry g = new Geometry("line", line);
+		geo = new Geometry("line", line);
 		
-        g.setMaterial(game.getMagentaGlowMaterial());
-		g.setMesh(line);
-		game.addNonCollidable(g); // non - collidable
+        geo.setMaterial(game.getMagentaGlowMaterial());
+		geo.setMesh(line);
+		game.addNonCollidable(geo); // non - collidable
 	}
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+		Point2D startPoint = lb.getPosition(start);
+		Point2D endPoint = lb.getPosition(end); 
+		line.updatePoints(threedeeify(startPoint), threedeeify(endPoint));
+    }
+
+    void removeFromWorld(Game game) {
+        game.removeNonCollidable(geo);
+    }
 
 }

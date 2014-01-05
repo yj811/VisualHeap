@@ -24,9 +24,10 @@ public class ObjectReferenceVertex extends Vertex {
 
 	protected ObjectReference objRef;
 	
-	public ObjectReferenceVertex(ObjectReference ref, Layout<Vertex, Edge> layout) {
-	    super(layout);
+	public ObjectReferenceVertex(ObjectReference ref, LayoutBuilder lb) {
+	    super(lb, false);
 	    objRef = ref;
+	    lb.registerVertex(this);
 	}
 
 	/**

@@ -10,8 +10,8 @@ import java.util.Collection;
 
 public class NullReferenceVertex extends Vertex {
 
-	public NullReferenceVertex(Layout<Vertex, Edge> layout) {
-		super(layout);
+	public NullReferenceVertex(LayoutBuilder lb) {
+		super(lb);
 	}
 
 	@Override
