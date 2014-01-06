@@ -172,11 +172,12 @@ class DebuggerEventThread extends Thread {
         excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         excReq.enable();
 
-
+        /*
         ThreadDeathRequest tdr = mgr.createThreadDeathRequest();
         // Make sure we sync on thread death
         tdr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         tdr.enable();
+        */
         
         VMDeathRequest vmdr = mgr.createVMDeathRequest();
         vmdr.setSuspendPolicy(EventRequest.SUSPEND_ALL); // is this necessary?
@@ -233,6 +234,7 @@ class DebuggerEventThread extends Thread {
     private void methodEntryEvent(MethodEntryEvent event) {
 		if (event.method().name().equals("main")) {
 			checkBreakpoints();
+			event.request().disable();
 		}
 	}
 

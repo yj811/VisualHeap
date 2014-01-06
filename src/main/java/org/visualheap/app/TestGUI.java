@@ -306,8 +306,17 @@ public class TestGUI extends NullListener {
 			if(f.exists()) { 
 				prepareVM();
 			} else {
-				state = GUI_STATE.UNLOADED;
-				setButtonsByState();
+				finalPath.setLength(0);
+				finalPath.append(edtClassPath.getText());
+				File j = new File(finalPath.toString());
+				if (edtClassName.getText().isEmpty()) return;
+				if (edtClassPath.getText().isEmpty()) return;
+				if(j.exists()) { 
+					prepareVM();
+				} else {
+					state = GUI_STATE.UNLOADED;
+					setButtonsByState();
+				}
 			}
 		}
 	} 

@@ -290,7 +290,7 @@ public class Debugger {
 		} catch (IOException exc) {
 			throw new Error("Unable to launch target VM: " + exc);
 		} catch (IllegalConnectorArgumentsException exc) {
-			throw new Error("Internal error: " + exc);
+			throw new Error("Internal error: " + exc.argumentNames());
 		} catch (VMStartException exc) {
 			throw new Error("Target VM failed to initialize: " +
 					exc.getMessage());
@@ -315,13 +315,19 @@ public class Debugger {
 	 */
 	private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, String mainArgs) {
 		Map<String, Connector.Argument> arguments = connector.defaultArguments();
+		
+		Connector.Argument optionArg =
+				(Connector.Argument)arguments.get("options");
 		Connector.Argument mainArg =
 				(Connector.Argument)arguments.get("main");
 		if (mainArg == null) {
 			throw new Error("Bad launching connector");
 		}
-		mainArg.setValue(mainArgs);
-
+		if (optionArg == null) {
+			throw new Error("Bad launching connector");
+		}
+		mainArg.setValue(mainClass);
+		optionArg.setValue("-cp " + innerClassPath);
 		return arguments;
 	}
 
