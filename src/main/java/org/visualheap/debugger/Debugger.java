@@ -124,6 +124,10 @@ public class Debugger {
 	public final InputStream getOutput() {
 		return vm.process().getInputStream();
 	}
+	
+	public final InputStream getErrOutput() {
+		return vm.process().getErrorStream();
+	}
 
 	/**
 	 * Allows the debugger's target classpath can be configured, before execution.
@@ -320,4 +324,7 @@ public class Debugger {
 
 		return arguments;
 	}
+
+
+	
 }
