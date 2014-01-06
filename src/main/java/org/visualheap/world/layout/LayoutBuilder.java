@@ -23,8 +23,6 @@ import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
  *
  */
 public class LayoutBuilder {
-	
-
 	/**
 	 * So that JUNG displays cyclic graphs correctly, we want to maintain a 
 	 * 1 - 1 mapping between ObjectReference's and ObjectReferenceVertex's
@@ -51,14 +49,10 @@ public class LayoutBuilder {
 	 * @param depth depth to search to (unimplemented)
 	 * @return returns a graph layout
 	 */
-	public static LayoutBuilder fromObjectReferences(
-	        Collection<ObjectReference> initialSet, Game game, int depth) {
-		
+	public static LayoutBuilder fromObjectReferences(Collection<ObjectReference> initialSet,
+                                                     Game game, int depth) {
 	    return new LayoutBuilder(initialSet, game, depth);
-	    
 	}
-	    
-		
 
 	/**
 	 * either creates a new ObjectReferenceVertex for this object reference,
@@ -67,9 +61,8 @@ public class LayoutBuilder {
 	 * @param ref ObjectReference to lookup
 	 * @return the ObjectReferenceVertex for this ObjectReference
 	 */
-	private ObjectReferenceVertex getVertexFromObjRef(
-			Layout<Vertex, Edge> layout, ObjectReference ref) {
-		
+	private ObjectReferenceVertex getVertexFromObjRef(Layout<Vertex, Edge> layout,
+                                                      ObjectReference ref) {
 		ObjectReferenceVertex vert = objRefMapping.get(ref);
 		
 		if(vert == null) {
@@ -130,20 +123,17 @@ public class LayoutBuilder {
         layout = new ObservableCachingLayout<Vertex, Edge>(frLayout);
         this.game = game;
         
-     // construct the graph
+        // construct the graph
         Vertex dummy = new DummyVertex(this);
         
         for(ObjectReference ref : initialSet) {
-            
             ObjectReferenceVertex vert = getVertexFromObjRef(layout, ref);
-            
             layoutUpToDate = false;
             graph.addEdge(new Edge(this, dummy, vert), dummy, vert);
             visitChildren(vert, depth - 1);
         }
         
         runLayoutAlgorithm();
-        
     }
 
 	/**
@@ -157,9 +147,7 @@ public class LayoutBuilder {
             layout.step();
         }
         layoutUpToDate = true;
-       
         layout.clear(); // clear layout cache
-
         layout.fireStateChanged();
     }
     
@@ -183,7 +171,6 @@ public class LayoutBuilder {
         if(layout.done()) {
             layoutUpToDate = true;
         }
-        
     }
 
     void setPosition(Vertex v, double x, double y) {
@@ -196,6 +183,7 @@ public class LayoutBuilder {
     
     void registerVertex(Vertex v) {
         layout.addChangeListener(v);
+        //checkLayoutDimension();
         v.createInWorld(game);
     }
 
@@ -213,7 +201,9 @@ public class LayoutBuilder {
 		graph.removeVertex(oldVert);
 		layout.removeChangeListener(oldVert);
 		oldVert.removeFromWorld(game);
-        
     }
 
+    void checkLayoutDimension() {
+        int vertexCount = layout.getGraph().getVertexCount();
+    }
 }

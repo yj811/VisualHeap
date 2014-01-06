@@ -102,5 +102,4 @@ public abstract class Vertex implements Savable, ChangeListener {
     void removeFromWorld(Game game) {
         game.removeCollidable(geo);
     }
-	
 }
