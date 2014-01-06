@@ -47,6 +47,7 @@ public class TestGUI extends NullListener {
 	private volatile GUI_STATE state;
 	private volatile StringBuilder finalPath;
 	private InputStreamThread istConsoleOutput;
+	private InputStreamThread istConsoleErrOutput;
 	private String classPath;
 	private String className;
 	private Game visualiser;
@@ -260,6 +261,7 @@ public class TestGUI extends NullListener {
 			istConsoleOutput.finish();
 		}
 		istConsoleOutput = new InputStreamThread(taConsoleOutput);
+		istConsoleErrOutput = new InputStreamThread(taConsoleOutput);
 		classPath = edtClassPath.getText();
 		className = edtClassName.getText();
 		if (debugger == null) {
@@ -271,6 +273,8 @@ public class TestGUI extends NullListener {
 		debugger.addListener(this);
 		istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
 		istConsoleOutput.start();
+		istConsoleErrOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getErrOutput())));
+		istConsoleErrOutput.start();
 
 
 		state = GUI_STATE.LOADED;
@@ -302,8 +306,17 @@ public class TestGUI extends NullListener {
 			if(f.exists()) { 
 				prepareVM();
 			} else {
-				state = GUI_STATE.UNLOADED;
-				setButtonsByState();
+				finalPath.setLength(0);
+				finalPath.append(edtClassPath.getText());
+				File j = new File(finalPath.toString());
+				if (edtClassName.getText().isEmpty()) return;
+				if (edtClassPath.getText().isEmpty()) return;
+				if(j.exists()) { 
+					prepareVM();
+				} else {
+					state = GUI_STATE.UNLOADED;
+					setButtonsByState();
+				}
 			}
 		}
 	} 
