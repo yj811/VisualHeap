@@ -407,7 +407,8 @@ public class TestGUI extends NullListener {
 
 	private class StepButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			btnStep.setEnabled(false);
+			state = GUI_STATE.STARTED;
+			setButtonsByState();
 			debugger.step();
 		}
 	}
