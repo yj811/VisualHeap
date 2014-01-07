@@ -120,6 +120,7 @@ class DebuggerEventThread extends Thread {
                 break;
             }
         }
+        System.err.println("Closing event thread");
     }
     
     public List<Location> getBreakpointableLines(ReferenceType classType) throws AbsentInformationException {

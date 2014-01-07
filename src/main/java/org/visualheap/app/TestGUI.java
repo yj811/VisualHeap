@@ -73,7 +73,7 @@ public class TestGUI extends NullListener {
 	private final JFileChooser fc = new JFileChooser();
 
 	private enum GUI_STATE {
-		UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED
+		UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED, CLOSING
 	}
 
 	/**
@@ -189,10 +189,12 @@ public class TestGUI extends NullListener {
 
 			@Override
 			public void run() {
+				
 				btnStep.setEnabled(false);
 				btnResume.setEnabled(false);
 				state = GUI_STATE.UNLOADED;
 				setButtonsByState();
+				
 				prepareVM();
 
 			}
@@ -257,6 +259,7 @@ public class TestGUI extends NullListener {
 	}
 
 	private void prepareVM() {
+		
 		if (istConsoleOutput != null && !istConsoleOutput.finished()) {
 			istConsoleOutput.finish();
 		}
@@ -295,6 +298,7 @@ public class TestGUI extends NullListener {
 		}
 
 		private void buildUpdate(DocumentEvent e) {
+			
 			finalPath.setLength(0);
 			finalPath.append(edtClassPath.getText());
 			finalPath.append("/");
@@ -303,7 +307,7 @@ public class TestGUI extends NullListener {
 			// if the new string results in a final product, load the VM auto-magically.
 
 			File f = new File(finalPath.toString());
-			if(f.exists()) { 
+			if(f.exists() && f.isDirectory()) { 
 				prepareVM();
 			} else {
 				finalPath.setLength(0);
@@ -311,7 +315,7 @@ public class TestGUI extends NullListener {
 				File j = new File(finalPath.toString());
 				if (edtClassName.getText().isEmpty()) return;
 				if (edtClassPath.getText().isEmpty()) return;
-				if(j.exists()) { 
+				if(j.exists()  && j.isFile()) { 
 					prepareVM();
 				} else {
 					state = GUI_STATE.UNLOADED;
@@ -375,7 +379,7 @@ public class TestGUI extends NullListener {
 					}
 				}
 			}
-
+			
 			state = GUI_STATE.STARTED;
 			setButtonsByState();
 
@@ -396,8 +400,11 @@ public class TestGUI extends NullListener {
 
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				state = GUI_STATE.CLOSING;
+				debugger.kill();
 				if (visualiser != null && visualiser.isRunning()) {
 					visualiser.stop();
+					
 				}
 			}
 		});

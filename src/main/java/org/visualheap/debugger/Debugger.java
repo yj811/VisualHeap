@@ -120,6 +120,12 @@ public class Debugger {
 	public final void resume() {
 		vm.resume();
 	}
+	
+	public final void kill() {
+		if (vm != null) {
+			vm.exit(0);
+		}
+	}
 
 	public final InputStream getOutput() {
 		return vm.process().getInputStream();
