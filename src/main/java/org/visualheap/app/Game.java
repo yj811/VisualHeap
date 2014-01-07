@@ -172,7 +172,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	    
 	    magentaGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    magentaGlowMat.setColor("Color", ColorRGBA.Magenta);
-	    magentaGlowMat.setColor("GlowColor", ColorRGBA.Magenta);
+	    //magentaGlowMat.setColor("GlowColor", ColorRGBA.Magenta);
 	    
 	    yellowGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    yellowGlowMat.setColor("Color", ColorRGBA.Yellow);
@@ -464,7 +464,7 @@ public class Game extends SimpleApplication implements ActionListener {
         mat1.setColor("Color", ColorRGBA.White);
         
         Texture quadTexture = assetManager.loadTexture(
-                "textures/grid.jpg");
+                "textures/floor.png");
         quadTexture.setWrap(Texture.WrapMode.Repeat);
         q.scaleTextureCoordinates(new Vector2f(500,500));
         mat1.setTexture("ColorMap", quadTexture);

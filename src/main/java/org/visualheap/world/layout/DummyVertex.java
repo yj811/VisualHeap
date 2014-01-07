@@ -1,14 +1,11 @@
 package org.visualheap.world.layout;
 
-import java.awt.geom.Point2D;
 import java.util.Collection;
 
 import org.visualheap.app.Game;
 
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-
-import edu.uci.ics.jung.algorithms.layout.Layout;
 
 import com.sun.jdi.Value;
 
@@ -28,7 +25,7 @@ public class DummyVertex extends Vertex {
 	public void createInWorld(Game game) {
 		Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
         geo = new Geometry("Box", box );
-        geo.setMaterial(game.getMagentaGlowMaterial());
+        geo.setMaterial(game.getGreenGlowMaterial());
         // make obj visible on scene and collidable
         game.addCollidable(geo); 
 	}

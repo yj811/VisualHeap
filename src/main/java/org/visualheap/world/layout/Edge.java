@@ -5,15 +5,12 @@ import java.awt.geom.Point2D;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.jme3.material.Material;
 import org.visualheap.app.Game;
 
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.shape.Line;
-
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 
 /**
  * represents an edge (i.e. a reference) between two objects
@@ -43,8 +40,7 @@ public class Edge implements ChangeListener {
 	}
 	
 	public void createInWorld(Game game) {
-		
-		Point2D startPoint = lb.getPosition(start); 
+		Point2D startPoint = lb.getPosition(start);
 		Point2D endPoint = lb.getPosition(end);
 		
 		line = new Line(threedeeify(startPoint), threedeeify(endPoint));

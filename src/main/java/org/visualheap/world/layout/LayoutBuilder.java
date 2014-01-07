@@ -8,11 +8,10 @@ import java.util.Map;
 
 import org.visualheap.app.Game;
 
-import com.jme3.scene.Geometry;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.ISOMLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -36,10 +35,10 @@ public class LayoutBuilder {
 		= new HashMap<ObjectReference, ObjectReferenceVertex>();
 	
 	private ObservableCachingLayout<Vertex, Edge> layout;
-	private FRLayout<Vertex, Edge> frLayout;
+    private ISOMLayout<Vertex, Edge> isomLayout;
     private Graph<Vertex, Edge> graph;
     
-    // has the graph changed since we last completed the layout algo?
+    // has the graph changed since we last completed the layout algorithm?
     private boolean layoutUpToDate = true;
     private Game game;
 
@@ -85,9 +84,7 @@ public class LayoutBuilder {
 			
 			if(child == null) {
 				// field of object was a null reference
-				
 				childVert = new NullReferenceVertex(this);
-				
 			} else if(child instanceof ObjectReference) {
 				// field was an ObjectReference
 				ObjectReference childObjRef = (ObjectReference)child;
@@ -95,7 +92,6 @@ public class LayoutBuilder {
 					// stopped searching, mark reference as unfollowed.
 					childVert = new UnfollowedReferenceVertex(childObjRef, this);
 				} else {
-					
 					// try to find an existing vertex for this reference
 					ObjectReferenceVertex vert = objRefMapping.get(childObjRef);
 					
@@ -108,7 +104,6 @@ public class LayoutBuilder {
 					}
 					childVert = vert;
 				}
-
 			}
 			
 			if(childVert != null) {
@@ -120,8 +115,9 @@ public class LayoutBuilder {
 	
 	private LayoutBuilder(Collection<ObjectReference> initialSet, Game game, int depth) {
         graph = new DirectedSparseGraph<Vertex, Edge>();
-        frLayout = new FRLayout<Vertex, Edge>(graph, new Dimension(BASE_SIZE, BASE_SIZE));
-        layout = new ObservableCachingLayout<Vertex, Edge>(frLayout);
+        isomLayout = new ISOMLayout<Vertex, Edge>(graph);
+        isomLayout.setSize(new Dimension(BASE_SIZE, BASE_SIZE));
+        layout = new ObservableCachingLayout<Vertex, Edge>(isomLayout);
         this.game = game;
         
         // construct the graph
@@ -209,7 +205,7 @@ public class LayoutBuilder {
         double scale = Math.sqrt(vertexCount);
         if (!(scale < 1)) {
             int newDim = (int) Math.round(BASE_SIZE * scale);
-            frLayout.setSize(new Dimension(newDim, newDim));
+            isomLayout.setSize(new Dimension(newDim, newDim));
         }
     }
 }

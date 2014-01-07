@@ -48,7 +48,7 @@ public class ObjectReferenceVertex extends Vertex {
         }
 
         // Set size
-        int size = 1;
+        int size = BASE_BOX;
         if (type.fieldByName("size") != null) {
             Field f = type.fieldByName("size");
             size = Integer.parseInt(objRef.getValue(f).toString());

@@ -42,7 +42,7 @@ public class NullReferenceVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Sphere sphere = new Sphere(32, 32, 1f);
+        Sphere sphere = new Sphere(32, 32, 3f);
         return new Geometry("sphere", sphere);
     }
 

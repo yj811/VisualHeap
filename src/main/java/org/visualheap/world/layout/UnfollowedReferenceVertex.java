@@ -18,6 +18,7 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
 
 public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
+    private final int MINI_BOX = 3;
 
     public UnfollowedReferenceVertex(ObjectReference ref, LayoutBuilder lb) {
 		super(ref, lb);
@@ -26,6 +27,7 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 	@Override
 	public void createInWorld(Game game) {
         geo.setMaterial(game.getYellowGlowMaterial());
+        geo.setLocalScale(MINI_BOX);
         geo.setUserData("vertex", this);
         
         updatePosition();
