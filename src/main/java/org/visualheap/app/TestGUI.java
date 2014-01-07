@@ -226,6 +226,7 @@ public class TestGUI extends NullListener {
 
 	private void setButtonsByState() {
 		switch (state) {
+		case FINISHED_ERROR:
 		case FINISHED:
 			btnNewBreakpoint.setEnabled(true);
 			btnRemoveBreakpoint.setEnabled(true);
