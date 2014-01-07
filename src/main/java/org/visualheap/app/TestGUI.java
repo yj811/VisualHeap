@@ -85,7 +85,7 @@ public class TestGUI extends NullListener {
 	
 
 	private enum GUI_STATE {
-		UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED, CLOSING
+		UNLOADED, LOADED, STARTED, SUSPENDED, FINISHED, FINISHED_ERROR, CLOSING
 	}
 
 	/**
@@ -202,10 +202,17 @@ public class TestGUI extends NullListener {
 
 			@Override
 			public void run() {
-				if (state.equals(GUI_STATE.FINISHED)) {
+				if (state.equals(GUI_STATE.STARTED)) {
+					state = GUI_STATE.FINISHED_ERROR;
+				}
+				
+				if (state.equals(GUI_STATE.FINISHED) || state.equals(GUI_STATE.FINISHED_ERROR)) {
 					state = GUI_STATE.LOADED;
 					setButtonsByState();
 					prepareVM();
+				} else {
+					state = GUI_STATE.LOADED;
+					setButtonsByState();
 				}
 			}
 		});
@@ -214,10 +221,12 @@ public class TestGUI extends NullListener {
 	@Override
 	public void exitedMain() {
 		state = GUI_STATE.FINISHED;
+		setButtonsByState();
 	}
 
 	private void setButtonsByState() {
 		switch (state) {
+		case FINISHED_ERROR:
 		case FINISHED:
 			btnNewBreakpoint.setEnabled(true);
 			btnRemoveBreakpoint.setEnabled(true);
@@ -283,7 +292,6 @@ public class TestGUI extends NullListener {
 		debugger.setClassName(className);
 		debugger.setClassPath(classPath);
 		debugger.setCmdArgs(cmdArgs);
-		System.err.println(state);
 		debugger.kill();
 		debugger.bootVM();
 		debugger.addListener(this);

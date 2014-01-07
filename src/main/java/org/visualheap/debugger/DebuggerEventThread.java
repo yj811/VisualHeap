@@ -65,6 +65,7 @@ class DebuggerEventThread extends Thread {
 	private List<Breakpoint> breakpointsToAdd = new Vector<Breakpoint>();
 	private List<Location> validBreakpointLines = new Vector<Location>();
 	private List<Breakpoint> invalidBreakpoints = new Vector<Breakpoint>();
+	private List<Breakpoint> validBreakpoints = new Vector<Breakpoint>();
 
 	private ThreadReference lastBreakpointedThread;
     private String lastBreakpointedClassName;
@@ -149,7 +150,6 @@ class DebuggerEventThread extends Thread {
         	//System.out.println(classType.name() + " line number " + line.lineNumber());
         	if(line.declaringType().equals(classType) && line.lineNumber() == bp.getLine()) {
         		bpLoc = line;
-        		
         	}
         }
 		
@@ -158,10 +158,12 @@ class DebuggerEventThread extends Thread {
 	    			.createBreakpointRequest(bpLoc);
 	    	bpReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 	    	bpReq.enable();
+	    	validBreakpoints.add(bp);
 		} else {
 		    invalidBreakpoints.add(bp);
 		    
 		}
+		
 	}
 
 
@@ -241,9 +243,10 @@ class DebuggerEventThread extends Thread {
 
     private void methodEntryEvent(MethodEntryEvent event) {
 		if (event.method().name().equals("main")) {
+			setupMethodExit(event.thread());
 			checkBreakpoints();
 			event.request().disable();
-			setupMethodExit(event.thread());
+			
 		}
 	}
 
@@ -340,7 +343,6 @@ class DebuggerEventThread extends Thread {
      */
     private void classPrepareEvent(ClassPrepareEvent event)  {
         //EventRequestManager mgr = vm.eventRequestManager();
-        
         ReferenceType refType = event.referenceType();
         
         
@@ -356,6 +358,7 @@ class DebuggerEventThread extends Thread {
 	        	System.out.println("found " + bp.getClassName());
 	        	
 	        	setBreakpoint(refType, bp);
+	        	
 	        }
         }
         
@@ -363,7 +366,8 @@ class DebuggerEventThread extends Thread {
     }
 
     private void checkBreakpoints() {
-		// TODO Auto-generated method stub
+    	breakpointsToAdd.removeAll(validBreakpoints);
+    	invalidBreakpoints.addAll(breakpointsToAdd);
     	if (invalidBreakpoints.size() > 0) {
     			//Terminate the virtual machine
     		
@@ -378,15 +382,16 @@ class DebuggerEventThread extends Thread {
     }
 
     public void vmDeathEvent(VMDeathEvent event) {
-        vmDied = true;
+    	System.out.println("vmdeath event");
+    	vmDied = true;
         connected = false;
         listener.vmDeath();
+        
     }
 
     public void vmDisconnectEvent(VMDisconnectEvent event) {
     	System.out.println("vm disconnect event");
         listener.vmDeath();
-        //System.out.println("called vmDeath");
         connected = false;
     }
 
@@ -399,14 +404,15 @@ class DebuggerEventThread extends Thread {
 		
 		Breakpoint bp = new Breakpoint(className, breakpointLine);
 		
-		List<ReferenceType> classes = vm.classesByName(className);
-		if(classes.isEmpty()) {	
-			// add this later
-			breakpointsToAdd.add(bp);
-		} else {
-			setBreakpoint(classes.get(0), bp);
+		if (connected) {
+			List<ReferenceType> classes = vm.classesByName(className);
+			if(classes.isEmpty()) {	
+				// add this later
+				breakpointsToAdd.add(bp);
+			} else {
+				setBreakpoint(classes.get(0), bp);
+			}
 		}
-		
 		
 		
 	}

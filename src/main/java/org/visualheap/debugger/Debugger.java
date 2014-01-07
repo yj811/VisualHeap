@@ -128,7 +128,7 @@ public class Debugger {
 				vm.exit(0);
 			}
 		} catch (Exception e) {
-			System.err.println(e.getStackTrace());
+			e.printStackTrace();
 		}
 	}
 
