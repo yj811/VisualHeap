@@ -63,8 +63,7 @@ public class ObjectReferenceVertex extends Vertex {
         
         updatePosition();
         // make obj visible on scene and collidable
-        game.addCollidable(geo); 
-        
+        game.addCollidable(geo);
 	}
 	
 	public String createInformation() {
@@ -102,5 +101,4 @@ public class ObjectReferenceVertex extends Vertex {
         Box box = new Box(1,1,1);
         return new Geometry("box", box );
     }
-	
 }

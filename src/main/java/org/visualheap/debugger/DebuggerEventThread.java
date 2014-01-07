@@ -132,6 +132,15 @@ class DebuggerEventThread extends Thread {
         
         return lines;
     }
+    
+    public boolean isConnected() {
+    	return connected;
+    }
+    
+    public boolean isVMdead() {
+    	return vmDied;
+    }
+    
 
 	private void setBreakpoint(ReferenceType classType, Breakpoint bp) {
 		Location bpLoc = null;
@@ -150,7 +159,6 @@ class DebuggerEventThread extends Thread {
 	    	bpReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
 	    	bpReq.enable();
 		} else {
-			//TODO pass a message to listeners which informs them of the invalid breakpoint.
 		    invalidBreakpoints.add(bp);
 		    
 		}
@@ -172,11 +180,12 @@ class DebuggerEventThread extends Thread {
         excReq.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         excReq.enable();
 
-
+        /*
         ThreadDeathRequest tdr = mgr.createThreadDeathRequest();
         // Make sure we sync on thread death
         tdr.setSuspendPolicy(EventRequest.SUSPEND_ALL);
         tdr.enable();
+        */
         
         VMDeathRequest vmdr = mgr.createVMDeathRequest();
         vmdr.setSuspendPolicy(EventRequest.SUSPEND_ALL); // is this necessary?
@@ -233,6 +242,8 @@ class DebuggerEventThread extends Thread {
     private void methodEntryEvent(MethodEntryEvent event) {
 		if (event.method().name().equals("main")) {
 			checkBreakpoints();
+			event.request().disable();
+			setupMethodExit(event.thread());
 		}
 	}
 
@@ -284,16 +295,20 @@ class DebuggerEventThread extends Thread {
     	lastBreakpointedThread = event.thread();
       
       
-      EventRequestManager mgr = vm.eventRequestManager();
-      MethodExitRequest mer = mgr.createMethodExitRequest();
-      mer.setSuspendPolicy(EventRequest.SUSPEND_NONE);
-      mer.addThreadFilter(thread);
-      mer.enable();
+      setupMethodExit(thread);
       
         
       StackFrame sf = getStackFrame(thread);
       listener.onBreakpoint(sf);
     }
+
+	private void setupMethodExit(ThreadReference thread) {
+		EventRequestManager mgr = vm.eventRequestManager();
+		  MethodExitRequest mer = mgr.createMethodExitRequest();
+		  mer.setSuspendPolicy(EventRequest.SUSPEND_NONE);
+		  mer.addThreadFilter(thread);
+		  mer.enable();
+	}
 
     private StackFrame getStackFrame(ThreadReference thread) {
         try {
@@ -364,13 +379,14 @@ class DebuggerEventThread extends Thread {
 
     public void vmDeathEvent(VMDeathEvent event) {
         vmDied = true;
+        connected = false;
         listener.vmDeath();
     }
 
     public void vmDisconnectEvent(VMDisconnectEvent event) {
     	System.out.println("vm disconnect event");
         listener.vmDeath();
-        System.out.println("called vmDeath");
+        //System.out.println("called vmDeath");
         connected = false;
     }
 

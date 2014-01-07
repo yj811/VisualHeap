@@ -54,6 +54,7 @@ public class Debugger {
 	private String innerClassPath = null;
 	private String mainClass;
 	private String mainArgs;
+	private String cmdArgs;
 	private DebugListener listener;
 	private DebuggerEventThread eventThread;
 
@@ -120,9 +121,23 @@ public class Debugger {
 	public final void resume() {
 		vm.resume();
 	}
+	
+	public final void kill() {
+		try {
+			if (vm != null && eventThread != null && eventThread.isConnected()) {
+				vm.exit(0);
+			}
+		} catch (Exception e) {
+			System.err.println(e.getStackTrace());
+		}
+	}
 
 	public final InputStream getOutput() {
 		return vm.process().getInputStream();
+	}
+	
+	public final InputStream getErrOutput() {
+		return vm.process().getErrorStream();
 	}
 
 	/**
@@ -140,6 +155,15 @@ public class Debugger {
 
 	public void setClassName(String className) {
 		this.mainClass = className;
+	}
+	
+	/**
+	 * Allows the debugger's target classname and package can be configured, before execution.
+	 *
+	 */
+
+	public void setCmdArgs(String cmdArgs) {
+		this.cmdArgs = cmdArgs;
 	}
 
 	/**
@@ -286,7 +310,7 @@ public class Debugger {
 		} catch (IOException exc) {
 			throw new Error("Unable to launch target VM: " + exc);
 		} catch (IllegalConnectorArgumentsException exc) {
-			throw new Error("Internal error: " + exc);
+			throw new Error("Internal error: " + exc.argumentNames());
 		} catch (VMStartException exc) {
 			throw new Error("Target VM failed to initialize: " +
 					exc.getMessage());
@@ -311,13 +335,22 @@ public class Debugger {
 	 */
 	private Map<String, Connector.Argument> connectorArguments(LaunchingConnector connector, String mainArgs) {
 		Map<String, Connector.Argument> arguments = connector.defaultArguments();
+		
+		Connector.Argument optionArg =
+				(Connector.Argument)arguments.get("options");
 		Connector.Argument mainArg =
 				(Connector.Argument)arguments.get("main");
 		if (mainArg == null) {
 			throw new Error("Bad launching connector");
 		}
-		mainArg.setValue(mainArgs);
-
+		if (optionArg == null) {
+			throw new Error("Bad launching connector");
+		}
+		mainArg.setValue(mainClass + " " + cmdArgs);
+		optionArg.setValue("-cp " + innerClassPath);
 		return arguments;
 	}
+
+
+	
 }
