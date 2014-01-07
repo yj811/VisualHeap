@@ -25,7 +25,8 @@ import edu.uci.ics.jung.algorithms.layout.Layout;
  *
  */
 public abstract class Vertex implements Savable, ChangeListener {
-    
+
+    protected final int BASE_BOX = 5;
     protected LayoutBuilder lb;
     protected Geometry geo;
     
