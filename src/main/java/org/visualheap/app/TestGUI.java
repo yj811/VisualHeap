@@ -180,7 +180,6 @@ public class TestGUI extends NullListener {
 			public void run() {
 				if (state.equals(GUI_STATE.FINISHED)) {
 					debugger.resume();
-					btnClasspath.setEnabled(true);
 				} else {
 					currentStackFrame = sf;
 					lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
@@ -203,16 +202,16 @@ public class TestGUI extends NullListener {
 
 			@Override
 			public void run() {
-				
 				if (!state.equals(GUI_STATE.UNLOADED)) {
-					btnStep.setEnabled(false);
-					btnResume.setEnabled(false);
 					state = GUI_STATE.UNLOADED;
 					setButtonsByState();
 
 					prepareVM();
+				} else {
+					state = GUI_STATE.LOADED;
+					setButtonsByState();
 				}
-
+				
 			}
 		});
 	}
