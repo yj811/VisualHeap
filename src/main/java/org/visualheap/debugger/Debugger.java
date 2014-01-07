@@ -54,6 +54,7 @@ public class Debugger {
 	private String innerClassPath = null;
 	private String mainClass;
 	private String mainArgs;
+	private String cmdArgs;
 	private DebugListener listener;
 	private DebuggerEventThread eventThread;
 
@@ -150,6 +151,15 @@ public class Debugger {
 
 	public void setClassName(String className) {
 		this.mainClass = className;
+	}
+	
+	/**
+	 * Allows the debugger's target classname and package can be configured, before execution.
+	 *
+	 */
+
+	public void setCmdArgs(String cmdArgs) {
+		this.cmdArgs = cmdArgs;
 	}
 
 	/**
@@ -332,8 +342,9 @@ public class Debugger {
 		if (optionArg == null) {
 			throw new Error("Bad launching connector");
 		}
-		mainArg.setValue(mainClass);
+		mainArg.setValue(mainClass + " " + cmdArgs);
 		optionArg.setValue("-cp " + innerClassPath);
+		System.err.println(arguments);
 		return arguments;
 	}
 

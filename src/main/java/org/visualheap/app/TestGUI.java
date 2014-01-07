@@ -56,6 +56,7 @@ public class TestGUI extends NullListener {
 	private InputStreamThread istConsoleErrOutput;
 	private String classPath;
 	private String className;
+	private String cmdArgs;
 	private Game visualiser;
 	private StackFrame currentStackFrame;
 	
@@ -66,6 +67,7 @@ public class TestGUI extends NullListener {
 	private JFrame frame;
 	private JTextField edtClassPath;
 	private JTextField edtClassName;
+	private JTextField edtCmdArgs;
 	private JTable tblBreakpoints;
 	private JLabel lblLineNo;
 	private JButton btnStep;
@@ -110,6 +112,7 @@ public class TestGUI extends NullListener {
 	public void show(String path, String name) {
 		classPath = path;
 		className = name;
+		cmdArgs = "";
 		show();
 	}
 
@@ -280,11 +283,13 @@ public class TestGUI extends NullListener {
 		istConsoleErrOutput = new InputStreamThread(taConsoleOutput);
 		classPath = edtClassPath.getText();
 		className = edtClassName.getText();
+		cmdArgs = edtCmdArgs.getText();
 		if (debugger == null) {
 			System.out.println("NULL");
 		}
 		debugger.setClassName(className);
 		debugger.setClassPath(classPath);
+		debugger.setCmdArgs(cmdArgs);
 		debugger.kill();
 		debugger.bootVM();
 		debugger.addListener(this);
@@ -507,10 +512,10 @@ public class TestGUI extends NullListener {
 		paneConfigure.add(btnRemoveBreakpoint);
 
 		JScrollPane scrollPane = new JScrollPane();
-		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, btnNewBreakpoint, -22, SpringLayout.NORTH, scrollPane);
-		sl_paneConfigure.putConstraint(SpringLayout.NORTH, scrollPane, 150, SpringLayout.NORTH, paneConfigure);
-		sl_paneConfigure.putConstraint(SpringLayout.WEST, scrollPane, 24, SpringLayout.WEST, paneConfigure);
+		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, btnNewBreakpoint, -6, SpringLayout.NORTH, scrollPane);
+		sl_paneConfigure.putConstraint(SpringLayout.NORTH, scrollPane, 155, SpringLayout.NORTH, paneConfigure);
 		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, scrollPane, -10, SpringLayout.SOUTH, paneConfigure);
+		sl_paneConfigure.putConstraint(SpringLayout.WEST, scrollPane, 24, SpringLayout.WEST, paneConfigure);
 		sl_paneConfigure.putConstraint(SpringLayout.EAST, scrollPane, -29, SpringLayout.EAST, paneConfigure);
 		paneConfigure.add(scrollPane);
 
@@ -595,9 +600,25 @@ public class TestGUI extends NullListener {
 
 		edtClassName.getDocument().addDocumentListener(new PathFieldListener());
 		edtClassPath.getDocument().addDocumentListener(new PathFieldListener());
+		
+		edtCmdArgs = new JTextField();
+		sl_paneConfigure.putConstraint(SpringLayout.NORTH, edtCmdArgs, 6, SpringLayout.SOUTH, edtClassName);
+		sl_paneConfigure.putConstraint(SpringLayout.WEST, edtCmdArgs, -73, SpringLayout.WEST, edtClassName);
+		sl_paneConfigure.putConstraint(SpringLayout.EAST, edtCmdArgs, 0, SpringLayout.EAST, btnClasspath);
+		edtCmdArgs.setText((String) null);
+		edtCmdArgs.setColumns(10);
+		edtCmdArgs.getDocument().addDocumentListener(new PathFieldListener());
+		paneConfigure.add(edtCmdArgs);
 
 		edtClassPath.setText(classPath);
 		edtClassName.setText(className);
+		
+		
+		
+		JLabel lblArguments = new JLabel("Arguments:");
+		sl_paneConfigure.putConstraint(SpringLayout.WEST, lblArguments, 0, SpringLayout.WEST, edtClassPath);
+		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, lblArguments, -27, SpringLayout.NORTH, btnNewBreakpoint);
+		paneConfigure.add(lblArguments);
 
 		setButtonsByState();
 	}

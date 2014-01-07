@@ -19,13 +19,21 @@ public class VisualHeap {
     public static void main(String[] args) {
         DebugListener debugListener = new HeapListener();
         debugger = null;
-		if(args.length < 2 || args.length > 3) {
+        System.out.println(args.length);
+		if(args.length < 1 || args.length > 3) {
             debugger = new Debugger(debugListener);
             TestGUI gui = new TestGUI(debugger);
             gui.show();
         } else {
-            String classPath = args[0];
-            String className = args[1];
+        	String className = "";
+        	String classPath = "";
+        	if(args.length >= 1) {
+        		classPath = args[0];
+        	}
+        	if(args.length >= 2) {
+        		className = args[1];
+        	}
+            
             debugger = new Debugger(debugListener);
             TestGUI gui = new TestGUI(debugger);
             if (args.length == 3) {
