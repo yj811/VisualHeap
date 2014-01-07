@@ -283,7 +283,6 @@ public class TestGUI extends NullListener {
 		debugger.setClassName(className);
 		debugger.setClassPath(classPath);
 		debugger.setCmdArgs(cmdArgs);
-		System.err.println(state);
 		debugger.kill();
 		debugger.bootVM();
 		debugger.addListener(this);
