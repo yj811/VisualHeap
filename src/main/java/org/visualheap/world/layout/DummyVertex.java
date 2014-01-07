@@ -26,11 +26,11 @@ public class DummyVertex extends Vertex {
 
 	@Override
 	public void createInWorld(Game game) {
-		Box box = new Box(1,1,1);
-        Geometry obj = new Geometry("Box", box );
-        obj.setMaterial(game.getMagentaGlowMaterial());
+		Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
+        geo = new Geometry("Box", box );
+        geo.setMaterial(game.getMagentaGlowMaterial());
         // make obj visible on scene and collidable
-        game.addCollidable(obj); 
+        game.addCollidable(geo); 
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class DummyVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(1,1,1);
+        Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
         return new Geometry("Box", box );
     }
 

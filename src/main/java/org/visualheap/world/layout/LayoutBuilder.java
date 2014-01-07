@@ -23,6 +23,8 @@ import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
  *
  */
 public class LayoutBuilder {
+    private final int BASE_SIZE = 100;
+
 	/**
 	 * So that JUNG displays cyclic graphs correctly, we want to maintain a 
 	 * 1 - 1 mapping between ObjectReference's and ObjectReferenceVertex's
@@ -39,7 +41,6 @@ public class LayoutBuilder {
     
     // has the graph changed since we last completed the layout algo?
     private boolean layoutUpToDate = true;
-
     private Game game;
 
 	/**
@@ -119,7 +120,7 @@ public class LayoutBuilder {
 	
 	private LayoutBuilder(Collection<ObjectReference> initialSet, Game game, int depth) {
         graph = new DirectedSparseGraph<Vertex, Edge>();
-        frLayout = new FRLayout<Vertex, Edge>(graph, new Dimension(100, 100));
+        frLayout = new FRLayout<Vertex, Edge>(graph, new Dimension(BASE_SIZE, BASE_SIZE));
         layout = new ObservableCachingLayout<Vertex, Edge>(frLayout);
         this.game = game;
         
@@ -183,7 +184,7 @@ public class LayoutBuilder {
     
     void registerVertex(Vertex v) {
         layout.addChangeListener(v);
-        //checkLayoutDimension();
+        checkLayoutDimension();
         v.createInWorld(game);
     }
 
@@ -205,5 +206,10 @@ public class LayoutBuilder {
 
     void checkLayoutDimension() {
         int vertexCount = layout.getGraph().getVertexCount();
+        double scale = Math.sqrt(vertexCount);
+        if (!(scale < 1)) {
+            int newDim = (int) Math.round(BASE_SIZE * scale);
+            frLayout.setSize(new Dimension(newDim, newDim));
+        }
     }
 }
