@@ -1,7 +1,11 @@
 package org.visualheap.app;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import com.sun.jdi.StackFrame;
 
@@ -37,8 +41,10 @@ import java.awt.event.WindowEvent;
 
 import java.io.File;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 
 public class TestGUI extends NullListener {
 
@@ -52,6 +58,9 @@ public class TestGUI extends NullListener {
 	private String className;
 	private Game visualiser;
 	private StackFrame currentStackFrame;
+	
+	private Set<String> classNames;
+	private String cachedJarPath;
 
 	//Swing Components
 	private JFrame frame;
@@ -71,6 +80,7 @@ public class TestGUI extends NullListener {
 
 	//Constants
 	private final JFileChooser fc = new JFileChooser();
+	
 
 	private enum GUI_STATE {
 		UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED, CLOSING
@@ -82,6 +92,7 @@ public class TestGUI extends NullListener {
 	 */
 	public TestGUI() {
 		finalPath = new StringBuilder();
+		cachedJarPath = "";
 		tableModel = new BreakpointTableModel();
 		state = GUI_STATE.UNLOADED;
 		initialize();
@@ -91,6 +102,7 @@ public class TestGUI extends NullListener {
 		this.debugger = debugger;
 		state = GUI_STATE.UNLOADED;
 
+		cachedJarPath = "";
 		finalPath = new StringBuilder();
 		tableModel = new BreakpointTableModel();
 	}
@@ -190,12 +202,14 @@ public class TestGUI extends NullListener {
 			@Override
 			public void run() {
 				
-				btnStep.setEnabled(false);
-				btnResume.setEnabled(false);
-				state = GUI_STATE.UNLOADED;
-				setButtonsByState();
-				
-				prepareVM();
+				if (!state.equals(GUI_STATE.UNLOADED)) {
+					btnStep.setEnabled(false);
+					btnResume.setEnabled(false);
+					state = GUI_STATE.UNLOADED;
+					setButtonsByState();
+
+					prepareVM();
+				}
 
 			}
 		});
@@ -204,7 +218,6 @@ public class TestGUI extends NullListener {
 	@Override
 	public void exitedMain() {
 		state = GUI_STATE.FINISHED;
-
 	}
 
 	private void setButtonsByState() {
@@ -272,6 +285,7 @@ public class TestGUI extends NullListener {
 		}
 		debugger.setClassName(className);
 		debugger.setClassPath(classPath);
+		debugger.kill();
 		debugger.bootVM();
 		debugger.addListener(this);
 		istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
@@ -308,6 +322,7 @@ public class TestGUI extends NullListener {
 
 			File f = new File(finalPath.toString());
 			if(f.exists() && f.isDirectory()) { 
+				System.err.println("class and path Exists");
 				prepareVM();
 			} else {
 				finalPath.setLength(0);
@@ -315,15 +330,53 @@ public class TestGUI extends NullListener {
 				File j = new File(finalPath.toString());
 				if (edtClassName.getText().isEmpty()) return;
 				if (edtClassPath.getText().isEmpty()) return;
-				if(j.exists()  && j.isFile()) { 
+				if(j.exists()  && j.isFile() && classExistsInJAR(edtClassPath.getText(), edtClassName.getText())) { 
+					System.err.println("Jar and Package Exists");
 					prepareVM();
 				} else {
+					System.err.println("Invalid");
 					state = GUI_STATE.UNLOADED;
 					setButtonsByState();
+					debugger.kill();
 				}
 			}
 		}
 	} 
+	
+	private boolean classExistsInJAR(String jarPath, String searchClass) {
+		//Quick fix, Adapted from here: http://stackoverflow.com/a/15720973
+		if (cachedJarPath != null && !cachedJarPath.equals(jarPath)) {
+			cachedJarPath = jarPath;
+			classNames = new HashSet<String>();
+			ZipInputStream zip;
+			try {
+				zip = new ZipInputStream(new FileInputStream(jarPath));
+
+				for(ZipEntry entry=zip.getNextEntry(); entry!=null; entry=zip.getNextEntry()) {
+					if(entry.getName().endsWith(".class") && !entry.isDirectory()) {
+						// This ZipEntry represents a class. Now, what class does it represent?
+						StringBuilder className = new StringBuilder();
+						for(String part : entry.getName().split("/")) {
+							if(className.length() != 0) {
+								className.append(".");
+							}
+							className.append(part);
+							if(part.endsWith(".class")) {
+								className.setLength(className.length()-".class".length());
+							}
+						}
+						classNames.add(className.toString());
+					}
+				}
+				zip.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return classNames.contains(searchClass);
+	}
 
 	private class ClassPathButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {

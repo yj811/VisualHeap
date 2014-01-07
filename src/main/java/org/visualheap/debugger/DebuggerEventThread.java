@@ -372,8 +372,8 @@ class DebuggerEventThread extends Thread {
 
     public void vmDisconnectEvent(VMDisconnectEvent event) {
     	System.out.println("vm disconnect event");
-        listener.vmDeath();
-        System.out.println("called vmDeath");
+        //listener.vmDeath();
+        //System.out.println("called vmDeath");
         connected = false;
     }
 

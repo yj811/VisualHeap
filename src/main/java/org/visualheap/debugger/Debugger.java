@@ -122,7 +122,7 @@ public class Debugger {
 	}
 	
 	public final void kill() {
-		if (vm != null) {
+		if (vm != null && eventThread != null && eventThread.isAlive()) {
 			vm.exit(0);
 		}
 	}
