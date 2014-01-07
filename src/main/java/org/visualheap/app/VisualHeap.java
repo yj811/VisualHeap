@@ -21,7 +21,7 @@ public class VisualHeap {
         debugger = null;
 		if(args.length < 1 || args.length > 3) {
             debugger = new Debugger(debugListener);
-            TestGUI gui = new TestGUI(debugger);
+            RealGUI gui = new RealGUI(debugger);
             gui.show();
         } else {
         	String className = "";
@@ -34,7 +34,7 @@ public class VisualHeap {
         	}
             
             debugger = new Debugger(debugListener);
-            TestGUI gui = new TestGUI(debugger);
+            RealGUI gui = new RealGUI(debugger);
             if (args.length == 3) {
                 Integer breakpointLine = 0;
                 try {

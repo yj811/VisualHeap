@@ -46,7 +46,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class TestGUI extends NullListener {
+public class RealGUI extends NullListener {
 
 	//Variables
 	private volatile Debugger debugger;
@@ -92,7 +92,7 @@ public class TestGUI extends NullListener {
 	 * Create the GUI.
 	 * @wbp.parser.constructor
 	 */
-	public TestGUI() {
+	public RealGUI() {
 		finalPath = new StringBuilder();
 		cachedJarPath = "";
 		tableModel = new BreakpointTableModel();
@@ -100,7 +100,7 @@ public class TestGUI extends NullListener {
 		initialize();
 	}
 
-	public TestGUI(Debugger debugger) {
+	public RealGUI(Debugger debugger) {
 		this.debugger = debugger;
 		state = GUI_STATE.UNLOADED;
 
@@ -131,7 +131,7 @@ public class TestGUI extends NullListener {
 
 
 	public void addBreakpoint(Integer number, String className) {
-		tableModel.addRow(new Object[] { number, className });
+		tableModel.addRow(new Object[]{number, className});
 	}
 
 	@Override
