@@ -23,6 +23,7 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Texture;
 import com.sun.jdi.ObjectReference;
@@ -185,6 +186,9 @@ public class Game extends SimpleApplication implements ActionListener {
         materialHashMap.put(null, magentaGlowMat);
         materialHashMap.put(null, yellowGlowMat);
         materialHashMap.put(null, redGlowMat);
+        
+        // Turn off culling, so lines don't disappear at random.
+        rootNode.setCullHint(CullHint.Never);
 
 	    FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
 	    BloomFilter bloom = new BloomFilter(BloomFilter.GlowMode.Objects);        

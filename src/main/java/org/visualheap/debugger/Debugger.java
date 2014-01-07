@@ -54,6 +54,7 @@ public class Debugger {
 	private String innerClassPath = null;
 	private String mainClass;
 	private String mainArgs;
+	private String cmdArgs;
 	private DebugListener listener;
 	private DebuggerEventThread eventThread;
 
@@ -120,6 +121,16 @@ public class Debugger {
 	public final void resume() {
 		vm.resume();
 	}
+	
+	public final void kill() {
+		try {
+			if (vm != null && eventThread != null && eventThread.isConnected()) {
+				vm.exit(0);
+			}
+		} catch (Exception e) {
+			System.err.println(e.getStackTrace());
+		}
+	}
 
 	public final InputStream getOutput() {
 		return vm.process().getInputStream();
@@ -144,6 +155,15 @@ public class Debugger {
 
 	public void setClassName(String className) {
 		this.mainClass = className;
+	}
+	
+	/**
+	 * Allows the debugger's target classname and package can be configured, before execution.
+	 *
+	 */
+
+	public void setCmdArgs(String cmdArgs) {
+		this.cmdArgs = cmdArgs;
 	}
 
 	/**
@@ -326,7 +346,7 @@ public class Debugger {
 		if (optionArg == null) {
 			throw new Error("Bad launching connector");
 		}
-		mainArg.setValue(mainClass);
+		mainArg.setValue(mainClass + " " + cmdArgs);
 		optionArg.setValue("-cp " + innerClassPath);
 		return arguments;
 	}

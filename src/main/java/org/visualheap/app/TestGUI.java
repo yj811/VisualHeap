@@ -1,7 +1,11 @@
 package org.visualheap.app;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import com.sun.jdi.StackFrame;
 
@@ -37,8 +41,10 @@ import java.awt.event.WindowEvent;
 
 import java.io.File;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
 
 public class TestGUI extends NullListener {
 
@@ -50,13 +56,18 @@ public class TestGUI extends NullListener {
 	private InputStreamThread istConsoleErrOutput;
 	private String classPath;
 	private String className;
+	private String cmdArgs;
 	private Game visualiser;
 	private StackFrame currentStackFrame;
+	
+	private Set<String> classNames;
+	private String cachedJarPath;
 
 	//Swing Components
 	private JFrame frame;
 	private JTextField edtClassPath;
 	private JTextField edtClassName;
+	private JTextField edtCmdArgs;
 	private JTable tblBreakpoints;
 	private JLabel lblLineNo;
 	private JButton btnStep;
@@ -71,9 +82,10 @@ public class TestGUI extends NullListener {
 
 	//Constants
 	private final JFileChooser fc = new JFileChooser();
+	
 
 	private enum GUI_STATE {
-		UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED
+		UNLOADED, LOADED, STARTED,SUSPENDED, FINISHED, CLOSING
 	}
 
 	/**
@@ -82,6 +94,7 @@ public class TestGUI extends NullListener {
 	 */
 	public TestGUI() {
 		finalPath = new StringBuilder();
+		cachedJarPath = "";
 		tableModel = new BreakpointTableModel();
 		state = GUI_STATE.UNLOADED;
 		initialize();
@@ -91,6 +104,7 @@ public class TestGUI extends NullListener {
 		this.debugger = debugger;
 		state = GUI_STATE.UNLOADED;
 
+		cachedJarPath = "";
 		finalPath = new StringBuilder();
 		tableModel = new BreakpointTableModel();
 	}
@@ -98,6 +112,7 @@ public class TestGUI extends NullListener {
 	public void show(String path, String name) {
 		classPath = path;
 		className = name;
+		cmdArgs = "";
 		show();
 	}
 
@@ -116,7 +131,6 @@ public class TestGUI extends NullListener {
 
 
 	public void addBreakpoint(Integer number, String className) {
-		System.out.println(className);
 		tableModel.addRow(new Object[] { number, className });
 	}
 
@@ -166,7 +180,6 @@ public class TestGUI extends NullListener {
 			public void run() {
 				if (state.equals(GUI_STATE.FINISHED)) {
 					debugger.resume();
-					btnClasspath.setEnabled(true);
 				} else {
 					currentStackFrame = sf;
 					lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
@@ -189,12 +202,11 @@ public class TestGUI extends NullListener {
 
 			@Override
 			public void run() {
-				btnStep.setEnabled(false);
-				btnResume.setEnabled(false);
-				state = GUI_STATE.UNLOADED;
-				setButtonsByState();
-				prepareVM();
-
+				if (state.equals(GUI_STATE.FINISHED)) {
+					state = GUI_STATE.LOADED;
+					setButtonsByState();
+					prepareVM();
+				}
 			}
 		});
 	}
@@ -202,7 +214,6 @@ public class TestGUI extends NullListener {
 	@Override
 	public void exitedMain() {
 		state = GUI_STATE.FINISHED;
-
 	}
 
 	private void setButtonsByState() {
@@ -257,6 +268,7 @@ public class TestGUI extends NullListener {
 	}
 
 	private void prepareVM() {
+		
 		if (istConsoleOutput != null && !istConsoleOutput.finished()) {
 			istConsoleOutput.finish();
 		}
@@ -264,11 +276,15 @@ public class TestGUI extends NullListener {
 		istConsoleErrOutput = new InputStreamThread(taConsoleOutput);
 		classPath = edtClassPath.getText();
 		className = edtClassName.getText();
+		cmdArgs = edtCmdArgs.getText();
 		if (debugger == null) {
 			System.out.println("NULL");
 		}
 		debugger.setClassName(className);
 		debugger.setClassPath(classPath);
+		debugger.setCmdArgs(cmdArgs);
+		System.err.println(state);
+		debugger.kill();
 		debugger.bootVM();
 		debugger.addListener(this);
 		istConsoleOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getOutput())));
@@ -295,6 +311,7 @@ public class TestGUI extends NullListener {
 		}
 
 		private void buildUpdate(DocumentEvent e) {
+			
 			finalPath.setLength(0);
 			finalPath.append(edtClassPath.getText());
 			finalPath.append("/");
@@ -303,7 +320,7 @@ public class TestGUI extends NullListener {
 			// if the new string results in a final product, load the VM auto-magically.
 
 			File f = new File(finalPath.toString());
-			if(f.exists()) { 
+			if(f.exists() && f.isFile()) { 
 				prepareVM();
 			} else {
 				finalPath.setLength(0);
@@ -311,15 +328,51 @@ public class TestGUI extends NullListener {
 				File j = new File(finalPath.toString());
 				if (edtClassName.getText().isEmpty()) return;
 				if (edtClassPath.getText().isEmpty()) return;
-				if(j.exists()) { 
+				if(j.exists()  && j.isFile() && classExistsInJAR(edtClassPath.getText(), edtClassName.getText())) { 
 					prepareVM();
 				} else {
 					state = GUI_STATE.UNLOADED;
 					setButtonsByState();
+					debugger.kill();
 				}
 			}
 		}
 	} 
+	
+	private boolean classExistsInJAR(String jarPath, String searchClass) {
+		//Quick fix, Adapted from here: http://stackoverflow.com/a/15720973
+		if (cachedJarPath != null && !cachedJarPath.equals(jarPath)) {
+			cachedJarPath = jarPath;
+			classNames = new HashSet<String>();
+			ZipInputStream zip;
+			try {
+				zip = new ZipInputStream(new FileInputStream(jarPath));
+
+				for(ZipEntry entry=zip.getNextEntry(); entry!=null; entry=zip.getNextEntry()) {
+					if(entry.getName().endsWith(".class") && !entry.isDirectory()) {
+						// This ZipEntry represents a class. Now, what class does it represent?
+						StringBuilder className = new StringBuilder();
+						for(String part : entry.getName().split("/")) {
+							if(className.length() != 0) {
+								className.append(".");
+							}
+							className.append(part);
+							if(part.endsWith(".class")) {
+								className.setLength(className.length()-".class".length());
+							}
+						}
+						classNames.add(className.toString());
+					}
+				}
+				zip.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return classNames.contains(searchClass);
+	}
 
 	private class ClassPathButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
@@ -349,7 +402,8 @@ public class TestGUI extends NullListener {
 
 	private class StepButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
-			btnStep.setEnabled(false);
+			state = GUI_STATE.STARTED;
+			setButtonsByState();
 			debugger.step();
 		}
 	}
@@ -375,7 +429,7 @@ public class TestGUI extends NullListener {
 					}
 				}
 			}
-
+			
 			state = GUI_STATE.STARTED;
 			setButtonsByState();
 
@@ -396,8 +450,11 @@ public class TestGUI extends NullListener {
 
 		frame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				state = GUI_STATE.CLOSING;
+				debugger.kill();
 				if (visualiser != null && visualiser.isRunning()) {
 					visualiser.stop();
+					
 				}
 			}
 		});
@@ -447,10 +504,10 @@ public class TestGUI extends NullListener {
 		paneConfigure.add(btnRemoveBreakpoint);
 
 		JScrollPane scrollPane = new JScrollPane();
-		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, btnNewBreakpoint, -22, SpringLayout.NORTH, scrollPane);
-		sl_paneConfigure.putConstraint(SpringLayout.NORTH, scrollPane, 150, SpringLayout.NORTH, paneConfigure);
-		sl_paneConfigure.putConstraint(SpringLayout.WEST, scrollPane, 24, SpringLayout.WEST, paneConfigure);
+		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, btnNewBreakpoint, -6, SpringLayout.NORTH, scrollPane);
+		sl_paneConfigure.putConstraint(SpringLayout.NORTH, scrollPane, 155, SpringLayout.NORTH, paneConfigure);
 		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, scrollPane, -10, SpringLayout.SOUTH, paneConfigure);
+		sl_paneConfigure.putConstraint(SpringLayout.WEST, scrollPane, 24, SpringLayout.WEST, paneConfigure);
 		sl_paneConfigure.putConstraint(SpringLayout.EAST, scrollPane, -29, SpringLayout.EAST, paneConfigure);
 		paneConfigure.add(scrollPane);
 
@@ -535,9 +592,25 @@ public class TestGUI extends NullListener {
 
 		edtClassName.getDocument().addDocumentListener(new PathFieldListener());
 		edtClassPath.getDocument().addDocumentListener(new PathFieldListener());
+		
+		edtCmdArgs = new JTextField();
+		sl_paneConfigure.putConstraint(SpringLayout.NORTH, edtCmdArgs, 6, SpringLayout.SOUTH, edtClassName);
+		sl_paneConfigure.putConstraint(SpringLayout.WEST, edtCmdArgs, -73, SpringLayout.WEST, edtClassName);
+		sl_paneConfigure.putConstraint(SpringLayout.EAST, edtCmdArgs, 0, SpringLayout.EAST, btnClasspath);
+		edtCmdArgs.setText((String) null);
+		edtCmdArgs.setColumns(10);
+		edtCmdArgs.getDocument().addDocumentListener(new PathFieldListener());
+		paneConfigure.add(edtCmdArgs);
 
 		edtClassPath.setText(classPath);
 		edtClassName.setText(className);
+		
+		
+		
+		JLabel lblArguments = new JLabel("Arguments:");
+		sl_paneConfigure.putConstraint(SpringLayout.WEST, lblArguments, 0, SpringLayout.WEST, edtClassPath);
+		sl_paneConfigure.putConstraint(SpringLayout.SOUTH, lblArguments, -27, SpringLayout.NORTH, btnNewBreakpoint);
+		paneConfigure.add(lblArguments);
 
 		setButtonsByState();
 	}
