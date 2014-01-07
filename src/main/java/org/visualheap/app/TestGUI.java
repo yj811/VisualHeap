@@ -202,16 +202,11 @@ public class TestGUI extends NullListener {
 
 			@Override
 			public void run() {
-				if (!state.equals(GUI_STATE.UNLOADED)) {
-					state = GUI_STATE.UNLOADED;
-					setButtonsByState();
-
-					prepareVM();
-				} else {
+				if (state.equals(GUI_STATE.FINISHED)) {
 					state = GUI_STATE.LOADED;
 					setButtonsByState();
+					prepareVM();
 				}
-				
 			}
 		});
 	}
@@ -288,6 +283,7 @@ public class TestGUI extends NullListener {
 		debugger.setClassName(className);
 		debugger.setClassPath(classPath);
 		debugger.setCmdArgs(cmdArgs);
+		System.err.println(state);
 		debugger.kill();
 		debugger.bootVM();
 		debugger.addListener(this);
@@ -324,7 +320,7 @@ public class TestGUI extends NullListener {
 			// if the new string results in a final product, load the VM auto-magically.
 
 			File f = new File(finalPath.toString());
-			if(f.exists() && f.isDirectory()) { 
+			if(f.exists() && f.isFile()) { 
 				prepareVM();
 			} else {
 				finalPath.setLength(0);
