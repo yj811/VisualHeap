@@ -131,7 +131,6 @@ public class TestGUI extends NullListener {
 
 
 	public void addBreakpoint(Integer number, String className) {
-		System.out.println(className);
 		tableModel.addRow(new Object[] { number, className });
 	}
 
@@ -327,7 +326,6 @@ public class TestGUI extends NullListener {
 
 			File f = new File(finalPath.toString());
 			if(f.exists() && f.isDirectory()) { 
-				System.err.println("class and path Exists");
 				prepareVM();
 			} else {
 				finalPath.setLength(0);
@@ -336,10 +334,8 @@ public class TestGUI extends NullListener {
 				if (edtClassName.getText().isEmpty()) return;
 				if (edtClassPath.getText().isEmpty()) return;
 				if(j.exists()  && j.isFile() && classExistsInJAR(edtClassPath.getText(), edtClassName.getText())) { 
-					System.err.println("Jar and Package Exists");
 					prepareVM();
 				} else {
-					System.err.println("Invalid");
 					state = GUI_STATE.UNLOADED;
 					setButtonsByState();
 					debugger.kill();

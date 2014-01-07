@@ -19,7 +19,6 @@ public class VisualHeap {
     public static void main(String[] args) {
         DebugListener debugListener = new HeapListener();
         debugger = null;
-        System.out.println(args.length);
 		if(args.length < 1 || args.length > 3) {
             debugger = new Debugger(debugListener);
             TestGUI gui = new TestGUI(debugger);

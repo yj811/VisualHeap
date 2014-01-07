@@ -344,7 +344,6 @@ public class Debugger {
 		}
 		mainArg.setValue(mainClass + " " + cmdArgs);
 		optionArg.setValue("-cp " + innerClassPath);
-		System.err.println(arguments);
 		return arguments;
 	}
 
