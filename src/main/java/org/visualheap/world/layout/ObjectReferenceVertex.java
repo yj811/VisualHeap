@@ -49,7 +49,7 @@ public class ObjectReferenceVertex extends Vertex {
         }
 
         // Set size
-        int size = BASE_BOX;
+        int size = 1;
         if (type.fieldByName("size") != null) {
             Field f = type.fieldByName("size");
             size = Integer.parseInt(objRef.getValue(f).toString());
@@ -72,7 +72,7 @@ public class ObjectReferenceVertex extends Vertex {
 		String result = "Type: " + type.name() + "\n";
 
 		for(Field f : type.allFields()) {
-			result += f.name() + "\t" + objRef.getValue(f) + "\n";
+			result += f.name() + ":   " + objRef.getValue(f) + "\n";
 		}
 		
 		return result;		
@@ -110,7 +110,7 @@ public class ObjectReferenceVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(1,1,1);
+        Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
         return new Geometry("box", box );
     }
 }

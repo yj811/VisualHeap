@@ -19,6 +19,7 @@ import com.sun.jdi.Value;
 public class DummyVertex extends Vertex {
 
     private Material material;
+    private final int DUMMY = 2;
 
 	public DummyVertex(LayoutBuilder lb) {
 		super(lb);
@@ -26,7 +27,7 @@ public class DummyVertex extends Vertex {
 
 	@Override
 	public void createInWorld(Game game) {
-		Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
+		Box box = new Box(DUMMY,DUMMY,DUMMY);
         geo = new Geometry("Box", box );
         material = game.getGreenGlowMaterial();
         geo.setMaterial(material);
@@ -47,7 +48,7 @@ public class DummyVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
+        Box box = new Box(DUMMY,DUMMY,DUMMY);
         return new Geometry("Box", box );
     }
 

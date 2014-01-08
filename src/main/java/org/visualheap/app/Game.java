@@ -62,10 +62,11 @@ public class Game extends SimpleApplication implements ActionListener {
 	private static final String TRIPLECYCLE = "debugger.testprogs.TripleCycle";
     private static final String MULTITYPES = "debugger.testprogs.MultipleTypes";
 
-    private static final int LINEHEIGHT = 20;
+    private static final int LINEHEIGHT = 15;
     private static final int NOKEYS = 3;
-
 	private static final float WALK_SPEED = 0.5f;
+
+    private final int FONT_SIZE = 13;
 	
 	private LayoutBuilder layoutBuilder;
 	private Material matBrick;
@@ -221,10 +222,11 @@ public class Game extends SimpleApplication implements ActionListener {
 		setupLight();
         setupKeys();
 
+
         setKeyInfo("Key:", ColorRGBA.White, 0);
-        setKeyInfo("Null Reference", ColorRGBA.Red, 20);
-        setKeyInfo("Static Reference", ColorRGBA.Green, 40);
-        setKeyInfo("Unfollowed Reference", ColorRGBA.Yellow, 60);
+        setKeyInfo("Null Reference", ColorRGBA.Red, LINEHEIGHT * 1);
+        setKeyInfo("Static Reference", ColorRGBA.Green, LINEHEIGHT * 2);
+        setKeyInfo("Unfollowed Reference", ColorRGBA.Yellow, LINEHEIGHT * 3);
 
         // create a collision shape for all collidable objects
         CollisionShape world = CollisionShapeFactory.createDynamicMeshShape(collidables);
@@ -355,7 +357,8 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	public void setObjInfo(String info) {
 		objInfo = new BitmapText(guiFont, false);
-		objInfo.setSize(12);
+        objInfo.setBox(new Rectangle(0, 0, 230, 400));
+		objInfo.setSize(FONT_SIZE);
 		objInfo.setColor(ColorRGBA.Yellow);
 		objInfo.setText(info);
 		objInfo.setLocalTranslation(10, 470, 0);
@@ -365,11 +368,12 @@ public class Game extends SimpleApplication implements ActionListener {
     public void setKeyInfo(String info, ColorRGBA color, int offset) {
         keyInfo = new BitmapText(guiFont, false);
         keyInfo.setBox(new Rectangle(0, 0, 230, 400));
-        keyInfo.setSize(guiFont.getCharSet().getRenderedSize());
+        keyInfo.setSize(FONT_SIZE);
+        //keyInfo.setSize(guiFont.getCharSet().getRenderedSize());
         keyInfo.setColor(color);
         keyInfo.setText(info);
         keyInfo.setAlignment(BitmapFont.Align.Right);
-        keyInfo.setLocalTranslation(400, 480 - offset, 0);
+        keyInfo.setLocalTranslation(400, 470 - offset, 0);
         guiNode.attachChild(keyInfo);
     }
 
