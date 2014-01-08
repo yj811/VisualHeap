@@ -100,11 +100,9 @@ public class Game extends SimpleApplication implements ActionListener {
 		final Game game = new Game();
 
 		DebugListener listener = new NullListener() {
-			
 			@Override
 			public void onBreakpoint(final StackFrame sf) {
                 game.beginGame(getObjectReferencesFromStackFrame(sf), game.d);
-
             }
         };
 
@@ -149,7 +147,6 @@ public class Game extends SimpleApplication implements ActionListener {
 	
 	private void setReferencesOnStack(Collection<ObjectReference> referencesOnStack) {
 	    this.referencesOnStack = referencesOnStack;
-	    
 	}
 
 	/**
@@ -158,7 +155,6 @@ public class Game extends SimpleApplication implements ActionListener {
 	 */
 	@Override
 	public void simpleInitApp() {
-		
 		// hide FPS/object statistics
 		setDisplayFps(false);
 		setDisplayStatView(false);
@@ -195,7 +191,6 @@ public class Game extends SimpleApplication implements ActionListener {
 	    fpp.addFilter(bloom);
 	    viewPort.addProcessor(fpp);
 
-		
 		// will hold all collidable objects.
 		rootNode.attachChild(collidables);
 		
@@ -213,7 +208,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		setupCrossHairs();
 		setupPlayer();
 		//createFloor();
-		
 		setupLight();
         setupKeys();
 
@@ -249,13 +243,11 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	private void setupPlayer() {
 		// setup the player's collision boundary + some parameters
-		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f,
-				10f, 1);
+		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 10f, 1);
 		player = new CharacterControl(capsuleShape, 0.05f);
 		player.setJumpSpeed(0);
 		player.setFallSpeed(0);
 		cam.lookAt(new Vector3f(10f,0f,10f), camUp);
-	
 		player.setPhysicsLocation(new Vector3f(0, 4, 0));
 
 		// adding an object to the physics space makes it collidable
@@ -266,7 +258,6 @@ public class Game extends SimpleApplication implements ActionListener {
 	 * tell the Game that the graph has changed - it should update the 
 	 * graphics and rerun the layout algorithm to reflect that.
 	public void rebuildWorld() {
-		
 		rootNode.detachChild(collidables);
 		collidables = new Node();
 		rootNode.attachChild(collidables);
@@ -274,16 +265,12 @@ public class Game extends SimpleApplication implements ActionListener {
 		nonCollidables = new Node();
 		rootNode.attachChild(nonCollidables);
 		constructWorld();
-		
 	}
 	 */
 
-	
 	private void constructWorld() {
-		
 	    // put the vertices in the world.
 	    // layoutBuilder.displayGraph(this);
-	    
 	    addGridSquare();
 	}
 
@@ -311,7 +298,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	}
 	
 	/**
-	 * Called when an Action occours.
+	 * Called when an Action occurs.
 	 */
 	public void onAction(String binding, boolean isPressed, float tpf) {
 		if (binding.equals("Left")) {
@@ -347,18 +334,16 @@ public class Game extends SimpleApplication implements ActionListener {
                 	// tell the associated vertex it was clicked.
 	                vertex.select(this);
                 }
-                
-                 
-            }             
+            }
         }
 	}
 
 	public void setObjInfo(String info) {
-		objInfo = new BitmapText(guiFont, false);          
-		objInfo.setSize(guiFont.getCharSet().getRenderedSize());     
+		objInfo = new BitmapText(guiFont, false);
+		objInfo.setSize(12);
 		objInfo.setColor(ColorRGBA.Yellow);
 		objInfo.setText(info);
-		objInfo.setLocalTranslation(0, 350, 0); 
+		objInfo.setLocalTranslation(10, 470, 0);
 		guiNode.attachChild(objInfo);
 	}
 
@@ -379,24 +364,20 @@ public class Game extends SimpleApplication implements ActionListener {
 		camLeft.set(cam.getLeft()).multLocal(WALK_SPEED);
 		camUp.set(cam.getUp()).multLocal(WALK_SPEED);
 		walkDirection.set(0, 0, 0);
-		if (left) {
+
+		if (left)
 			walkDirection.addLocal(camLeft);
-		}
-		if (right) {
+		if (right)
 			walkDirection.addLocal(camLeft.negate());
-		}
-		if (up) {
+		if (up)
 			walkDirection.addLocal(camDir);
-		}
-		if (down) {
+		if (down)
 			walkDirection.addLocal(camDir.negate());
-		}
-		if (rise) {
+		if (rise)
             walkDirection.addLocal(camUp);
-        }
-		if (sink) {
+		if (sink)
             walkDirection.addLocal(camUp.negate());
-        }
+
 		player.setWalkDirection(walkDirection);
 		cam.setLocation(player.getPhysicsLocation());
 		
@@ -438,7 +419,6 @@ public class Game extends SimpleApplication implements ActionListener {
         }
 
         materialHashMap.put(type, material);
-
         return material;
     }
 	
@@ -455,22 +435,17 @@ public class Game extends SimpleApplication implements ActionListener {
         Geometry blueq = new Geometry("Quad", q);
         blueq.setLocalTranslation(new Vector3f(-1000, -1.2f,-1000));
         blueq.rotate( 270*FastMath.DEG_TO_RAD , 270*FastMath.DEG_TO_RAD  , 0f);
-        Material mat1 = new Material(assetManager, 
-                "Common/MatDefs/Misc/Unshaded.j3md");
-        
+        Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat1.setColor("Color", ColorRGBA.White);
         
-        Texture quadTexture = assetManager.loadTexture(
-                "textures/floor.png");
+        Texture quadTexture = assetManager.loadTexture("textures/floor.png");
         quadTexture.setWrap(Texture.WrapMode.Repeat);
         q.scaleTextureCoordinates(new Vector2f(500,500));
         mat1.setTexture("ColorMap", quadTexture);
         
         blueq.setMaterial(mat1);   
         collidables.attachChild(blueq);
-	
 	}
-
 
     /**
      * Returns whether this game object is currently running
@@ -488,7 +463,6 @@ public class Game extends SimpleApplication implements ActionListener {
      */
     public void sync(Object object) {
         //TODO: given an object representing the updates to the heap, update the user view.
-
     }
 
     public void removeCollidable(Geometry geo) {
@@ -498,6 +472,4 @@ public class Game extends SimpleApplication implements ActionListener {
     public void removeNonCollidable(Geometry geo) {
         nonCollidables.detachChild(geo);
     }
-
-
 }

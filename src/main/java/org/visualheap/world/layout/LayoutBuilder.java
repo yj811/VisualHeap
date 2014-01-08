@@ -44,8 +44,8 @@ public class LayoutBuilder {
 
 	/**
 	 * builds a graph of the heap to depth specified.
-	 * @param debugger a debugger object (doesn't need to be the main one...)
 	 * @param initialSet ObjectReferences on the stack frame
+     * @param game current game object
 	 * @param depth depth to search to (unimplemented)
 	 * @return returns a graph layout
 	 */
