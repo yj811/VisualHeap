@@ -63,7 +63,8 @@ public class Game extends SimpleApplication implements ActionListener {
     private static final String MULTITYPES = "debugger.testprogs.MultipleTypes";
 
     private static final int LINEHEIGHT = 15;
-    private static final int NOKEYS = 3;
+    private static final int NOKEYS = 4;
+
 	private static final float WALK_SPEED = 0.5f;
 
     private final int FONT_SIZE = 13;
@@ -96,6 +97,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Material magentaGlowMat;
 	private Material yellowGlowMat;
 	private Material redGlowMat;
+    private Material blueGlowMat;
     private volatile boolean running;
 
     private HashMap<ReferenceType, Material> materialHashMap;
@@ -188,6 +190,10 @@ public class Game extends SimpleApplication implements ActionListener {
 	    redGlowMat.setColor("Color", ColorRGBA.Red);
 	    redGlowMat.setColor("GlowColor", ColorRGBA.Red);
 
+        blueGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        blueGlowMat.setColor("Color", ColorRGBA.Blue);
+        blueGlowMat.setColor("GlowColor", ColorRGBA.Blue);
+
         materialHashMap = new HashMap<ReferenceType, Material>();
         //useless atm, just overwrites each entry.
         materialHashMap.put(null, magentaGlowMat);
@@ -221,7 +227,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		setupPlayer();
 		setupLight();
         setupKeys();
-
 
         setKeyInfo("Key:", ColorRGBA.White, 0);
         setKeyInfo("Null Reference", ColorRGBA.Red, LINEHEIGHT * 1);
@@ -429,6 +434,10 @@ public class Game extends SimpleApplication implements ActionListener {
 	public Material getRedGlowMaterial() {
 		return redGlowMat;
 	}
+
+    public Material getBlueGlowMaterial() {
+        return blueGlowMat;
+    }
 
     public HashMap getMaterialHashMap() {
         return materialHashMap;

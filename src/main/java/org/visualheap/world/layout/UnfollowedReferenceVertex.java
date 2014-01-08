@@ -27,7 +27,7 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 	@Override
 	public void createInWorld(Game game) {
         geo.setMaterial(game.getYellowGlowMaterial());
-        geo.setLocalScale(MINI_BOX);
+        geo.setLocalScale(new Vector3f(MINI_BOX, MINI_BOX * 2, MINI_BOX));
         geo.setUserData("vertex", this);
         
         updatePosition();

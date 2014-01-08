@@ -2,6 +2,7 @@ package org.visualheap.world.layout;
 
 
 import com.jme3.material.Material;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.sun.jdi.Field;
@@ -49,16 +50,18 @@ public class ObjectReferenceVertex extends Vertex {
         }
 
         // Set size
-        int size = 1;
+        //int size = BASE_BOX;
+        /*
         if (type.fieldByName("size") != null) {
             Field f = type.fieldByName("size");
             size = Integer.parseInt(objRef.getValue(f).toString());
             size = (size == 0) ? 1 : size;
         }
+        */
         // Results in null pointer exception currently
         //result += "Size: " + ObjectSizeFetcher.getObjectSize(objRef);
 
-        geo.setLocalScale(size);
+        //geo.setLocalScale(new Vector3f(size, size * 2, size));
         geo.setMaterial(material);
         geo.setUserData("vertex", this);
         
@@ -110,7 +113,7 @@ public class ObjectReferenceVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
-        return new Geometry("box", box );
+        Box box = new Box(BASE_BOX, BASE_BOX * 2, BASE_BOX);
+        return new Geometry("box", box);
     }
 }

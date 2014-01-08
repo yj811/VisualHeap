@@ -27,9 +27,9 @@ public class DummyVertex extends Vertex {
 
 	@Override
 	public void createInWorld(Game game) {
-		Box box = new Box(DUMMY,DUMMY,DUMMY);
+		Box box = new Box(DUMMY,DUMMY*2,DUMMY);
         geo = new Geometry("Box", box );
-        material = game.getGreenGlowMaterial();
+        material = game.getBlueGlowMaterial();
         geo.setMaterial(material);
         // make obj visible on scene and collidable
         game.addCollidable(geo); 
@@ -48,7 +48,7 @@ public class DummyVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(DUMMY,DUMMY,DUMMY);
+        Box box = new Box(DUMMY,DUMMY*2,DUMMY);
         return new Geometry("Box", box );
     }
 
