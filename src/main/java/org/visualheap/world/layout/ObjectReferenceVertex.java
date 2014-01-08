@@ -23,6 +23,7 @@ import java.util.Vector;
 public class ObjectReferenceVertex extends Vertex {
 
 	protected ObjectReference objRef;
+    protected Material material;
 	
 	public ObjectReferenceVertex(ObjectReference ref, LayoutBuilder lb) {
 	    super(lb, false);
@@ -36,7 +37,7 @@ public class ObjectReferenceVertex extends Vertex {
 	@Override
 	public void createInWorld(Game game) {
         ReferenceType type = objRef.referenceType();
-        Material material;
+        //Material material;
 
         // Set colour
         if (type.isStatic()) {
@@ -93,8 +94,19 @@ public class ObjectReferenceVertex extends Vertex {
 
 	@Override
 	public void select(Game game) {
-		game.setObjInfo(createInformation());
+        if (game.getSelectedVertex() == this) {
+            game.removeSelectedVertex();
+            game.setObjInfo("");
+        } else {
+            game.setSelectedVertex(this);
+            game.setObjInfo(createInformation());
+        }
 	}
+
+    @Override
+    public Material getMaterial() {
+        return material;
+    }
 
     @Override
     protected Geometry createGeometry() {

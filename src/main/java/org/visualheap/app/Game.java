@@ -86,7 +86,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Vector3f camUp = new Vector3f();
 	private Vector3f walkDirection = new Vector3f();
 	private Debugger d;
-	private Material greenGlowMat;
+    private Material greenGlowMat;
 	private Material magentaGlowMat;
 	private Material yellowGlowMat;
 	private Material redGlowMat;
@@ -94,6 +94,10 @@ public class Game extends SimpleApplication implements ActionListener {
 
     private HashMap<ReferenceType, Material> materialHashMap;
     private Collection<ObjectReference> referencesOnStack;
+
+    private Vertex selectedVertex;
+    private Material oldMaterial;
+    private Material selectedMaterial;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -443,6 +447,28 @@ public class Game extends SimpleApplication implements ActionListener {
         materialHashMap.put(type, material);
 
         return material;
+    }
+
+    public Vertex getSelectedVertex() {
+        return selectedVertex;
+    }
+
+    public void removeSelectedVertex() {
+        selectedVertex.setMaterial(oldMaterial);
+        selectedVertex = null;
+    }
+
+    public void setSelectedVertex(Vertex v) {
+        if (selectedVertex != null) {
+            selectedVertex.setMaterial(oldMaterial);
+        }
+
+        oldMaterial = v.getMaterial();
+        selectedMaterial = oldMaterial.clone();
+        selectedMaterial.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
+
+        selectedVertex = v;
+        selectedVertex.setMaterial(selectedMaterial);
     }
 	
 	public void addCollidable(Geometry child) {
