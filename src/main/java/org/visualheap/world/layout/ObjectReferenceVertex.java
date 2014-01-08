@@ -113,7 +113,7 @@ public class ObjectReferenceVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(BASE_BOX, BASE_BOX * 2, BASE_BOX);
+        Box box = new Box(BASE_BOX, BASE_BOX, BASE_BOX);
         return new Geometry("box", box);
     }
 }

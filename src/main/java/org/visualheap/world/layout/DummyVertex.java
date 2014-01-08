@@ -46,7 +46,7 @@ public class DummyVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(DUMMY,DUMMY*2,DUMMY);
+        Box box = new Box(DUMMY,DUMMY,DUMMY);
         return new Geometry("Box", box );
     }
 

@@ -27,7 +27,7 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 	@Override
 	public void createInWorld(Game game) {
         geo.setMaterial(game.getYellowGlowMaterial());
-        geo.setLocalScale(new Vector3f(MINI_BOX, MINI_BOX * 2, MINI_BOX));
+        //geo.setLocalScale(MINI_BOX);
         geo.setUserData("vertex", this);
         
         updatePosition();
@@ -53,4 +53,10 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 		// add children to layout.
 		lb.visitChildren(newVert, 0);
 	}
+
+    @Override
+    protected Geometry createGeometry() {
+        Box box = new Box(MINI_BOX,MINI_BOX,MINI_BOX);
+        return new Geometry("Box", box );
+    }
 }
