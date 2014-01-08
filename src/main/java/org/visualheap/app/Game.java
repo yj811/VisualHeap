@@ -377,7 +377,6 @@ public class Game extends SimpleApplication implements ActionListener {
 	 */
 	@Override
 	public void simpleUpdate(float tpf) {
-	    
 	    layoutBuilder.stepLayoutAlgorithm();
 	    
 		camDir.set(cam.getDirection()).multLocal(WALK_SPEED);
@@ -385,7 +384,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		camUp.set(cam.getUp()).multLocal(WALK_SPEED);
 		walkDirection.set(0, 0, 0);
 		if (left) {
-			System.out.println("left");
 			walkDirection.addLocal(camLeft);
 		}
 		if (right) {
@@ -407,7 +405,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		cam.setLocation(player.getPhysicsLocation());
 		
 		layoutBuilder.stepLayoutAlgorithm();
-		
 	}
 
 	public Material getGreenGlowMaterial() {

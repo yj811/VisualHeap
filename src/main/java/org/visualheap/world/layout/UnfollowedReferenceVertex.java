@@ -52,7 +52,5 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 		
 		// add children to layout.
 		lb.visitChildren(newVert, 0);
-		
 	}
-
 }
