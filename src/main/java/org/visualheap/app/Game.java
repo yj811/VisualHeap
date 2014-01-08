@@ -9,7 +9,8 @@ import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
-import com.jme3.font.BitmapText;
+import com.jme3.font.*;
+import com.jme3.font.Rectangle;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
@@ -61,6 +62,9 @@ public class Game extends SimpleApplication implements ActionListener {
 	private static final String TRIPLECYCLE = "debugger.testprogs.TripleCycle";
     private static final String MULTITYPES = "debugger.testprogs.MultipleTypes";
 
+    private static final int LINEHEIGHT = 20;
+    private static final int NOKEYS = 3;
+
 	private static final float WALK_SPEED = 0.5f;
 	
 	private LayoutBuilder layoutBuilder;
@@ -69,7 +73,8 @@ public class Game extends SimpleApplication implements ActionListener {
 	private CharacterControl player;
 	private Node collidables = new Node();
 	private Node nonCollidables = new Node();
-	private BitmapText objInfo;
+    private BitmapText objInfo;
+    private BitmapText keyInfo;
 	private Geometry target;
 	private Graph<Vertex, Edge> graph;
 
@@ -86,7 +91,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Vector3f camUp = new Vector3f();
 	private Vector3f walkDirection = new Vector3f();
 	private Debugger d;
-	private Material greenGlowMat;
+    private Material greenGlowMat;
 	private Material magentaGlowMat;
 	private Material yellowGlowMat;
 	private Material redGlowMat;
@@ -94,6 +99,10 @@ public class Game extends SimpleApplication implements ActionListener {
 
     private HashMap<ReferenceType, Material> materialHashMap;
     private Collection<ObjectReference> referencesOnStack;
+
+    private Vertex selectedVertex;
+    private Material oldMaterial;
+    private Material selectedMaterial;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -179,9 +188,11 @@ public class Game extends SimpleApplication implements ActionListener {
 	    redGlowMat.setColor("GlowColor", ColorRGBA.Red);
 
         materialHashMap = new HashMap<ReferenceType, Material>();
+        //useless atm, just overwrites each entry.
         materialHashMap.put(null, magentaGlowMat);
         materialHashMap.put(null, yellowGlowMat);
         materialHashMap.put(null, redGlowMat);
+        materialHashMap.put(null, greenGlowMat);
         
         // Turn off culling, so lines don't disappear at random.
         rootNode.setCullHint(CullHint.Never);
@@ -207,9 +218,13 @@ public class Game extends SimpleApplication implements ActionListener {
 		
 		setupCrossHairs();
 		setupPlayer();
-		//createFloor();
 		setupLight();
         setupKeys();
+
+        setKeyInfo("Key:", ColorRGBA.White, 0);
+        setKeyInfo("Null Reference", ColorRGBA.Red, 20);
+        setKeyInfo("Static Reference", ColorRGBA.Green, 40);
+        setKeyInfo("Unfollowed Reference", ColorRGBA.Yellow, 60);
 
         // create a collision shape for all collidable objects
         CollisionShape world = CollisionShapeFactory.createDynamicMeshShape(collidables);
@@ -347,6 +362,17 @@ public class Game extends SimpleApplication implements ActionListener {
 		guiNode.attachChild(objInfo);
 	}
 
+    public void setKeyInfo(String info, ColorRGBA color, int offset) {
+        keyInfo = new BitmapText(guiFont, false);
+        keyInfo.setBox(new Rectangle(0, 0, 230, 400));
+        keyInfo.setSize(guiFont.getCharSet().getRenderedSize());
+        keyInfo.setColor(color);
+        keyInfo.setText(info);
+        keyInfo.setAlignment(BitmapFont.Align.Right);
+        keyInfo.setLocalTranslation(400, 480 - offset, 0);
+        guiNode.attachChild(keyInfo);
+    }
+
 	/**
 	 * From JME tutorial.
 	 * 
@@ -418,8 +444,32 @@ public class Game extends SimpleApplication implements ActionListener {
             material.setColor("GlowColor", color);
         }
 
+        setKeyInfo(type.name(), color, (materialHashMap.size() + NOKEYS) * LINEHEIGHT);
+
         materialHashMap.put(type, material);
         return material;
+    }
+
+    public Vertex getSelectedVertex() {
+        return selectedVertex;
+    }
+
+    public void removeSelectedVertex() {
+        selectedVertex.setMaterial(oldMaterial);
+        selectedVertex = null;
+    }
+
+    public void setSelectedVertex(Vertex v) {
+        if (selectedVertex != null) {
+            selectedVertex.setMaterial(oldMaterial);
+        }
+
+        oldMaterial = v.getMaterial();
+        selectedMaterial = oldMaterial.clone();
+        selectedMaterial.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
+
+        selectedVertex = v;
+        selectedVertex.setMaterial(selectedMaterial);
     }
 	
 	public void addCollidable(Geometry child) {

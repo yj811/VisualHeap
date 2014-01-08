@@ -1,5 +1,6 @@
 package org.visualheap.world.layout;
 
+import com.jme3.material.Material;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Sphere;
 import com.sun.jdi.Value;
@@ -10,13 +11,16 @@ import java.util.Collection;
 
 public class NullReferenceVertex extends Vertex {
 
+    private Material material;
+
 	public NullReferenceVertex(LayoutBuilder lb) {
 		super(lb);
 	}
 
 	@Override
 	public void createInWorld(Game game) {
-        geo.setMaterial(game.getRedGlowMaterial());
+        material = game.getRedGlowMaterial();
+        geo.setMaterial(material);
         geo.setUserData("vertex", this);
         
         updatePosition();
@@ -37,8 +41,19 @@ public class NullReferenceVertex extends Vertex {
 
 	@Override
 	public void select(Game game) {
-        game.setObjInfo(createInformation());
+        if (game.getSelectedVertex() == this) {
+            game.removeSelectedVertex();
+            game.setObjInfo("");
+        } else {
+            game.setSelectedVertex(this);
+            game.setObjInfo(createInformation());
+        }
 	}
+
+    @Override
+    public Material getMaterial() {
+        return material;
+    }
 
     @Override
     protected Geometry createGeometry() {

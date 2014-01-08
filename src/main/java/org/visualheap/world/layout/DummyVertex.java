@@ -2,6 +2,7 @@ package org.visualheap.world.layout;
 
 import java.util.Collection;
 
+import com.jme3.material.Material;
 import org.visualheap.app.Game;
 
 import com.jme3.scene.Geometry;
@@ -17,6 +18,8 @@ import com.sun.jdi.Value;
  */
 public class DummyVertex extends Vertex {
 
+    private Material material;
+
 	public DummyVertex(LayoutBuilder lb) {
 		super(lb);
 	}
@@ -25,7 +28,8 @@ public class DummyVertex extends Vertex {
 	public void createInWorld(Game game) {
 		Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
         geo = new Geometry("Box", box );
-        geo.setMaterial(game.getGreenGlowMaterial());
+        material = game.getGreenGlowMaterial();
+        geo.setMaterial(material);
         // make obj visible on scene and collidable
         game.addCollidable(geo); 
 	}
@@ -45,6 +49,11 @@ public class DummyVertex extends Vertex {
     protected Geometry createGeometry() {
         Box box = new Box(BASE_BOX,BASE_BOX,BASE_BOX);
         return new Geometry("Box", box );
+    }
+
+    @Override
+    public Material getMaterial() {
+        return material;
     }
 
 }

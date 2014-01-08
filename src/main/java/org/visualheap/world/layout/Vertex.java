@@ -1,13 +1,16 @@
 package org.visualheap.world.layout;
 
 
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.jme3.material.Material;
 import org.visualheap.app.Game;
 
 import com.jme3.export.JmeExporter;
@@ -72,6 +75,12 @@ public abstract class Vertex implements Savable, ChangeListener {
 	 * @param game the game object this vertex is displayed in
 	 */
 	public abstract void select(Game game);
+
+    public abstract Material getMaterial();
+
+    public void setMaterial(Material m) {
+        geo.setMaterial(m);
+    }
 	
 	/**
 	 * tell the Vertex to update it's position by asking the layout
