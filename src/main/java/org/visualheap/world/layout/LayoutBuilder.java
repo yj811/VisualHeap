@@ -109,6 +109,7 @@ public class LayoutBuilder {
 			if(childVert != null) {
 			    layoutUpToDate = false;
 				graph.addEdge(new Edge(this, parent, childVert), parent, childVert);
+                runLayoutAlgorithm();
 			}
 		}
 	}
@@ -152,7 +153,6 @@ public class LayoutBuilder {
      * Performs one step of the layout algorithm if it isn't up to date
      */
     public void stepLayoutAlgorithm() {
-        
         if(!layoutUpToDate && layout.done()) {
             // layout thinks it is up to date, but it isn't
             // happens on the first step after a change.

@@ -37,7 +37,6 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 
 	@Override
 	public void select(Game game) {
-		
 		System.out.println("click unfollowed reference");
 		
 		// replace this vertex in the graph with an ObjectRefernceVertex
@@ -51,7 +50,5 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 		
 		// add children to layout.
 		lb.visitChildren(newVert, 0);
-		
 	}
-
 }
