@@ -15,11 +15,12 @@ public class MultipleTypes {
         c.next = a;
 
         SimpleReference ref = new SimpleReference(5);
+        TreeReference tree = new TreeReference(5);
 
-        func(multi, a, ref);
+        func(multi, a, ref, tree);
     }
 
-    public static void func(MultipleTypes m, TripleCycle t, SimpleReference s) {
+    public static void func(MultipleTypes m, TripleCycle t, SimpleReference s, TreeReference tree) {
         System.out.println("break here");
     }
 

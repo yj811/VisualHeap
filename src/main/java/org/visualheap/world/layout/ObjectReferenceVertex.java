@@ -37,7 +37,6 @@ public class ObjectReferenceVertex extends Vertex {
 	@Override
 	public void createInWorld(Game game) {
         ReferenceType type = objRef.referenceType();
-        //Material material;
 
         // Set colour
         if (type.isStatic()) {
@@ -49,18 +48,11 @@ public class ObjectReferenceVertex extends Vertex {
         }
 
         // Set size
-        //int size = BASE_BOX;
-        /*
-        if (type.fieldByName("size") != null) {
-            Field f = type.fieldByName("size");
-            size = Integer.parseInt(objRef.getValue(f).toString());
-            size = (size == 0) ? 1 : size;
-        }
-        */
-        // Results in null pointer exception currently
-        //result += "Size: " + ObjectSizeFetcher.getObjectSize(objRef);
+        int size = type.allFields().size();
+        System.out.println("Number of fields for " + type.name() + " : " + size);
+        size = (size == 0) ? BASE_BOX : size;
 
-        //geo.setLocalScale(new Vector3f(size, size * 2, size));
+        geo.setLocalScale(1, size * 2, 1);
         geo.setMaterial(material);
         geo.setUserData("vertex", this);
         
