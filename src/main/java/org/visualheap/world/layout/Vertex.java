@@ -11,6 +11,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.jme3.material.Material;
+import com.sun.jdi.ReferenceType;
 import org.visualheap.app.Game;
 
 import com.jme3.export.JmeExporter;
@@ -111,5 +112,9 @@ public abstract class Vertex implements Savable, ChangeListener {
 
     void removeFromWorld(Game game) {
         game.removeCollidable(geo);
+    }
+
+    public ReferenceType getType() {
+        return null;
     }
 }

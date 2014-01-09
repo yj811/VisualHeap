@@ -100,7 +100,7 @@ public class Game extends SimpleApplication implements ActionListener {
     private Material blueGlowMat;
     private volatile boolean running;
 
-    private HashMap<ReferenceType, Material> materialHashMap;
+    private HashMap<ReferenceType, ColorRGBA> typeColorHashMap;
     private Collection<ObjectReference> referencesOnStack;
 
     private Vertex selectedVertex;
@@ -176,7 +176,7 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	    greenGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    greenGlowMat.setColor("Color", ColorRGBA.Green);
-	    greenGlowMat.setColor("GlowColor", ColorRGBA.Green);
+	    //greenGlowMat.setColor("GlowColor", ColorRGBA.Green);
 	    
 	    magentaGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    magentaGlowMat.setColor("Color", ColorRGBA.Magenta);
@@ -184,22 +184,22 @@ public class Game extends SimpleApplication implements ActionListener {
 	    
 	    yellowGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    yellowGlowMat.setColor("Color", ColorRGBA.Yellow);
-	    yellowGlowMat.setColor("GlowColor", ColorRGBA.Yellow);
+	    //yellowGlowMat.setColor("GlowColor", ColorRGBA.Yellow);
 	    
 	    redGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    redGlowMat.setColor("Color", ColorRGBA.Red);
-	    redGlowMat.setColor("GlowColor", ColorRGBA.Red);
+	    //redGlowMat.setColor("GlowColor", ColorRGBA.Red);
 
         blueGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         blueGlowMat.setColor("Color", ColorRGBA.Blue);
-        blueGlowMat.setColor("GlowColor", ColorRGBA.Blue);
+        //blueGlowMat.setColor("GlowColor", ColorRGBA.Blue);
 
-        materialHashMap = new HashMap<ReferenceType, Material>();
+        typeColorHashMap = new HashMap<ReferenceType, ColorRGBA>();
         //useless atm, just overwrites each entry.
-        materialHashMap.put(null, magentaGlowMat);
-        materialHashMap.put(null, yellowGlowMat);
-        materialHashMap.put(null, redGlowMat);
-        materialHashMap.put(null, greenGlowMat);
+        typeColorHashMap.put(null, ColorRGBA.Magenta);
+        typeColorHashMap.put(null, ColorRGBA.Yellow);
+        typeColorHashMap.put(null, ColorRGBA.Red);
+        typeColorHashMap.put(null, ColorRGBA.Green);
         
         // Turn off culling, so lines don't disappear at random.
         rootNode.setCullHint(CullHint.Never);
@@ -440,27 +440,34 @@ public class Game extends SimpleApplication implements ActionListener {
         return blueGlowMat;
     }
 
-    public HashMap getMaterialHashMap() {
-        return materialHashMap;
+    public HashMap getTypeColorHashMap() {
+        return typeColorHashMap;
     }
 
     public Material createNewMaterial(ReferenceType type) {
         ColorRGBA color = ColorRGBA.randomColor();
 
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", color);
-        material.setColor("GlowColor", color);
+        //material.setColor("Color", color);
+        //material.setColor("GlowColor", color);
 
         // Could be improved to check for colours similar to used colours too
-        while (materialHashMap.containsValue(material)) {
+        while (typeColorHashMap.containsValue(color)) {
             color = ColorRGBA.randomColor();
-            material.setColor("Color", color);
-            material.setColor("GlowColor", color);
+            //material.setColor("GlowColor", color);
         }
 
-        setKeyInfo(type.name(), color, (materialHashMap.size() + NOKEYS) * LINEHEIGHT);
+        material.setColor("Color", color);
+        setKeyInfo(type.name(), color, (typeColorHashMap.size() + NOKEYS) * LINEHEIGHT);
 
-        materialHashMap.put(type, material);
+        typeColorHashMap.put(type, color);
+        return material;
+    }
+
+    public Material getMaterial(ColorRGBA color) {
+        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        material.setColor("Color", color);
+
         return material;
     }
 
@@ -478,9 +485,17 @@ public class Game extends SimpleApplication implements ActionListener {
             selectedVertex.setMaterial(oldMaterial);
         }
 
+        ColorRGBA color = ColorRGBA.White;
+
+        ReferenceType type = v.getType();
+        if (type != null) {
+            color = typeColorHashMap.get(type);
+        }
+
         oldMaterial = v.getMaterial();
         selectedMaterial = oldMaterial.clone();
-        selectedMaterial.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
+        selectedMaterial.setColor("GlowColor", color);
+        //selectedMaterial.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
 
         selectedVertex = v;
         selectedVertex.setMaterial(selectedMaterial);

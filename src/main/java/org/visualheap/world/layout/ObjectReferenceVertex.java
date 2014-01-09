@@ -2,14 +2,13 @@ package org.visualheap.world.layout;
 
 
 import com.jme3.material.Material;
-import com.jme3.math.Vector3f;
+import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.sun.jdi.Field;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.Value;
-import edu.uci.ics.jung.algorithms.layout.Layout;
 import org.visualheap.app.Game;
 
 import java.util.Collection;
@@ -43,8 +42,8 @@ public class ObjectReferenceVertex extends Vertex {
         // Set colour
         if (type.isStatic()) {
             material = game.getGreenGlowMaterial();
-        } else if (game.getMaterialHashMap().containsKey(type)) {
-            material = (Material)game.getMaterialHashMap().get(type);
+        } else if (game.getTypeColorHashMap().containsKey(type)) {
+            material = game.getMaterial((ColorRGBA)game.getTypeColorHashMap().get(type));
         } else {
             material = game.createNewMaterial(type);
         }
@@ -115,5 +114,10 @@ public class ObjectReferenceVertex extends Vertex {
     protected Geometry createGeometry() {
         Box box = new Box(BASE_BOX, BASE_BOX, BASE_BOX);
         return new Geometry("box", box);
+    }
+
+    @Override
+    public ReferenceType getType() {
+        return objRef.referenceType();
     }
 }
