@@ -147,7 +147,7 @@ class DebuggerEventThread extends Thread {
 		Location bpLoc = null;
 		for(Location line : validBreakpointLines) {
         	
-        	//System.out.println(classType.name() + " line number " + line.lineNumber());
+        	System.err.println(classType.name() + " line number " + line.lineNumber());
         	if(line.declaringType().equals(classType) && line.lineNumber() == bp.getLine()) {
         		bpLoc = line;
         	}
@@ -244,7 +244,6 @@ class DebuggerEventThread extends Thread {
     private void methodEntryEvent(MethodEntryEvent event) {
 		if (event.method().name().equals("main")) {
 			setupMethodExit(event.thread());
-			checkBreakpoints();
 			event.request().disable();
 			
 		}
@@ -343,10 +342,31 @@ class DebuggerEventThread extends Thread {
      */
     private void classPrepareEvent(ClassPrepareEvent event)  {
         //EventRequestManager mgr = vm.eventRequestManager();
+    	//Load a class
+    	//Get all valid lines in that class
         ReferenceType refType = event.referenceType();
         
+        if (refType.name().startsWith("org.")) {
+        	System.err.println(event.referenceType().name());
+        }
         
+        try {
+        	List<Location> lines = getBreakpointableLines(refType);
+        	validBreakpointLines.clear();
+        	validBreakpointLines.addAll(lines);
+        } catch (AbsentInformationException e) {
+            e.printStackTrace();
+            return;
+        }
+        for(Breakpoint bp : breakpointsToAdd) {
+        	if (refType.name().equals(bp.getClassName())) {
+        		setBreakpoint(refType, bp);
+        	}
+        	
+        }
+        checkBreakpoints();
         
+        /*
         for(Breakpoint bp : breakpointsToAdd) {
 	        if(refType.name().equals(bp.getClassName())) {
 	            try {
@@ -361,13 +381,12 @@ class DebuggerEventThread extends Thread {
 	        	
 	        }
         }
-        
+        */
     
     }
 
     private void checkBreakpoints() {
-    	breakpointsToAdd.removeAll(validBreakpoints);
-    	invalidBreakpoints.addAll(breakpointsToAdd);
+    	//invalidBreakpoints.addAll(breakpointsToAdd);
     	if (invalidBreakpoints.size() > 0) {
     			//Terminate the virtual machine
     		
