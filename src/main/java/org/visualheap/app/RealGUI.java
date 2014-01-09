@@ -1,5 +1,6 @@
 package org.visualheap.app;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.StackFrame;
 
 import org.visualheap.debugger.Breakpoint;
@@ -62,6 +64,7 @@ public class RealGUI extends NullListener {
 	
 	private Set<String> classNames;
 	private String cachedJarPath;
+	private boolean loadingAJar;
 
 	//Swing Components
 	private JFrame frame;
@@ -79,6 +82,7 @@ public class RealGUI extends NullListener {
 	private JTextArea taConsoleOutput;
 	private BreakpointTableModel tableModel;
 	private JPanel paneVisual;
+	
 
 	//Constants
 	private final JFileChooser fc = new JFileChooser();
@@ -164,7 +168,11 @@ public class RealGUI extends NullListener {
 			@Override
 			public void run() {
 				currentStackFrame = sf;
-				lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+				try {
+					lblLineNo.setText("File: " + sf.location().sourceName() + " - Line Number: " + sf.location().lineNumber());
+				} catch (AbsentInformationException e) {
+					lblLineNo.setText("File: Unknown - Line Number: " + sf.location().lineNumber());
+				} 
 				state = GUI_STATE.SUSPENDED;
 				setButtonsByState();
 			}
@@ -182,7 +190,11 @@ public class RealGUI extends NullListener {
 					debugger.resume();
 				} else {
 					currentStackFrame = sf;
-					lblLineNo.setText("Line Number: " + sf.location().lineNumber());    
+					try {
+						lblLineNo.setText("File: " + sf.location().sourceName() + " - Line Number: " + sf.location().lineNumber());
+					} catch (AbsentInformationException e) {
+						lblLineNo.setText("File: Unknown - Line Number: " + sf.location().lineNumber());
+					}    
 
 					state = GUI_STATE.SUSPENDED;
 					setButtonsByState();
@@ -328,8 +340,9 @@ public class RealGUI extends NullListener {
 			// if the new string results in a final product, load the VM auto-magically.
 
 			File f = new File(finalPath.toString());
-			if(f.exists() && f.isFile()) { 
+			if(f.exists() && f.isFile()) {
 				prepareVM();
+				loadingAJar = false;
 			} else {
 				finalPath.setLength(0);
 				finalPath.append(edtClassPath.getText());
@@ -338,6 +351,7 @@ public class RealGUI extends NullListener {
 				if (edtClassPath.getText().isEmpty()) return;
 				if(j.exists()  && j.isFile() && classExistsInJAR(edtClassPath.getText(), edtClassName.getText())) { 
 					prepareVM();
+					loadingAJar = true;
 				} else {
 					state = GUI_STATE.UNLOADED;
 					setButtonsByState();
@@ -426,15 +440,44 @@ public class RealGUI extends NullListener {
 	}
 
 	private class ResumeButtonListener implements ActionListener {
+		
+
 		public void actionPerformed(ActionEvent e) {
 			if (state.equals(GUI_STATE.LOADED)) {
 				//Load breakpoints to the debugger;
 				int size = tableModel.getRowCount();
+				List<Breakpoint> invalidBPS = new ArrayList<Breakpoint>();
 				for (int i = 0; i < size; i++) {
 					Vector<?> row = (Vector<?>)tableModel.getDataVector().elementAt(i);
 					if (!row.elementAt(0).equals(null) && !row.elementAt(1).equals(null)) {
-						debugger.addBreakpoint((String)row.elementAt(1), (Integer)row.elementAt(0));
+						boolean breakpointedClassFileExists = true;
+						String breakpointClass = (String)row.elementAt(1);
+						Integer breakpointLine = (Integer)row.elementAt(0);
+						if (loadingAJar) {
+							
+							breakpointedClassFileExists = classExistsInJAR(edtClassPath.getText(),(String)row.elementAt(1));
+						} else {
+							StringBuilder sb = new StringBuilder();
+							sb.append(edtClassPath.getText());
+							sb.append("/");
+							sb.append(breakpointClass.replaceAll("\\Q.\\E", "/"));
+							sb.append(".class");
+							System.err.println("TESTING: " + sb.toString());
+							File f = new File(sb.toString());
+							breakpointedClassFileExists = (f.exists() && f.isFile());
+						}
+						if (!breakpointedClassFileExists) {
+							
+							invalidBPS.add(new Breakpoint(breakpointClass, breakpointLine));
+						} else {
+							
+							debugger.addBreakpoint(breakpointClass, breakpointLine);
+						}
 					}
+				}
+				if (invalidBPS.size() > 0) {
+					onInvalidBreakpointEvent(invalidBPS);
+					return;
 				}
 			}
 			
