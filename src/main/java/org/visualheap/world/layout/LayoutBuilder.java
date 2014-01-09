@@ -89,8 +89,12 @@ public class LayoutBuilder {
 				// field was an ObjectReference
 				ObjectReference childObjRef = (ObjectReference)child;
 				if(depth == 0) {
-					// stopped searching, mark reference as unfollowed.
-					childVert = new UnfollowedReferenceVertex(childObjRef, this);
+					// stopped searching, mark reference as unfollowed unless we 
+				    // have alredy seen this object.
+				    childVert = objRefMapping.get(childObjRef);
+				    if(childVert == null) {
+    					childVert = new UnfollowedReferenceVertex(childObjRef, this);
+				    }
 				} else {
 					// try to find an existing vertex for this reference
 					ObjectReferenceVertex vert = objRefMapping.get(childObjRef);
