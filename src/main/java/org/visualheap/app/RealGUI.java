@@ -81,7 +81,6 @@ public class RealGUI extends NullListener {
 	private JButton btnClasspath;
 	private JTextArea taConsoleOutput;
 	private BreakpointTableModel tableModel;
-	private JPanel paneVisual;
 	
 
 	//Constants
@@ -635,10 +634,6 @@ public class RealGUI extends NullListener {
 		btnVisualise = new JButton("Visualise");
 		paneOutputs.add(btnVisualise, BorderLayout.SOUTH);
 		btnVisualise.addActionListener(new VisualiseButtonListener());
-
-		paneVisual = new JPanel();
-		tabbedPane.addTab("Visual", null, paneVisual, null);
-		paneVisual.setVisible(true);
 
 		edtClassName.getDocument().addDocumentListener(new PathFieldListener());
 		edtClassPath.getDocument().addDocumentListener(new PathFieldListener());
