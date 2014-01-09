@@ -49,7 +49,6 @@ public class ObjectReferenceVertex extends Vertex {
 
         // Set size
         int size = type.allFields().size();
-        System.out.println("Number of fields for " + type.name() + " : " + size);
         size = (size == 0) ? BASE_BOX : size;
 
         geo.setLocalScale(1, size * 2, 1);

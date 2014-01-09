@@ -36,6 +36,7 @@ import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
 import org.visualheap.world.layout.Edge;
 import org.visualheap.world.layout.LayoutBuilder;
+import org.visualheap.world.layout.NullReferenceVertex;
 import org.visualheap.world.layout.Vertex;
 
 import java.util.Collection;
@@ -375,7 +376,6 @@ public class Game extends SimpleApplication implements ActionListener {
         keyInfo = new BitmapText(guiFont, false);
         keyInfo.setBox(new Rectangle(0, 0, 230, 400));
         keyInfo.setSize(FONT_SIZE);
-        //keyInfo.setSize(guiFont.getCharSet().getRenderedSize());
         keyInfo.setColor(color);
         keyInfo.setText(info);
         keyInfo.setAlignment(BitmapFont.Align.Right);
@@ -448,13 +448,10 @@ public class Game extends SimpleApplication implements ActionListener {
         ColorRGBA color = ColorRGBA.randomColor();
 
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        //material.setColor("Color", color);
-        //material.setColor("GlowColor", color);
 
         // Could be improved to check for colours similar to used colours too
         while (typeColorHashMap.containsValue(color)) {
             color = ColorRGBA.randomColor();
-            //material.setColor("GlowColor", color);
         }
 
         material.setColor("Color", color);
@@ -490,6 +487,10 @@ public class Game extends SimpleApplication implements ActionListener {
         ReferenceType type = v.getType();
         if (type != null) {
             color = typeColorHashMap.get(type);
+        } else if (v instanceof NullReferenceVertex) {
+            color = ColorRGBA.Red;
+        } else if (type.isStatic()) {
+            color = ColorRGBA.Green;
         }
 
         oldMaterial = v.getMaterial();
