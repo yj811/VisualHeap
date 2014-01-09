@@ -147,7 +147,7 @@ class DebuggerEventThread extends Thread {
 		Location bpLoc = null;
 		for(Location line : validBreakpointLines) {
         	
-        	System.err.println(classType.name() + " line number " + line.lineNumber());
+        	//System.err.println(classType.name() + " line number " + line.lineNumber());
         	if(line.declaringType().equals(classType) && line.lineNumber() == bp.getLine()) {
         		bpLoc = line;
         	}
@@ -346,16 +346,12 @@ class DebuggerEventThread extends Thread {
     	//Get all valid lines in that class
         ReferenceType refType = event.referenceType();
         
-        if (refType.name().startsWith("org.")) {
-        	System.err.println(event.referenceType().name());
-        }
-        
         try {
         	List<Location> lines = getBreakpointableLines(refType);
         	validBreakpointLines.clear();
         	validBreakpointLines.addAll(lines);
         } catch (AbsentInformationException e) {
-            e.printStackTrace();
+        	validBreakpointLines.clear();
             return;
         }
         for(Breakpoint bp : breakpointsToAdd) {
@@ -364,25 +360,7 @@ class DebuggerEventThread extends Thread {
         	}
         	
         }
-        checkBreakpoints();
-        
-        /*
-        for(Breakpoint bp : breakpointsToAdd) {
-	        if(refType.name().equals(bp.getClassName())) {
-	            try {
-	                List<Location> test = getBreakpointableLines(refType);
-	                validBreakpointLines.addAll(test);
-	            } catch (AbsentInformationException e) {
-	                e.printStackTrace();
-	            }
-	        	System.out.println("found " + bp.getClassName());
-	        	
-	        	setBreakpoint(refType, bp);
-	        	
-	        }
-        }
-        */
-    
+        checkBreakpoints();    
     }
 
     private void checkBreakpoints() {

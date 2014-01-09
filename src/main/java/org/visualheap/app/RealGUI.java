@@ -462,7 +462,6 @@ public class RealGUI extends NullListener {
 							sb.append("/");
 							sb.append(breakpointClass.replaceAll("\\Q.\\E", "/"));
 							sb.append(".class");
-							System.err.println("TESTING: " + sb.toString());
 							File f = new File(sb.toString());
 							breakpointedClassFileExists = (f.exists() && f.isFile());
 						}

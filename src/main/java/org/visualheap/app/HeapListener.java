@@ -86,7 +86,10 @@ public class HeapListener extends NullListener {
 
         writer.println("");
         // referringObjects(0) - Returns all objects that directly reference this object.
-        writer.println("    References: " + val.referringObjects(0));
+        if (val.referringObjects(0).size() > 0) {
+        	writer.println("    References: " + val.referringObjects(0));
+        	System.err.println(val.referringObjects(0));
+        }
         List<Field> fields = objectType.allFields();
 
         prevRefs.put(val.hashCode(), val);
@@ -96,6 +99,7 @@ public class HeapListener extends NullListener {
             Value v = val.getValue(f);
             if (v instanceof ObjectReference) {
                 writer.println("        " + v.toString());
+                
                 getReferences(((ObjectReference) v), writer, prevRefs);
             }
         }

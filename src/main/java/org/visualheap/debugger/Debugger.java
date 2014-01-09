@@ -58,6 +58,9 @@ public class Debugger {
 	private DebugListener listener;
 	private DebuggerEventThread eventThread;
 
+	
+	public Debugger() {}
+	
 	/**
 	 * Launch target VM with specified breakpoint
 	 * @param classPath classpath to class to invoke
@@ -92,6 +95,7 @@ public class Debugger {
 	public Debugger(DebugListener listener) {
 		this.listener = listener;
 	}
+	
 
 
 	/**
@@ -203,7 +207,9 @@ public class Debugger {
 	 * @param listener the listener to add
 	 */
 	public void addListener(DebugListener listener) {
-		eventThread.addListener(listener);
+		if (eventThread != null) {
+			eventThread.addListener(listener);
+		}
 	}
 
 	public void await() {

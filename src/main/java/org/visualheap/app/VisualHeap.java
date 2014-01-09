@@ -1,7 +1,13 @@
 package org.visualheap.app;
 
+import java.util.List;
+
+import org.visualheap.debugger.Breakpoint;
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
+import org.visualheap.debugger.NullListener;
+
+import com.sun.jdi.StackFrame;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,10 +23,8 @@ public class VisualHeap {
      * main
      */
     public static void main(String[] args) {
-        DebugListener debugListener = new HeapListener();
-        debugger = null;
 		if(args.length < 1 || args.length > 3) {
-            debugger = new Debugger(debugListener);
+            debugger = new Debugger();
             RealGUI gui = new RealGUI(debugger);
             gui.show();
         } else {
@@ -33,7 +37,7 @@ public class VisualHeap {
         		className = args[1];
         	}
             
-            debugger = new Debugger(debugListener);
+            debugger = new Debugger();
             RealGUI gui = new RealGUI(debugger);
             if (args.length == 3) {
                 Integer breakpointLine = 0;
