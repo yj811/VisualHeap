@@ -188,7 +188,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	    //yellowGlowMat.setColor("GlowColor", ColorRGBA.Yellow);
 	    
 	    redGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	    redGlowMat.setColor("Color", ColorRGBA.Red);
+        redGlowMat.setColor("Color", ColorRGBA.Red);
 	    //redGlowMat.setColor("GlowColor", ColorRGBA.Red);
 
         blueGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -226,7 +226,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		
 		setupCrossHairs();
 		setupPlayer();
-		setupLight();
         setupKeys();
 
         setKeyInfo("Key:", ColorRGBA.White, 0);
@@ -252,19 +251,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		 guiNode.attachChild(ch);		
 	}
 
-	private void setupLight() {
-		// We add light so we see the scene
-		AmbientLight al = new AmbientLight();
-		al.setColor(ColorRGBA.White.mult(1.3f));
-		rootNode.addLight(al);
-
-		DirectionalLight dl = new DirectionalLight();
-		dl.setColor(ColorRGBA.White);
-		dl.setDirection(new Vector3f(2.8f, -2.8f, -2.8f).normalizeLocal());
-		rootNode.addLight(dl);
-		System.out.println("added light");
-	}
-
 	private void setupPlayer() {
 		// setup the player's collision boundary + some parameters
 		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 10f, 1);
@@ -277,20 +263,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		// adding an object to the physics space makes it collidable
 		bulletAppState.getPhysicsSpace().add(player);
 	}
-	
-	/**
-	 * tell the Game that the graph has changed - it should update the 
-	 * graphics and rerun the layout algorithm to reflect that.
-	public void rebuildWorld() {
-		rootNode.detachChild(collidables);
-		collidables = new Node();
-		rootNode.attachChild(collidables);
-		rootNode.detachChild(nonCollidables);
-		nonCollidables = new Node();
-		rootNode.attachChild(nonCollidables);
-		constructWorld();
-	}
-	 */
 
 	private void constructWorld() {
 	    // put the vertices in the world.
@@ -513,7 +485,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	public void addGridSquare() {
 	    Quad q = new Quad(2000,2000);
         Geometry blueq = new Geometry("Quad", q);
-        blueq.setLocalTranslation(new Vector3f(-1000, -1.2f,-1000));
+        blueq.setLocalTranslation(new Vector3f(-1000, -5f,-1000));
         blueq.rotate( 270*FastMath.DEG_TO_RAD , 270*FastMath.DEG_TO_RAD  , 0f);
         Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         mat1.setColor("Color", ColorRGBA.White);
