@@ -9,7 +9,8 @@ import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
-import com.jme3.font.*;
+import com.jme3.font.BitmapFont;
+import com.jme3.font.BitmapText;
 import com.jme3.font.Rectangle;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
@@ -36,7 +37,6 @@ import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
 import org.visualheap.world.layout.Edge;
 import org.visualheap.world.layout.LayoutBuilder;
-import org.visualheap.world.layout.NullReferenceVertex;
 import org.visualheap.world.layout.Vertex;
 
 import java.util.Collection;
@@ -455,7 +455,7 @@ public class Game extends SimpleApplication implements ActionListener {
         }
 
         ColorRGBA color = ColorRGBA.White;
-
+/*
         ReferenceType type = v.getType();
         if (type != null) {
             color = typeColorHashMap.get(type);
@@ -464,7 +464,7 @@ public class Game extends SimpleApplication implements ActionListener {
         } else if (type.isStatic()) {
             color = ColorRGBA.Green;
         }
-
+*/
         oldMaterial = v.getMaterial();
         selectedMaterial = oldMaterial.clone();
         selectedMaterial.setColor("GlowColor", color);
