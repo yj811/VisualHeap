@@ -197,11 +197,6 @@ public class Game extends SimpleApplication implements ActionListener {
         //blueGlowMat.setColor("GlowColor", ColorRGBA.Blue);
 
         typeColorHashMap = new HashMap<ReferenceType, ColorRGBA>();
-        //useless atm, just overwrites each entry.
-        typeColorHashMap.put(null, ColorRGBA.Magenta);
-        typeColorHashMap.put(null, ColorRGBA.Yellow);
-        typeColorHashMap.put(null, ColorRGBA.Red);
-        typeColorHashMap.put(null, ColorRGBA.Green);
         
         // Turn off culling, so lines don't disappear at random.
         rootNode.setCullHint(CullHint.Never);
@@ -434,7 +429,7 @@ public class Game extends SimpleApplication implements ActionListener {
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 
         // Could be improved to check for colours similar to used colours too
-        while (typeColorHashMap.containsValue(color)) {
+        while (isUsedColor(color)) {
             color = ColorRGBA.randomColor();
         }
 
@@ -443,6 +438,12 @@ public class Game extends SimpleApplication implements ActionListener {
 
         typeColorHashMap.put(type, color);
         return material;
+    }
+
+    public boolean isUsedColor(ColorRGBA color) {
+        return typeColorHashMap.containsValue(color) || color.equals(ColorRGBA.Blue) || color.equals(ColorRGBA.Red)
+                || color.equals(ColorRGBA.Green) || color.equals(ColorRGBA.White) || color.equals(ColorRGBA.Magenta)
+                || color.equals(ColorRGBA.Yellow);
     }
 
     public Material getMaterial(ColorRGBA color) {
