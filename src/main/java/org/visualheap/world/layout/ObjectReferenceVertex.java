@@ -5,10 +5,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
-import com.sun.jdi.Field;
-import com.sun.jdi.ObjectReference;
-import com.sun.jdi.ReferenceType;
-import com.sun.jdi.Value;
+import com.sun.jdi.*;
 import org.visualheap.app.Game;
 
 import java.util.Collection;
@@ -71,6 +68,17 @@ public class ObjectReferenceVertex extends Vertex {
 		return result;		
 	}
 
+    public String createMethInformation() {
+        ReferenceType type = objRef.referenceType();
+        String result = "Type: " + type.name() + "\n";
+
+        for(Method m : type.allMethods()) {
+            result += m.name() + ":   " + m.argumentTypeNames().toString() + "\n";
+        }
+
+        return result;
+    }
+
 	/**
 	 * get children of object reference.
 	 */
@@ -90,9 +98,11 @@ public class ObjectReferenceVertex extends Vertex {
         if (game.getSelectedVertex() == this) {
             game.removeSelectedVertex();
             game.setObjInfo("");
+            game.setObjMethInfo("");
         } else {
             game.setSelectedVertex(this);
             game.setObjInfo(createInformation());
+            game.setObjMethInfo(createMethInformation());
         }
 	}
 

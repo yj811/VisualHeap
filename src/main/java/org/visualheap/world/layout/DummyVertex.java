@@ -35,13 +35,12 @@ public class DummyVertex extends Vertex {
 
 	@Override
 	public Collection<Value> getChildren() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void select(Game game) {
-		// TODO display some stack frame related information?
+		// implementation not required
 	}
 
     @Override

@@ -33,6 +33,10 @@ public class NullReferenceVertex extends Vertex {
         return result;
     }
 
+    public String createMethInformation() {
+        return "";
+    }
+
 	@Override
 	public Collection<Value> getChildren() {
 		// TODO Auto-generated method stub
@@ -44,9 +48,11 @@ public class NullReferenceVertex extends Vertex {
         if (game.getSelectedVertex() == this) {
             game.removeSelectedVertex();
             game.setObjInfo("");
+            game.setObjMethInfo("");
         } else {
             game.setSelectedVertex(this);
             game.setObjInfo(createInformation());
+            game.setObjMethInfo(createMethInformation());
         }
 	}
 

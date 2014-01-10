@@ -77,6 +77,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Node collidables = new Node();
 	private Node nonCollidables = new Node();
     private BitmapText objInfo;
+    private BitmapText objMethInfo;
     private BitmapText keyInfo;
 	private Geometry target;
 	private Graph<Vertex, Edge> graph;
@@ -321,6 +322,7 @@ public class Game extends SimpleApplication implements ActionListener {
             Ray ray = new Ray(cam.getLocation(), cam.getDirection());
             collidables.collideWith(ray, results);
             if (objInfo != null) guiNode.detachChild(objInfo);
+            if (objMethInfo != null) guiNode.detachChild(objMethInfo);
             if (results.size() > 0) {
             	// pick the closest object as the target
                 target = results.getClosestCollision().getGeometry();
@@ -343,6 +345,16 @@ public class Game extends SimpleApplication implements ActionListener {
 		objInfo.setLocalTranslation(10, 470, 0);
 		guiNode.attachChild(objInfo);
 	}
+
+    public void setObjMethInfo(String info) {
+        objMethInfo = new BitmapText(guiFont, false);
+        objMethInfo.setBox(new Rectangle(0, 0, 230, 400));
+        objMethInfo.setSize(FONT_SIZE);
+        objMethInfo.setColor(ColorRGBA.Yellow);
+        objMethInfo.setText(info);
+        objMethInfo.setLocalTranslation(250, 470, 0);
+        guiNode.attachChild(objMethInfo);
+    }
 
     public void setKeyInfo(String info, ColorRGBA color, int offset) {
         keyInfo = new BitmapText(guiFont, false);
