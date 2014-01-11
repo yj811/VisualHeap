@@ -11,6 +11,7 @@ import org.visualheap.app.Game;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Line;
+import com.jme3.scene.shape.Sphere;
 
 /**
  * represents an edge (i.e. a reference) between two objects
@@ -20,11 +21,14 @@ import com.jme3.scene.shape.Line;
  */
 public class Edge implements ChangeListener {
 	
-	protected Vertex start;
+	private static final int SPHERE_DISTANCE_FROM_ENDPOINT = 5;
+    private static final int SPHERE_RADIUS = 3;
+    protected Vertex start;
 	protected Vertex end;
     private Line line;
     private LayoutBuilder lb;
-    private Geometry geo;
+    private Geometry lineGeo;
+    private Geometry ballGeo;
 
 	public Edge(LayoutBuilder lb, Vertex start, Vertex end) {
 	    this.lb = lb;
@@ -43,24 +47,49 @@ public class Edge implements ChangeListener {
 		Point2D startPoint = lb.getPosition(start);
 		Point2D endPoint = lb.getPosition(end);
 		
-		line = new Line(threedeeify(startPoint), threedeeify(endPoint));
-		line.setLineWidth(5);
-		geo = new Geometry("line", line);
+		Vector3f startVec = threedeeify(endPoint);
+        Vector3f endVec = threedeeify(startPoint);
 		
-        geo.setMaterial(game.getMagentaGlowMaterial());
-		geo.setMesh(line);
-		game.addNonCollidable(geo); // non - collidable
+		line = new Line(endVec, startVec);
+		line.setLineWidth(5);
+		lineGeo = new Geometry("line", line);
+		
+        lineGeo.setMaterial(game.getMagentaGlowMaterial());
+		lineGeo.setMesh(line);
+		game.addNonCollidable(lineGeo); // non - collidable
+
+        Sphere ball = new Sphere(32, 32, SPHERE_RADIUS);
+        ballGeo = new Geometry("ball", ball);
+        ballGeo.setMaterial(game.getMagentaGlowMaterial());
+        
+        game.addNonCollidable(ballGeo);
+        
+        computePositions();
+
 	}
 
     @Override
     public void stateChanged(ChangeEvent e) {
-		Point2D startPoint = lb.getPosition(start);
+		computePositions();
+    }
+
+    private void computePositions() {
+        Point2D startPoint = lb.getPosition(start);
 		Point2D endPoint = lb.getPosition(end); 
-		line.updatePoints(threedeeify(startPoint), threedeeify(endPoint));
+		Vector3f startVec = threedeeify(endPoint);
+        Vector3f endVec = threedeeify(startPoint);
+
+		line.updatePoints(startVec, endVec);
+
+        Vector3f startToEnd = endVec.subtract(startVec); 
+        
+        Vector3f ballPos = startVec.add(startToEnd.normalize().mult(SPHERE_DISTANCE_FROM_ENDPOINT));
+        ballGeo.setLocalTranslation(ballPos);
     }
 
     void removeFromWorld(Game game) {
-        game.removeNonCollidable(geo);
+        game.removeNonCollidable(lineGeo);
+        game.removeNonCollidable(ballGeo);
     }
 
 }
