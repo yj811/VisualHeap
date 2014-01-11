@@ -27,6 +27,7 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Quad;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
@@ -143,6 +144,9 @@ public class Game extends SimpleApplication implements ActionListener {
 			public void run() {
 			    setReferencesOnStack(initialSet);
                 setShowSettings(false);
+                AppSettings settings = new AppSettings(true);
+                settings.setResolution(800,600);                 
+                setSettings(settings);
                 start();
 			}
 		});
@@ -337,7 +341,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		objInfo.setSize(FONT_SIZE);
 		objInfo.setColor(ColorRGBA.Yellow);
 		objInfo.setText(info);
-		objInfo.setLocalTranslation(10, 470, 0);
+		objInfo.setLocalTranslation(10, 580, 0);
 		guiNode.attachChild(objInfo);
 	}
 
@@ -347,7 +351,7 @@ public class Game extends SimpleApplication implements ActionListener {
         objMethInfo.setSize(FONT_SIZE);
         objMethInfo.setColor(ColorRGBA.Yellow);
         objMethInfo.setText(info);
-        objMethInfo.setLocalTranslation(250, 470, 0);
+        objMethInfo.setLocalTranslation(250, 580, 0);
         guiNode.attachChild(objMethInfo);
     }
 
@@ -358,7 +362,7 @@ public class Game extends SimpleApplication implements ActionListener {
         keyInfo.setColor(color);
         keyInfo.setText(info);
         keyInfo.setAlignment(BitmapFont.Align.Right);
-        keyInfo.setLocalTranslation(400, 470 - offset, 0);
+        keyInfo.setLocalTranslation(550, 580 - offset, 0);
         guiNode.attachChild(keyInfo);
     }
 
@@ -434,7 +438,7 @@ public class Game extends SimpleApplication implements ActionListener {
         }
 
         material.setColor("Color", color);
-        setKeyInfo(type.name(), color, (typeColorHashMap.size() + NOKEYS) * LINEHEIGHT);
+        setKeyInfo(type.name(), color, (1 + typeColorHashMap.size() + NOKEYS) * LINEHEIGHT);
 
         typeColorHashMap.put(type, color);
         return material;

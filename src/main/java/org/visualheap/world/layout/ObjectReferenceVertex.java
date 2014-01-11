@@ -6,6 +6,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.sun.jdi.*;
+
 import org.visualheap.app.Game;
 
 import java.util.Collection;
@@ -73,7 +74,16 @@ public class ObjectReferenceVertex extends Vertex {
         String result = "Type: " + type.name() + "\n";
 
         for(Method m : type.allMethods()) {
-            result += m.name() + ":   " + m.argumentTypeNames().toString() + "\n";
+            try {
+				result += m.name() + "(";
+				for (Type t : m.argumentTypes()) {
+					int i = t.name().lastIndexOf('.');
+					result += t.name().substring(i + 1) + ",";
+				}
+				result += ")\n";
+			} catch (ClassNotLoadedException e) {
+				result += m.name() + ": Arguments Unavailable\n";
+			}
         }
 
         return result;
