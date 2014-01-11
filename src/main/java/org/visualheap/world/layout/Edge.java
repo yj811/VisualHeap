@@ -85,7 +85,7 @@ public class Edge implements ChangeListener {
 
         Vector3f startToEnd = endVec.subtract(startVec); 
         int endDimension = end.getDimension();
-        ball.updateGeometry(32, 32, endDimension / 2);
+        // not updating ball size, building a new sphere damages performance.
         
         Vector3f ballPos = startVec.add(startToEnd.normalize().mult(endDimension));
         ballGeo.setLocalTranslation(ballPos);
