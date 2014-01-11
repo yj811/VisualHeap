@@ -87,12 +87,9 @@ public class RealGUI implements DebugListener {
     private JRadioButton rbtnFR;
     private JRadioButton rbtnISOM;
     
-
-
     //Constants
     private final JFileChooser fc = new JFileChooser();
     private final ButtonGroup buttonGroup = new ButtonGroup();
-
 
     private enum GUI_STATE {
         UNLOADED, LOADED, STARTED, SUSPENDED, FINISHED, FINISHED_ERROR, CLOSING
@@ -181,7 +178,6 @@ public class RealGUI implements DebugListener {
     @Override
     public void onBreakpoint(final StackFrame sf) {
         SwingUtilities.invokeLater(new Runnable () {
-
             @Override
             public void run() {
                 currentStackFrame = sf;
@@ -194,13 +190,11 @@ public class RealGUI implements DebugListener {
                 setButtonsByState();
             }
         });
-
     }
 
     @Override
     public void onStep(final StackFrame sf) {
         SwingUtilities.invokeLater(new Runnable () {
-
             @Override
             public void run() {
                 if (state.equals(GUI_STATE.FINISHED)) {
@@ -228,7 +222,6 @@ public class RealGUI implements DebugListener {
     @Override
     public void vmDeath() {
         SwingUtilities.invokeLater(new Runnable () {
-
             @Override
             public void run() {
                 if (state.equals(GUI_STATE.STARTED)) {
@@ -301,12 +294,10 @@ public class RealGUI implements DebugListener {
             break;
         default:
             break;
-
         }
     }
 
     private void prepareVM() {
-
         if (istConsoleOutput != null && !istConsoleOutput.finished()) {
             istConsoleOutput.finish();
         }
@@ -329,7 +320,6 @@ public class RealGUI implements DebugListener {
         istConsoleErrOutput.setReader(new BufferedReader(new InputStreamReader(debugger.getErrOutput())));
         istConsoleErrOutput.start();
 
-
         state = GUI_STATE.LOADED;
         setButtonsByState();
     }
@@ -348,7 +338,6 @@ public class RealGUI implements DebugListener {
         }
 
         private void buildUpdate(DocumentEvent e) {
-
             finalPath.setLength(0);
             finalPath.append(edtClassPath.getText());
             finalPath.append("/");
@@ -470,8 +459,6 @@ public class RealGUI implements DebugListener {
     }
 
     private class ResumeButtonListener implements ActionListener {
-
-
         public void actionPerformed(ActionEvent e) {
             if (state.equals(GUI_STATE.LOADED)) {
                 //Load breakpoints to the debugger;
@@ -534,7 +521,6 @@ public class RealGUI implements DebugListener {
                 debugger.kill();
                 if (visualiser != null && visualiser.isRunning()) {
                     visualiser.stop();
-
                 }
             }
         });
@@ -698,8 +684,6 @@ public class RealGUI implements DebugListener {
         edtClassPath.setText(classPath);
         edtClassName.setText(className);
 
-
-
         JLabel lblArguments = new JLabel("Arguments:");
         sl_paneConfigure.putConstraint(SpringLayout.WEST, lblArguments, 0, SpringLayout.WEST, edtClassPath);
         sl_paneConfigure.putConstraint(SpringLayout.SOUTH, lblArguments, -27, SpringLayout.NORTH, btnNewBreakpoint);
@@ -738,6 +722,4 @@ public class RealGUI implements DebugListener {
             return columnEditables[column];
         }
     }
-
-
 }

@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import org.visualheap.app.Game;
 
 import com.sun.jdi.ObjectReference;
@@ -36,6 +38,8 @@ public class LayoutBuilder {
 	
 	private ObservableCachingLayout<Vertex, Edge> layout;
     private ISOMLayout<Vertex, Edge> isomLayout;
+    private FRLayout<Vertex, Edge> frLayout;
+    private KKLayout<Vertex, Edge> kkLayout;
     private Graph<Vertex, Edge> graph;
     
     // has the graph changed since we last completed the layout algorithm?
@@ -120,9 +124,24 @@ public class LayoutBuilder {
 	
 	private LayoutBuilder(Collection<ObjectReference> initialSet, Game game, int depth) {
         graph = new DirectedSparseGraph<Vertex, Edge>();
-        isomLayout = new ISOMLayout<Vertex, Edge>(graph);
-        isomLayout.setSize(new Dimension(BASE_SIZE, BASE_SIZE));
-        layout = new ObservableCachingLayout<Vertex, Edge>(isomLayout);
+
+        switch(game.layout) {
+            case FR:
+                frLayout = new FRLayout<Vertex, Edge>(graph, new Dimension(BASE_SIZE, BASE_SIZE));
+                layout = new ObservableCachingLayout<Vertex, Edge>(frLayout);
+                break;
+            case KK:
+                kkLayout = new KKLayout<Vertex, Edge>(graph);
+                kkLayout.setSize(new Dimension(BASE_SIZE, BASE_SIZE));
+                layout = new ObservableCachingLayout<Vertex, Edge>(kkLayout);
+                break;
+            default:
+                isomLayout = new ISOMLayout<Vertex, Edge>(graph);
+                isomLayout.setSize(new Dimension(BASE_SIZE, BASE_SIZE));
+                layout = new ObservableCachingLayout<Vertex, Edge>(isomLayout);
+                break;
+        }
+
         this.game = game;
         
         // construct the graph
@@ -209,7 +228,17 @@ public class LayoutBuilder {
         double scale = Math.sqrt(vertexCount);
         if (!(scale < 1)) {
             int newDim = (int) Math.round(BASE_SIZE * scale);
-            isomLayout.setSize(new Dimension(newDim, newDim));
+            switch (game.layout) {
+                case FR:
+                    frLayout.setSize(new Dimension(newDim, newDim));
+                    break;
+                case KK:
+                    kkLayout.setSize(new Dimension(newDim, newDim));
+                    break;
+                default:
+                    isomLayout.setSize(new Dimension(newDim, newDim));
+                    break;
+            }
         }
     }
 }
