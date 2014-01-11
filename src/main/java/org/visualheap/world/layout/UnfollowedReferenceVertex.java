@@ -59,4 +59,9 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
         Box box = new Box(MINI_BOX,MINI_BOX,MINI_BOX);
         return new Geometry("Box", box );
     }
+    
+    @Override
+    public int getDimension() {
+        return MINI_BOX;
+    }
 }

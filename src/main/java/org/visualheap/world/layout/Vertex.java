@@ -117,4 +117,8 @@ public abstract class Vertex implements Savable, ChangeListener {
     public ReferenceType getType() {
         return null;
     }
+    
+    public int getDimension() {
+        return BASE_BOX;
+    }
 }

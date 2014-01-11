@@ -66,5 +66,10 @@ public class NullReferenceVertex extends Vertex {
         Sphere sphere = new Sphere(32, 32, 3f);
         return new Geometry("sphere", sphere);
     }
+    
+    @Override
+    public int getDimension() {
+        return 2; // just to make the sphere small
+    }
 
 }

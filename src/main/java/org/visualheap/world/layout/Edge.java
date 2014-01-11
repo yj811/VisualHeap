@@ -29,6 +29,7 @@ public class Edge implements ChangeListener {
     private LayoutBuilder lb;
     private Geometry lineGeo;
     private Geometry ballGeo;
+    private Sphere ball;
 
 	public Edge(LayoutBuilder lb, Vertex start, Vertex end) {
 	    this.lb = lb;
@@ -58,7 +59,8 @@ public class Edge implements ChangeListener {
 		lineGeo.setMesh(line);
 		game.addNonCollidable(lineGeo); // non - collidable
 
-        Sphere ball = new Sphere(32, 32, SPHERE_RADIUS);
+		float radius = end.getDimension() / 2;
+        ball = new Sphere(32, 32, radius);
         ballGeo = new Geometry("ball", ball);
         ballGeo.setMaterial(game.getMagentaGlowMaterial());
         
@@ -82,8 +84,10 @@ public class Edge implements ChangeListener {
 		line.updatePoints(startVec, endVec);
 
         Vector3f startToEnd = endVec.subtract(startVec); 
+        int endDimension = end.getDimension();
+        ball.updateGeometry(32, 32, endDimension / 2);
         
-        Vector3f ballPos = startVec.add(startToEnd.normalize().mult(SPHERE_DISTANCE_FROM_ENDPOINT));
+        Vector3f ballPos = startVec.add(startToEnd.normalize().mult(endDimension));
         ballGeo.setLocalTranslation(ballPos);
     }
 
