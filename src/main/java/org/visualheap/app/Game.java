@@ -17,8 +17,6 @@ import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
-import com.jme3.light.AmbientLight;
-import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.*;
 import com.jme3.post.FilterPostProcessor;
@@ -31,13 +29,8 @@ import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
-import com.sun.jdi.StackFrame;
 import edu.uci.ics.jung.graph.Graph;
-
-import org.visualheap.app.Game.LAYOUT;
-import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
-import org.visualheap.debugger.NullListener;
 import org.visualheap.world.layout.Edge;
 import org.visualheap.world.layout.LayoutBuilder;
 import org.visualheap.world.layout.Vertex;
@@ -359,7 +352,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		objInfo.setSize(FONT_SIZE);
 		objInfo.setColor(ColorRGBA.Yellow);
 		objInfo.setText(info);
-		objInfo.setLocalTranslation(10, 580, 0);
+        objInfo.setLocalTranslation(250, 580, 0);
 		guiNode.attachChild(objInfo);
 	}
 
@@ -369,7 +362,7 @@ public class Game extends SimpleApplication implements ActionListener {
         objMethInfo.setSize(FONT_SIZE);
         objMethInfo.setColor(ColorRGBA.Yellow);
         objMethInfo.setText(info);
-        objMethInfo.setLocalTranslation(250, 580, 0);
+        objMethInfo.setLocalTranslation(10, 580, 0);
         guiNode.attachChild(objMethInfo);
     }
 
