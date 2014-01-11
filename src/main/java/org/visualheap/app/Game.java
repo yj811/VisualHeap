@@ -121,7 +121,8 @@ public class Game extends SimpleApplication implements ActionListener {
     private LAYOUT layout;
 
 	// start a new game.
-	public static void main(String[] args) {
+	/*
+    public static void main(String[] args) {
 		final Game game = new Game();
 
 		DebugListener listener = new NullListener() {
@@ -133,7 +134,7 @@ public class Game extends SimpleApplication implements ActionListener {
 
         Debugger debugger = new Debugger(CLASSPATH, TREEREFERENCE, 21, listener);
         game.setDebugger(debugger);
-    }
+    } */
     
     public Game() {
         super();
@@ -329,9 +330,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		} else if (binding.equals("Sink")) {
 		    sink = isPressed;
         } else if (binding.equals("Quit")) {
-        	//TODO: Change this to our expected behaviour when the user closes the game window
-        	d.resume();
-
+        	
             //This should remain the same
             running = false;
         	this.stop();
