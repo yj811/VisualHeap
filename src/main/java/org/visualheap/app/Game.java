@@ -33,6 +33,8 @@ import com.sun.jdi.ObjectReference;
 import com.sun.jdi.ReferenceType;
 import com.sun.jdi.StackFrame;
 import edu.uci.ics.jung.graph.Graph;
+
+import org.visualheap.app.Game.LAYOUT;
 import org.visualheap.debugger.DebugListener;
 import org.visualheap.debugger.Debugger;
 import org.visualheap.debugger.NullListener;
@@ -54,7 +56,13 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
+
+
 public class Game extends SimpleApplication implements ActionListener {
+    
+    public enum LAYOUT {
+        FR, ISOM, KK
+    }
 
 	private static final String CLASSPATH = "build/classes/test";
     private static final String ARRAY = "debugger.testprogs.Array";
@@ -109,6 +117,8 @@ public class Game extends SimpleApplication implements ActionListener {
     private Vertex selectedVertex;
     private Material oldMaterial;
     private Material selectedMaterial;
+    
+    private LAYOUT layout;
 
 	// start a new game.
 	public static void main(String[] args) {
@@ -128,8 +138,17 @@ public class Game extends SimpleApplication implements ActionListener {
     public Game() {
         super();
         running = false;
+        
+        layout = LAYOUT.ISOM;
     }
 				
+    public Game(LAYOUT l) {
+        super();
+        running = false;
+        
+        layout = l;
+    }
+
     public void beginGame(final Collection<ObjectReference> initialSet, Debugger debugger) {
         setDebugger(debugger);
         running = true;
