@@ -49,8 +49,6 @@ import java.util.concurrent.TimeUnit;
  *
  */
 
-
-
 public class Game extends SimpleApplication implements ActionListener {
     
     public enum LAYOUT {
@@ -67,7 +65,6 @@ public class Game extends SimpleApplication implements ActionListener {
 
     private static final int LINEHEIGHT = 15;
     private static final int NOKEYS = 4;
-
 	private static final float WALK_SPEED = 0.5f;
 
     private final int FONT_SIZE = 13;
@@ -111,7 +108,7 @@ public class Game extends SimpleApplication implements ActionListener {
     private Material oldMaterial;
     private Material selectedMaterial;
     
-    private LAYOUT layout;
+    public LAYOUT layout;
 
 	// start a new game.
 	/*
@@ -132,7 +129,7 @@ public class Game extends SimpleApplication implements ActionListener {
     public Game() {
         super();
         running = false;
-        
+        System.out.println("G");
         layout = LAYOUT.ISOM;
     }
 				
@@ -152,7 +149,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		 * Perhaps we should start all event handlers in their own threads?
 		 */
 		es.execute(new Runnable() {
-
 			@Override
 			public void run() {
 			    setReferencesOnStack(initialSet);
