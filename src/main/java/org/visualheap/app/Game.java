@@ -117,7 +117,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		DebugListener listener = new NullListener() {
 			@Override
 			public void onBreakpoint(final StackFrame sf) {
-                game.beginGame(getObjectReferencesFromStackFrame(sf), game.d);
+                game.beginGame(getObjectReferencesFromStackFrameForTest(sf), game.d);
             }
         };
 

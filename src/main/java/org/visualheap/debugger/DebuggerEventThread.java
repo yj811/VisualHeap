@@ -68,7 +68,6 @@ class DebuggerEventThread extends Thread {
 	private List<Breakpoint> validBreakpoints = new Vector<Breakpoint>();
 
 	private ThreadReference lastBreakpointedThread;
-    private String lastBreakpointedClassName;
 
 	/**
 	 * construct an event thread, with preset breakpoint.
@@ -221,7 +220,6 @@ class DebuggerEventThread extends Thread {
         } else if (event instanceof VMDeathEvent) {
             vmDeathEvent((VMDeathEvent)event);
         } else if (event instanceof VMDisconnectEvent) {
-        	System.out.println("vm disconnect");
             vmDisconnectEvent((VMDisconnectEvent)event);
         } else if (event instanceof BreakpointEvent) {
         	shouldResume = false;
@@ -245,12 +243,13 @@ class DebuggerEventThread extends Thread {
 		if (event.method().name().equals("main")) {
 			setupMethodExit(event.thread());
 			event.request().disable();
+			System.out.println("Running...");
 			
 		}
 	}
 
 	private void threadDeathEvent(ThreadDeathEvent event) {
-    	System.out.println("thread death");	
+    	System.out.println("Thread " + event.thread().name() + " died");	
 	}
     private void methodExitEvent(MethodExitEvent event) {
     	if (event.method().name().equals("main")) {
@@ -293,15 +292,20 @@ class DebuggerEventThread extends Thread {
 
     private void breakpointEvent(BreakpointEvent event)  {
     	//vm.suspend(); // just to be safe
+    	try {
+			System.out.println("Breakpoint at " + event.location().sourceName() + ":" + event.location().lineNumber());
+		} catch (AbsentInformationException e) {
+			System.out.println("Breakpoint at Unknown:" + event.location().lineNumber());
+		}
     	ThreadReference thread = event.thread();
     	lastBreakpointedThread = event.thread();
       
       
-      setupMethodExit(thread);
+    	setupMethodExit(thread);
       
         
-      StackFrame sf = getStackFrame(thread);
-      listener.onBreakpoint(sf);
+      	StackFrame sf = getStackFrame(thread);
+      	listener.onBreakpoint(sf);
     }
 
 	private void setupMethodExit(ThreadReference thread) {
@@ -331,7 +335,11 @@ class DebuggerEventThread extends Thread {
      * @see DebuggerEventThread . step
      */
     private void stepEvent(StepEvent event) {
-    	System.out.println("step event");
+    	try {
+			System.out.println("Finished step at " + event.location().sourceName() + ":" + event.location().lineNumber());
+		} catch (AbsentInformationException e) {
+			System.out.println("Finished step at Unknown:" + event.location().lineNumber());
+		}
     	event.request().disable();
     	listener.onStep(getStackFrame(lastBreakpointedThread));
     }
@@ -379,7 +387,7 @@ class DebuggerEventThread extends Thread {
     }
 
     public void vmDeathEvent(VMDeathEvent event) {
-    	System.out.println("vmdeath event");
+    	System.out.println("VM Shutdown");
     	vmDied = true;
         connected = false;
         listener.vmDeath();
@@ -387,7 +395,7 @@ class DebuggerEventThread extends Thread {
     }
 
     public void vmDisconnectEvent(VMDisconnectEvent event) {
-    	System.out.println("vm disconnect event");
+    	System.out.println("VM Disconnected");
         listener.vmDeath();
         connected = false;
     }
@@ -428,7 +436,7 @@ class DebuggerEventThread extends Thread {
 	
 	public void step(StepDepth depth) {
 		
-		System.out.println("step eventthread");
+		System.out.println("Stepping...");
 		
 		ThreadReference threadToStep = lastBreakpointedThread;
 		

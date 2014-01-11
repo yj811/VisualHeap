@@ -20,7 +20,7 @@ public class LatchingDebugListener extends NullListener {
 	
 	@Override
 	public void onBreakpoint(StackFrame sf) {	
-		this.fromStackFrame = getObjectReferencesFromStackFrame(sf);
+		this.fromStackFrame = getObjectReferencesFromStackFrameForTest(sf);
 		latch.countDown();
 	}
 	

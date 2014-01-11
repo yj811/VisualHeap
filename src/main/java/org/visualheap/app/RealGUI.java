@@ -13,7 +13,7 @@ import com.sun.jdi.StackFrame;
 
 import org.visualheap.debugger.Breakpoint;
 import org.visualheap.debugger.Debugger;
-import org.visualheap.debugger.NullListener;
+import org.visualheap.debugger.DebugListener;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -48,7 +48,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class RealGUI extends NullListener {
+public class RealGUI implements DebugListener {
 
 	//Variables
 	private volatile Debugger debugger;
@@ -157,6 +157,17 @@ public class RealGUI extends NullListener {
 				JOptionPane.showMessageDialog(frame, sb.toString());
 			}
 
+		});
+	}
+	
+	@Override
+	public void vmStart() {
+		SwingUtilities.invokeLater(new Runnable () {
+
+			@Override
+			public void run() {
+				System.out.println("VM Invoked");
+			}
 		});
 	}
 
@@ -433,7 +444,7 @@ public class RealGUI extends NullListener {
 		public void actionPerformed(ActionEvent e) {
 			if (visualiser == null || !visualiser.isRunning() ) {
 				visualiser = new Game();
-				visualiser.beginGame(getObjectReferencesFromStackFrame(currentStackFrame), debugger);
+				visualiser.beginGame(debugger.getObjectReferencesFromStackFrame(currentStackFrame), debugger);
 			}
 		}
 	}
@@ -690,4 +701,6 @@ public class RealGUI extends NullListener {
 			return columnEditables[column];
 		}
 	}
+
+	
 }

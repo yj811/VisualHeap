@@ -18,14 +18,17 @@ package org.visualheap.debugger;
 
 import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.Field;
+import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;
 import com.sun.jdi.ObjectReference;
+import com.sun.jdi.StackFrame;
 import com.sun.jdi.Value;
 import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.Bootstrap;
 import com.sun.jdi.connect.*;
 import com.sun.jdi.ReferenceType;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
@@ -104,6 +107,7 @@ public class Debugger {
 	 * @return list of objects referenced by given object reference
 	 * @see ObjectReference
 	 */
+	
 	public static final List<ObjectReference> getObjectReferences(ObjectReference objRef) {
 		List<ObjectReference> resultList = new LinkedList<ObjectReference>();
 		ReferenceType type = objRef.referenceType();
@@ -117,7 +121,7 @@ public class Debugger {
 		}
 
 		return resultList;
-	}
+	} 
 
 	/**
 	 * resume the VM from a suspended state.
@@ -357,6 +361,28 @@ public class Debugger {
 		return arguments;
 	}
 
+	public List<ObjectReference> getObjectReferencesFromStackFrame(
+			StackFrame sf) {
+		List<ObjectReference> objRefs = Collections.emptyList();
+		try {
+    		objRefs = new ArrayList<ObjectReference>();
+			
+			System.out.println("Current location - " + sf.location().sourceName() + ": " + sf.location().lineNumber());
+			
+			for(LocalVariable lv : sf.visibleVariables()) {
+				Value val = sf.getValue(lv);
+				if(val instanceof ObjectReference) {
+					ObjectReference objRef = (ObjectReference) val;
+					objRefs.add(objRef);
+				}
+			}
+		} catch (AbsentInformationException e) {
+			// if the invoked program was not compiled with full debug info,
+			// this might happen
+			e.printStackTrace();
+		}
+		return objRefs;
+	}
 
 	
 }

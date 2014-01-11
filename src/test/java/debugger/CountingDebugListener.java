@@ -21,7 +21,7 @@ public class CountingDebugListener extends NullListener {
 	@Override
 	public void onBreakpoint(StackFrame sf) {
 		System.out.println("breakpoint reached");
-		count = getObjectReferencesFromStackFrame(sf).size();
+		count = getObjectReferencesFromStackFrameForTest(sf).size();
 		latch.countDown();
 	}
 	
@@ -37,7 +37,7 @@ public class CountingDebugListener extends NullListener {
 	@Override
 	public void onStep(StackFrame sf) {
 		System.out.println("step performed");
-		count = getObjectReferencesFromStackFrame(sf).size();
+		count = getObjectReferencesFromStackFrameForTest(sf).size();
 		latch.countDown();
 	}
 

@@ -40,7 +40,7 @@ public class NullListener implements DebugListener {
 		System.out.println("NullListener: Exited main");
 	}
 
-    protected List<ObjectReference> getObjectReferencesFromStackFrame(
+    protected List<ObjectReference> getObjectReferencesFromStackFrameForTest(
 			StackFrame sf) {
 		List<ObjectReference> objRefs = Collections.emptyList();
 		try {

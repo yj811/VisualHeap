@@ -10,7 +10,7 @@ public class TestDebugListener extends NullListener {
 	@Override
 	public void onBreakpoint(StackFrame sf) {
 
-    List<ObjectReference> frameObjects = getObjectReferencesFromStackFrame(sf); 
+    List<ObjectReference> frameObjects = getObjectReferencesFromStackFrameForTest(sf); 
 		System.out.println("breakpoint, got " 
 				+ frameObjects.size() + " object references");
 	}
