@@ -117,7 +117,9 @@ public class LayoutBuilder {
 			if(childVert != null) {
 			    layoutUpToDate = false;
 				graph.addEdge(new Edge(this, parent, childVert), parent, childVert);
-                runLayoutAlgorithm();
+				if (!game.animate) {
+				    runLayoutAlgorithm();
+				}
 			}
 		}
 	}
@@ -153,7 +155,6 @@ public class LayoutBuilder {
             graph.addEdge(new Edge(this, dummy, vert), dummy, vert);
             visitChildren(vert, depth - 1);
         }
-        
         runLayoutAlgorithm();
     }
 

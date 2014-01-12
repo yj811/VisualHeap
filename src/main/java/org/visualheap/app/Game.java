@@ -109,6 +109,7 @@ public class Game extends SimpleApplication implements ActionListener {
     private Material selectedMaterial;
     
     public LAYOUT layout;
+    public boolean animate;
 
 	// start a new game.
 	/*
@@ -131,12 +132,20 @@ public class Game extends SimpleApplication implements ActionListener {
         running = false;
         System.out.println("G");
         layout = LAYOUT.ISOM;
+        animate = false;
     }
 				
     public Game(LAYOUT l) {
         super();
         running = false;
-        
+        animate = false;
+        layout = l;
+    }
+    
+    public Game(LAYOUT l, boolean a) {
+        super();
+        running = false;
+        animate = a;
         layout = l;
     }
 

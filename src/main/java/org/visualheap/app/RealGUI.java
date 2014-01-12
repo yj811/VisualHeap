@@ -49,6 +49,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class RealGUI implements DebugListener {
 
@@ -86,6 +91,7 @@ public class RealGUI implements DebugListener {
     private JRadioButton rbtnKK;
     private JRadioButton rbtnFR;
     private JRadioButton rbtnISOM;
+    private JCheckBox chkboAnimate;
     
     //Constants
     private final JFileChooser fc = new JFileChooser();
@@ -443,10 +449,10 @@ public class RealGUI implements DebugListener {
                     visualiser = new Game(Game.LAYOUT.KK);
                     System.err.println("1");
                 } else  if (rbtnFR.isSelected()) {
-                    visualiser = new Game(Game.LAYOUT.FR);
+                    visualiser = new Game(Game.LAYOUT.FR, chkboAnimate.isSelected());
                     System.err.println("2");
                 } else  if (rbtnISOM.isSelected()) {
-                    visualiser = new Game(Game.LAYOUT.ISOM);
+                    visualiser = new Game(Game.LAYOUT.ISOM, chkboAnimate.isSelected());
                     System.err.println("3");
                 } else {
                     visualiser = new Game();
@@ -655,17 +661,39 @@ public class RealGUI implements DebugListener {
         panel.add(btnVisualise);
 
         rbtnISOM = new JRadioButton("ISOM");
+        rbtnISOM.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                chkboAnimate.setEnabled(true);
+            }
+        });
         buttonGroup.add(rbtnISOM);
         rbtnISOM.setSelected(true);
         panel.add(rbtnISOM);
 
         rbtnFR = new JRadioButton("FR");
+        rbtnFR.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                chkboAnimate.setEnabled(true);
+            }
+        });
         buttonGroup.add(rbtnFR);
         panel.add(rbtnFR);
 
         rbtnKK = new JRadioButton("KK");
+        rbtnKK.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                chkboAnimate.setEnabled(false);  
+            }
+        });
         buttonGroup.add(rbtnKK);
         panel.add(rbtnKK);
+        
+        
+        
+        chkboAnimate = new JCheckBox("Animate?");
+        panel.add(chkboAnimate);
         
         btnVisualise.addActionListener(new VisualiseButtonListener());
 
