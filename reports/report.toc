@@ -40,5 +40,4 @@
 \contentsline {section}{\numberline {6.3}Known Issues}{24}
 \contentsline {chapter}{\numberline {7}Future Extensions}{25}
 \contentsline {chapter}{\numberline {8}Conclusion}{27}
-\contentsline {chapter}{Appendices}{29}
-\contentsline {chapter}{\numberline {A}Program Walkthrough}{30}
+\contentsline {chapter}{\numberline {A}Program Walkthrough}{29}
