@@ -41,13 +41,13 @@ The heap is memory set aside for dynamic allocation. Within Java, the heap, a ru
 
 \section{Motivation}
 
-A strong motivation behind the VisualHeap project was as a teaching aid. When many people begin programming they do not know what the heap is in Java, or are even aware of where objects are created. Learning about the Java heap is a key part of understanding the language so you can deal with, for example, a java.lang.OutOfMemoryError and analyse heap dumps. We know learning the basics of programming can be a difficult process for many people as there is no formal process that can teach you everything you need to know. In the first year Java course at Imperial, and many other courses, the heap is described using a simple 2D diagram similar to the one shown below (Figure whatever). This is currently the main method of explaining how objects are created in the heap and how they reference each other. Whilst adequate for some, many would find alternative explanations of the concept useful to cement their understanding of the concepts. For the most part, these alternate visualisations are not readily available . A visualisation of the way in which the heap (arguably the most prominent feature of an OO language) is populated would be an invaluable tool. 
+A strong motivation behind the VisualHeap project was as a teaching aid. An object-oriented language is a step-up from languages that students may have encountered or been taught before, such as Haskell, and arguably the heap is one of the most prominent features of what sets a language such as Java apart. Learning about the Java heap is a key part of understanding the language so you can deal with, for example, a java.lang.OutOfMemoryError and analyse heap dumps, and so a visualisation of the way in which the heap is populated would be an invaluable tool. The current alternatives to ‘viewing’ and analysing the heap are text logs within a console, and learning about the heap simply involves 2D diagrams. We feel that this is inadequate for a true understanding of aspects such as object creation and destruction, memory management and data structures. In our research we came across several alternative tools, for example HeapVis[ref], which produced a 2D map of the entire heap of a program. We hoped to make a more interesting, visually appealing, interactive and scalable tool. 
 
 Being an interactive tool, VisualHeap has the potential to be more engaging than a simple diagram; a live demonstration breaks up the lecture. Students can pose questions and use the tool (either on their own time or in a lecture) to answer them. VisualHeap also represents a goal for first year students. It is an exciting program of reasonable size and the point can be made that they too could build a system like this after following the Java course.
 
 Expanding on this teaching point, as technology develops more and more complex projects are being developed, increasing the complexity of the debugging process. Debugging in a traditional development environment can be tedious and challenging, and this is due to tools which are unintuitive for the task at hand. For example, trying to follow complex data structures (Trees, Graphs) in a debugging environment is quite messy when performed in an IDE such as Eclipse. Providing a simplified environment to those new to the concepts of debugging would help those who struggle to understand the need for such tool ease into the workflow. With a simple and clean layout VisualHeap would provide a useful setting to encourage further independent learning on the topic. 
 
-To compliment this, throughout the world in many different industries in the world, data visualisation has always been a diverse and interesting area for exploration. Within technology there are many projects devoted to finding new ways to extract data and develop creative, intuitive solutions to the issues the industries faces. With respect to heap visualisation, and memory management in general, there are significantly fewer tools readily available; those that are tend to be either too specialised or are not especially innovative in presenting their data. VisualHeap aims to begin to challenge this and develop a more interesting, interactive mode in which to view broad variety of programs.
+To complement this, throughout the world in many different industries in the world, data visualisation has always been a diverse and interesting area for exploration. Within technology there are many projects devoted to finding new ways to extract data and develop creative, intuitive solutions to the issues the industries faces. With respect to heap visualisation, and memory management in general, there are significantly fewer tools readily available; those that are tend to be either too specialised or are not especially innovative in presenting their data. VisualHeap aims to begin to challenge this and develop a more interesting, interactive mode in which to view broad variety of programs. 
 
 \section{Objectives}
 
@@ -73,11 +73,12 @@ Intuitive and simple GUI to integrate with the Java program and run VisualHeap
 
 \section{Achievements}
 
-VisualHeap is a suitable tool to accompany lecturers while teaching the first-year programming course by complementing the material and exercises. This is done by providing an interactive 3D visual representation of the example program allowing students to navigate their way through it’s heap.
+VisualHeap has been designed to improve the learning experience of students and help them to understand the heap of an object-oriented language. Lecturers will be able to use our tool to complement the teaching of Java by providing an interactive 3D visual representation of a sample program. With the aid of VisualHeap, lecturers can demonstrate core concepts such as object creation, inheritance, data structures and garbage collection. 
 
-Through an attractive and interactive 3D visualisation of the heap, students will be able to better understand and comprehend what the heap is. The ability to navigate the heap world should help increase understanding of how objects are connected to each other through references. Obtaining object information by interacting with the heap objects allows a student to discover more about the objects that live on the heap.
+Through an attractive and interactive 3D visualisation of the heap, students will be able to better understand and comprehend what the heap is. The ability to navigate the heap world and view the directed references created between objects should help increase understanding of how objects are created and related. Obtaining object information by interacting with the heap objects allows a student to discover more about the objects that live on the heap, including object type and their relative size.
 
-We have provided a simple debugging interface using the GUI, which can then provide a 3D representation of the heap at the click of a button to help analyse data structures and improve learning. We believe we have solved the problems stated above and more detail is provided about these solutions in later sections.
+Furthermore, students will be able to gain experience in debugging. We have provided a simple debugging interface using the GUI, which can then provide a 3D representation of the heap at the click of a button. 
+
 
 \chapter{Design}
 
@@ -128,7 +129,7 @@ The system should include “accelerators” which provide experienced users wit
 No irrelevant information should be presented to the user; this will compete with the relevant information for the user’s attention. We have split the GUI into two panes, one for setup (selecting a program, setting breakpoints) and another for running the program. This ensures that the user is focused on one task at a time.
 
 {\bfseries Help users recognize, diagnose, and recover from errors}: \\
-Error messages should be expressed in plain language, appropriate for users who do not know how the system works.
+Error messages should be expressed in plain language, appropriate for users who do not know how the system works. Errors that VisualHeap generates tell the user which breakpoints the user have set which are invalid, which are very simple. The interface does most of the job of helping the user recover from errors due to how the program enables and disables options based on the state the program is in.
 
 {\bfseries Help and documentation}: \\
 It is best if a system can be used without documentation, but this is rarely the case.
@@ -383,7 +384,7 @@ We decided upon three main areas to begin our project as they could be initially
 
 Eleanor acted as group leader throughout the project, so she became responsible for CATE submissions, organising our weekly group meetings with the supervisor and settling the few disagreements between members.
 
-Aviv and Oli began the project working on the debugger as they had the most experience in this area and we were keen to set the project off with a quick start. Anna and Eleanor started looking at heap analysis to discover what information could be gained to eventually use in the final product, this naturally lead on to also researching how best to present the layout of the graph produced. Briony and Ying were in charge of finding a 3D graphics engine to draw the visualisation to as they were keen to investigate various game engines and other options.
+Aviv and Oli began the project working on the debugger as they had the most experience in this area and we were keen to set the project off with a quick start. Aviv then moved to develop the application's GUI and user-facing debugger features. Anna and Eleanor started looking at heap analysis to discover what information could be gained to eventually use in the final product, this naturally lead on to also researching how best to present the layout of the graph produced. Briony and Ying were in charge of finding a 3D graphics engine to draw the visualisation to as they were keen to investigate various game engines and other options.
 
 \chapter{Evaluation}
 
@@ -401,7 +402,14 @@ When the project reached the stage of needing to see the visual output to debug 
 
 Once we were mainly using self-defined test cases we found it was quite time consuming to always enter the classpath of each test each time you ran the program. For this reason we set up the program to accept arguments for the classpath and qualified class name so we could run various tests more easily.
 
-An interesting test case was running the tool on itself. The ability to do this was one of the main reasons we decided to write VisualHeap in Java. It also serves as the test of running VisualHeap on a much larger program than in our other test cases. This test did show that our application does not work that well on multi-threaded apps for the purposes of debugging. This is mostly due to time constraints preventing us from providing a useful interface for accommodating multi-threaded applications; they can still be visualised by VisualHeap.
+\section{Performance}
+VisualHeap performs well enough to be used in real time. When exploring the 3D world the visualisation is fluid. Expanding an object reference causes a slight break in fluidity, typically for a fraction of a second.
+
+\section{Usefulness}
+The most significant outcomes of our group project is its use as a teaching aid that will be used by our supervisor to educate first-year students. We feel that this will provide an improvement to the course as a complementary extra to the material in helping the students understand the step up to an object-oriented language. We feel that our tool has met the requirements that our supervisor set out for VisualHeap to be a success within a teaching environment and covers many of the key concepts learnt through the course, such as inheritance, data structures and garbage collection. 
+
+\section{Scalability}
+VisualHeap has been designed to be scalable so that it can be run on large and interesting programs. One of our most interesting test cases to test the scalability of our project was to run VisualHeap on itself. The ability to do this was one of the main reasons we decided to write VisualHeap in Java. It also serves as the test of running VisualHeap on a much larger program than in our other test cases. This test did show that our application does not work that well on multi-threaded apps for the purposes of debugging. This is mostly due to time constraints preventing us from providing a useful interface for accommodating multi-threaded applications; they can still be visualised by VisualHeap.
 
 \chapter{Challenges}
 
