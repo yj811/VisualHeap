@@ -34,10 +34,10 @@
 \contentsline {section}{\numberline {4.6}Group Organisation}{19}
 \contentsline {chapter}{\numberline {5}Evaluation}{21}
 \contentsline {section}{\numberline {5.1}Testing Procedures}{21}
-\contentsline {chapter}{\numberline {6}Challenges}{22}
-\contentsline {section}{\numberline {6.1}Development Challenges}{22}
-\contentsline {section}{\numberline {6.2}Feedback}{24}
-\contentsline {section}{\numberline {6.3}Known Issues}{24}
-\contentsline {chapter}{\numberline {7}Future Extensions}{25}
-\contentsline {chapter}{\numberline {8}Conclusion}{27}
-\contentsline {chapter}{\numberline {A}Program Walkthrough}{29}
+\contentsline {chapter}{\numberline {6}Challenges}{23}
+\contentsline {section}{\numberline {6.1}Development Challenges}{23}
+\contentsline {section}{\numberline {6.2}Feedback}{25}
+\contentsline {section}{\numberline {6.3}Known Issues}{25}
+\contentsline {chapter}{\numberline {7}Future Extensions}{26}
+\contentsline {chapter}{\numberline {8}Conclusion}{28}
+\contentsline {chapter}{\numberline {A}Program Walkthrough}{30}
