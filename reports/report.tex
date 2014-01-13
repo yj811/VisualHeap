@@ -54,21 +54,15 @@ VisualHeap is a tool to visualise the heap of a Java program in 3-dimensional sp
 
 \begin{quote}
 
-\begin{itemize}
-  \item Students
-\end{itemize}
+{\bfseries Students}: \\
 Increase understanding what the heap is \\
 How objects are created and stored \\
 Understanding large data structures such as trees and graphs
 
-\begin{itemize}
-  \item Lecturers
-\end{itemize}
+{\bfseries Lecturers}: \\
 Provide an alternative tool for teaching object-oriented languages
 
-\begin{itemize}
-  \item General Objectives
-\end{itemize}
+{\bfseries General Objectives}: \\
 Provide an intuitive tool for debugging \\
 Attractive and intuitive 3D visualisation of the heap of a Java program \\
 Easy navigation and interactive objects \\
@@ -424,7 +418,15 @@ When the project reached the stage of needing to see the visual output to debug 
 
 Once we were mainly using self-defined test cases we found it was quite time consuming to always enter the classpath of each test each time you ran the program. For this reason we set up the program to accept arguments for the classpath and qualified class name so we could run various tests more easily.
 
-An interesting test case was running the tool on itself. The ability to do this was one of the main reasons we decided to write VisualHeap in Java. It also serves as the test of running VisualHeap on a much larger program than in our other test cases. This test did show that our application does not work that well on multi-threaded apps for the purposes of debugging. This is mostly due to time constraints preventing us from providing a useful interface for accommodating multi-threaded applications; they can still be visualised by VisualHeap.
+
+\section{Performance}
+VisualHeap performs well enough to be used in real time. When exploring the 3D world the visualisation is fluid. Expanding an object reference causes a slight break in fluidity, typically for a fraction of a second.
+
+\section{Usefulness}
+The most significant outcomes of our group project is its use as a teaching aid that will be used by our supervisor to educate first-year students. We feel that this will provide an improvement to the course as a complementary extra to the material in helping the students understand the step up to an object-oriented language. We feel that we have fulfilled most of the requirements set out by our supervisor to demonstrate the key concepts of the Java programming course, such as inheritance, garbage collection and data structures.
+
+\section{Scalability}
+VisualHeap has been designed to be scalable so that it can be run on large and interesting programs. One of our most interesting test cases to test the scalability of our project was to run VisualHeap on itself. The ability to do this was one of the main reasons we decided to write VisualHeap in Java. It also serves as the test of running VisualHeap on a much larger program than in our other test cases. This test did show that our application does not work that well on multi-threaded apps for the purposes of debugging. This is mostly due to time constraints preventing us from providing a useful interface for accommodating multi-threaded applications; they can still be visualised by VisualHeap.
 
 \chapter{Challenges}
 
