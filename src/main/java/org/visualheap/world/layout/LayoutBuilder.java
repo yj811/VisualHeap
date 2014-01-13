@@ -92,7 +92,7 @@ public class LayoutBuilder {
 			} else if(child instanceof ObjectReference) {
 				// field was an ObjectReference
 				ObjectReference childObjRef = (ObjectReference)child;
-				if(depth == 0) {
+				if(depth <= 0) {
 					// stopped searching, mark reference as unfollowed unless we 
 				    // have alredy seen this object.
 				    childVert = objRefMapping.get(childObjRef);
