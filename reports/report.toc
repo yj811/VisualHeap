@@ -1,0 +1,42 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {1.1}What is the heap?}{1}
+\contentsline {section}{\numberline {1.2}Motivation}{1}
+\contentsline {section}{\numberline {1.3}Objectives}{2}
+\contentsline {section}{\numberline {1.4}Achievements}{2}
+\contentsline {chapter}{\numberline {2}Design}{4}
+\contentsline {section}{\numberline {2.1}GUI}{4}
+\contentsline {section}{\numberline {2.2}Exploring the 3D world}{5}
+\contentsline {subsection}{\numberline {2.2.1}Movement}{5}
+\contentsline {subsection}{\numberline {2.2.2}Object Representation}{6}
+\contentsline {subsection}{\numberline {2.2.3}Object Details}{7}
+\contentsline {subsection}{\numberline {2.2.4}Layout}{7}
+\contentsline {chapter}{\numberline {3}Implementation}{9}
+\contentsline {section}{\numberline {3.1}Language}{9}
+\contentsline {section}{\numberline {3.2}Overview}{9}
+\contentsline {section}{\numberline {3.3}Debugger}{10}
+\contentsline {section}{\numberline {3.4}Visualiser Module}{11}
+\contentsline {section}{\numberline {3.5}Producing a Layout}{11}
+\contentsline {subsection}{\numberline {3.5.1}Force Directed}{12}
+\contentsline {subsection}{\numberline {3.5.2}Inverted Self Organising Maps}{13}
+\contentsline {section}{\numberline {3.6}Graphics}{14}
+\contentsline {subsection}{\numberline {3.6.1}Game Engine Selection}{14}
+\contentsline {subsection}{\numberline {3.6.2}Layout Update}{15}
+\contentsline {subsection}{\numberline {3.6.3}Target Detection}{16}
+\contentsline {chapter}{\numberline {4}Project Management}{17}
+\contentsline {section}{\numberline {4.1}Planning}{17}
+\contentsline {section}{\numberline {4.2}Agile Practices}{17}
+\contentsline {subsection}{\numberline {4.2.1}Stand-ups}{18}
+\contentsline {subsection}{\numberline {4.2.2}Pair Programming}{18}
+\contentsline {section}{\numberline {4.3}Trello}{18}
+\contentsline {section}{\numberline {4.4}Version Control}{19}
+\contentsline {subsection}{\numberline {4.4.1}Continuous Integration}{19}
+\contentsline {section}{\numberline {4.5}Test-driven development}{19}
+\contentsline {section}{\numberline {4.6}Group Organisation}{19}
+\contentsline {chapter}{\numberline {5}Evaluation}{21}
+\contentsline {section}{\numberline {5.1}Testing Procedures}{21}
+\contentsline {chapter}{\numberline {6}Challenges}{22}
+\contentsline {section}{\numberline {6.1}Development Challenges}{22}
+\contentsline {section}{\numberline {6.2}Feedback}{24}
+\contentsline {section}{\numberline {6.3}Known Issues}{24}
+\contentsline {chapter}{\numberline {7}Future Extensions}{25}
+\contentsline {chapter}{\numberline {8}Conclusion}{27}
