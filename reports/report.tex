@@ -1,4 +1,5 @@
 \documentclass[11pt, a4paper]{report}
+\usepackage[toc,page]{appendix}
 \usepackage{fullpage}
 \usepackage{graphicx}
 \usepackage{subcaption}
@@ -524,104 +525,86 @@ In our tool we incrementally explore the heap, initially to a depth of three beg
 
 So based on these points we have met our original brief and produced a tool which meets our objective. This can then be used to improve the teaching of object oriented languages and memory management of future groups of students. 
 
-
-
-
-
-
-
-
-
-
-
-
+\begin{appendices}
+\chapter{Program Walkthrough}
 
 \begin{figure}[h]
         \centering
         \includegraphics[width=0.75\textwidth]{images/final/walk1.png}
-        \caption{}
+        \caption{Select Classpath}
 \end{figure}
 
 \begin{figure}[h]
         \centering
         \includegraphics[width=0.75\textwidth]{images/final/walk2.png}
-        \caption{}
+        \caption{Choose Program and Breakpoint}
 \end{figure}
 
 \begin{figure}[h]
         \centering
         \includegraphics[width=0.75\textwidth]{images/final/walk3.png}
-        \caption{}
+        \caption{Run Program}
 \end{figure}
 
 \begin{figure}[h]
         \centering
         \includegraphics[width=0.75\textwidth]{images/final/walk4.png}
-        \caption{}
+        \caption{Select Algorithm Layout}
 \end{figure}
 
 \begin{figure}[h]
         \centering
         \includegraphics[width=0.75\textwidth]{images/final/walk5.png}
-        \caption{}
+        \caption{Visualise}
 \end{figure}
 
-
-\end{document}
-
-
-\begin{itemize}
-
-  \item Teacher/Lecturer
-  \item Beginner Programmer
-  \item Experienced Programmer 
-  \item A Typical Gamer 
-
-\end{itemize}
-
-\begin{figure}
-        \centering
-        \begin{subfigure}[b]{0.4\textwidth}
-                \centering
-                \includegraphics[width=\textwidth]{""}
-                \caption{}
-        \end{subfigure}%
-        ~ %add desired spacing between images, e. g. ~, \quad, \qquad etc.
-          %(or a blank line to force the subfigure onto a new line)
-        \begin{subfigure}[b]{0.4\textwidth}
-                \centering
-                \includegraphics[width=\textwidth]{""}
-                \caption{Register Password}
-        \end{subfigure}
-        \caption{}\label{}
-\end{figure}
-
-
-
-
-\cite{ssagile,atlasagile}
+\end{appendices}
 
 \begin{thebibliography}{9}
 
-\bibitem{ssagile}
-  Steffan Surdek,
-  \emph{Agile Planning in Real Life},
-  \\http://www.ibm.com/developerworks/library/l-agile-plan/
+\bibitem{1}
+  Bernd Meyer. 
+  \\ \emph{Self-organizing graphs: A neural network perspective of graph layout. In Graph Drawing (GD'98)}, 
+  \\Montreal, Canada, 
+  \\August 1998
 
-\bibitem{atlasagile}
-  Atlassian,
-  \emph{Do Agile Right},
-  \\https://www.atlassian.com/agile/
+\bibitem{2}
+  Fruchterman and Reingold, 
+  \emph{Graph Drawing by Force-directed Placement}
+ 
+\bibitem{3}
+  GCspy,
+  \\http://www.cs.kent.ac.uk/projects/gc/gcspy/
+
+\bibitem{4}
+  JDI, 
+  \\http://docs.oracle.com/javase/7/docs/jdk/api/jpda/jdi/
+
+\bibitem{5}
+  Heuristic Evaluation,
+  \\http://www.nngroup.com/articles/ten-usability-heuristics/
   
-\bibitem{omgnames}
-  Molokken-Ostvold, K., Simula Res. Lab., Lysaker, Haugen, N.C.,
-  \emph{Software Engineering Conference, ASWEC 2007},
-  18th Australian,
-  \\http://ieeexplore.ieee.org/xpl/articleDetails.jsp?reload=true{\&}arnumber=4159687
-  
-\bibitem{agilelevy}
-  Darren Levy,
-  \emph{Use Case Examples - Effective Samples and Tips},
-  \\http://www.gatherspace.com/static/use{\_}case{\_}example.html
+\bibitem{6}
+  HeapViz,
+  \\http://www.cs.tufts.edu/research/redline/heapviz/
+
+\bibitem{7}
+  Travis,
+  \\https://travis-ci.org/
+
+\bibitem{8}
+  Jung,
+  \\http://jung.sourceforge.net/
+
+\bibitem{9}
+  Gradle,
+  \\http://www.gradle.org/
+
+\bibitem{10}
+  jME,
+  \\http://jmonkeyengine.org/
 
 \end{thebibliography}
+
+
+\end{document}
