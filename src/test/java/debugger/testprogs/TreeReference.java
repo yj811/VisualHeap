@@ -19,9 +19,12 @@ public class TreeReference {
 		TreeReference first = new TreeReference(10);
 		
 		System.out.println("woah");
-		
-		
+
 	}
+
+    public void foo() {};
+
+    public void bar() {};
 
 }
 
