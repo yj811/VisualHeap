@@ -158,7 +158,7 @@ To create more informative and useful visuals for the user, objects are displaye
 Unfollowed references, which are yet to be expanded, are represented by a yellow cube.
 Null references (i.e. when one of object A’s fields are null) are presented with a red sphere.
 
-Objects are represented by coloured cubes. Colours are generated randomly at runtime based on type, so that all objects of the same type will be instantly recognisable. A key in the top right translates colours to types to allow the user to quickly determine what type a particular node is. These colours are selected to not overlap with ones used elsewhere.
+Objects are represented by coloured cubes. Colours are generated randomly at runtime based on type [Figure 2.2], so that all objects of the same type will be instantly recognisable. A key in the top right translates colours to types to allow the user to quickly determine what type a particular node is. These colours are selected to not overlap with ones used elsewhere.
 
 \begin{figure}[h]
         \centering
@@ -166,7 +166,7 @@ Objects are represented by coloured cubes. Colours are generated randomly at run
         \caption{Coloured Types}
 \end{figure}
 
-References are represented by directed lines, this is represented by a line with a sphere attached where it meets the referenced object. There is a 1 to 1 mapping between objects on the heap and object vertices, so if an object is accessible via two different reference chains a cycle will be present in the graph.
+References are represented by directed lines [Figure 2.3], this is represented by a line with a sphere attached where it meets the referenced object. There is a 1 to 1 mapping between objects on the heap and object vertices, so if an object is accessible via two different reference chains a cycle will be present in the graph.
 
 \begin{figure}[h]
         \centering
