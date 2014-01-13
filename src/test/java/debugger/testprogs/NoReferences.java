@@ -7,7 +7,7 @@ public class NoReferences {
 		NoReferences noReferences = new NoReferences();
 		
 		System.out.println(noReferences.hashCode());
-		
+
 	}
 
 }

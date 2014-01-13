@@ -37,9 +37,10 @@ public class ObjectReferenceVertex extends Vertex {
         ReferenceType type = objRef.referenceType();
 
         // Set colour
-        if (type.isStatic()) {
-            material = game.getGreenGlowMaterial();
-        } else if (game.getTypeColorHashMap().containsKey(type)) {
+        //if (type.isStatic()) {
+        //    material = game.getGreenGlowMaterial();
+        //} else
+        if (game.getTypeColorHashMap().containsKey(type)) {
             material = game.getMaterial((ColorRGBA)game.getTypeColorHashMap().get(type));
         } else {
             material = game.createNewMaterial(type);

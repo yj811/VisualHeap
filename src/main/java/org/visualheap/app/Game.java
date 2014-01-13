@@ -37,6 +37,7 @@ import org.visualheap.world.layout.Vertex;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -64,7 +65,7 @@ public class Game extends SimpleApplication implements ActionListener {
     private static final String MULTITYPES = "debugger.testprogs.MultipleTypes";
 
     private static final int LINEHEIGHT = 15;
-    private static final int NOKEYS = 4;
+    private static final int NOKEYS = 3;
 	private static final float WALK_SPEED = 0.5f;
 
     private final int FONT_SIZE = 13;
@@ -219,7 +220,7 @@ public class Game extends SimpleApplication implements ActionListener {
         //blueGlowMat.setColor("GlowColor", ColorRGBA.Blue);
 
         typeColorHashMap = new HashMap<ReferenceType, ColorRGBA>();
-        
+
         // Turn off culling, so lines don't disappear at random.
         rootNode.setCullHint(CullHint.Never);
 
@@ -249,8 +250,8 @@ public class Game extends SimpleApplication implements ActionListener {
         setKeyInfo("Key:", ColorRGBA.White, 0);
         setKeyInfo("Root Node", ColorRGBA.Blue, LINEHEIGHT * 1);
         setKeyInfo("Null Reference", ColorRGBA.Red, LINEHEIGHT * 2);
-        setKeyInfo("Static Reference", ColorRGBA.Green, LINEHEIGHT * 3);
-        setKeyInfo("Unfollowed Reference", ColorRGBA.Yellow, LINEHEIGHT * 4);
+        //setKeyInfo("Static Reference", ColorRGBA.Green, LINEHEIGHT * 3);
+        setKeyInfo("Unfollowed Reference", ColorRGBA.Yellow, LINEHEIGHT * 3);
 
         // create a collision shape for all collidable objects
         CollisionShape world = CollisionShapeFactory.createDynamicMeshShape(collidables);
@@ -262,10 +263,10 @@ public class Game extends SimpleApplication implements ActionListener {
 		 setDisplayStatView(false);
 		 guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
 		 BitmapText ch = new BitmapText(guiFont, false);
-		 ch.setSize(guiFont.getCharSet().getRenderedSize()*2);
+		 ch.setSize(guiFont.getCharSet().getRenderedSize() * 2);
 		 ch.setText("+"); 
 		 ch.setLocalTranslation(
-		 settings.getWidth() / 2 - ch.getLineWidth()/2, settings.getHeight() / 2 + ch.getLineHeight()/2, 0);
+                 settings.getWidth() / 2 - ch.getLineWidth() / 2, settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
 		 guiNode.attachChild(ch);		
 	}
 
@@ -418,10 +419,6 @@ public class Game extends SimpleApplication implements ActionListener {
 		
 		layoutBuilder.stepLayoutAlgorithm();
 	}
-
-	public Material getGreenGlowMaterial() {
-		return greenGlowMat;
-	}
 	
 	public Material getMagentaGlowMaterial() {
 		return magentaGlowMat;
@@ -445,6 +442,12 @@ public class Game extends SimpleApplication implements ActionListener {
 
     public Material createNewMaterial(ReferenceType type) {
         ColorRGBA color = ColorRGBA.randomColor();
+        Random rand = new Random();
+
+        float r = rand.nextFloat();
+        float g = rand.nextFloat();
+        float b = rand.nextFloat();
+        float a = 1;
 
         Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 
@@ -462,7 +465,7 @@ public class Game extends SimpleApplication implements ActionListener {
 
     public boolean isUsedColor(ColorRGBA color) {
         return typeColorHashMap.containsValue(color) || color.equals(ColorRGBA.Blue) || color.equals(ColorRGBA.Red)
-                || color.equals(ColorRGBA.Green) || color.equals(ColorRGBA.White) || color.equals(ColorRGBA.Magenta)
+                || color.equals(ColorRGBA.White) || color.equals(ColorRGBA.Magenta)
                 || color.equals(ColorRGBA.Yellow);
     }
 
@@ -488,16 +491,7 @@ public class Game extends SimpleApplication implements ActionListener {
         }
 
         ColorRGBA color = ColorRGBA.White;
-/*
-        ReferenceType type = v.getType();
-        if (type != null) {
-            color = typeColorHashMap.get(type);
-        } else if (v instanceof NullReferenceVertex) {
-            color = ColorRGBA.Red;
-        } else if (type.isStatic()) {
-            color = ColorRGBA.Green;
-        }
-*/
+
         oldMaterial = v.getMaterial();
         selectedMaterial = oldMaterial.clone();
         selectedMaterial.setColor("GlowColor", color);
