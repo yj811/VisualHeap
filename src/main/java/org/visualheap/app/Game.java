@@ -354,7 +354,7 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	public void setObjInfo(String info) {
 		objInfo = new BitmapText(guiFont, false);
-        objInfo.setBox(new Rectangle(0, 0, 230, 400));
+        objInfo.setBox(new Rectangle(0, 0, 250, 400));
 		objInfo.setSize(FONT_SIZE);
 		objInfo.setColor(ColorRGBA.Yellow);
 		objInfo.setText(info);
