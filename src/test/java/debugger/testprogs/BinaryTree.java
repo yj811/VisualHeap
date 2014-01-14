@@ -1,12 +1,5 @@
 package debugger.testprogs;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Anna
- * Date: 14/01/14
- * Time: 14:33
- * To change this template use File | Settings | File Templates.
- */
 public class BinaryTree {
 
     BinaryTree left;
@@ -27,7 +20,6 @@ public class BinaryTree {
     }
 
     public void foo() {};
-
     public void bar() {};
 
 }

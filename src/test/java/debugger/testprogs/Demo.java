@@ -10,6 +10,10 @@ public class Demo {
         BinaryTree tree = new BinaryTree(3);
         CyclicReference cyclic = new CyclicReference();
         NullReference nullRef = new NullReference();
+        SimpleReference[] arr = new SimpleReference[10];
+
+        arr[0] = new SimpleReference(3);
+        arr[1] = new SimpleReference(3);
 
         System.out.println("Examples created");
 
