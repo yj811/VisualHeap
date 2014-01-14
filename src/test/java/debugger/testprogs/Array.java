@@ -19,25 +19,12 @@ public class Array {
 		System.out.println("after");
 	}
 	
-	public int sum() {
-		int[] arr = new int[SIZE];
+	public void sum() {
+		SimpleReference[] arr = new SimpleReference[SIZE];
 		
-		Array innerArray = new Array();
-		
-		char c = 'c';
-		int integer = 0;
-		int sum = 0;
-		
-		arr[0] = 1;
-		
-		for(int i = 0; i < SIZE; i++) {
-			for(int j = 0; j < i; j++) {
-				arr[i] += arr[j];
-			}
-			sum += arr[i];
-		}
-		return sum;
-		
+		arr[0] = new SimpleReference(3);
+        arr[1] = new SimpleReference(3);
+
 	}
 
 }
