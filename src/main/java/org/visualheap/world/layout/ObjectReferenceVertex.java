@@ -132,12 +132,4 @@ public class ObjectReferenceVertex extends Vertex {
     public ReferenceType getType() {
         return objRef.referenceType();
     }
-    
-    @Override
-    public boolean equals(Object other) {
-    	if(other instanceof ObjectReferenceVertex) {
-    		return ((ObjectReferenceVertex) other).objRef.equals(this.objRef);
-    	}
-    	return false;
-    }
 }
