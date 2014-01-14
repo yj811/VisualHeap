@@ -1,0 +1,4 @@
+#!/bin/bash
+
+java -jar build/libs/VisualHeap.jar $PWD/build/classes/test debugger.testprogs.
+
