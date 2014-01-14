@@ -10,6 +10,7 @@ import edu.uci.ics.jung.algorithms.layout.FRLayout;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import org.visualheap.app.Game;
 
+import com.sun.jdi.ArrayReference;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 
@@ -105,7 +106,11 @@ public class LayoutBuilder {
 					
 					if(vert == null) {
 						// no pre-existing vertex, make a new one
-						vert = new ObjectReferenceVertex(childObjRef, this);
+						if(child instanceof ArrayReference) {
+							vert = new ArrayVertex((ArrayReference)child, this);
+						} else {
+							vert = new ObjectReferenceVertex(childObjRef, this);
+						}
 						objRefMapping.put(childObjRef, vert);
 						// explore successors of this vertex.
 						visitChildren(vert, depth - 1);
@@ -147,14 +152,17 @@ public class LayoutBuilder {
         this.game = game;
         
         // construct the graph
-        Vertex dummy = new DummyVertex(this);
+        Vertex dummy = new DummyVertex(this, initialSet);
+        visitChildren(dummy, depth);
         
+        /*
         for(ObjectReference ref : initialSet) {
             ObjectReferenceVertex vert = getVertexFromObjRef(layout, ref);
             layoutUpToDate = false;
             graph.addEdge(new Edge(this, dummy, vert), dummy, vert);
             visitChildren(vert, depth - 1);
         }
+        */
         runLayoutAlgorithm();
     }
 

@@ -1,6 +1,7 @@
 package org.visualheap.world.layout;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 import com.jme3.material.Material;
 import org.visualheap.app.Game;
@@ -20,9 +21,14 @@ public class DummyVertex extends Vertex {
 
     private Material material;
     private final int DUMMY = 2;
+	private Collection<Value> children;
 
-	public DummyVertex(LayoutBuilder lb) {
+	public DummyVertex(LayoutBuilder lb, Collection<? extends Value> children) {
 		super(lb);
+		this.children = new HashSet<Value>();
+		for(Value v : children) {
+			this.children.add(v);
+		}
 	}
 
 	@Override
@@ -35,7 +41,7 @@ public class DummyVertex extends Vertex {
 
 	@Override
 	public Collection<Value> getChildren() {
-		return null;
+		return children;
 	}
 
 	@Override

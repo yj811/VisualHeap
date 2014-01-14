@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Array {
 	
-	private static int SIZE = 1000;
+	private static int SIZE = 10;
 
 	public static void main(String[] args) {
 		
@@ -15,10 +15,19 @@ public class Array {
 		System.out.println("starting");
   
 		outerArray.sum();
+		outerArray.obj();
 		
 		System.out.println("after");
 	}
 	
+	private void obj() {
+		Object[] arr = new Object[SIZE];
+		for(int i = 0; i < SIZE; i++) {
+			arr[i] = new Object();
+		}
+		System.out.println("break here");
+	}
+
 	public int sum() {
 		int[] arr = new int[SIZE];
 		
