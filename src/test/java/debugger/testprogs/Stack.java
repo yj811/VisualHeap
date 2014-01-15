@@ -1,17 +1,11 @@
 package debugger.testprogs;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Anna
- * Date: 15/01/14
- * Time: 12:41
- * To change this template use File | Settings | File Templates.
- */
 public class Stack {
 
     private static final int SIZE = 5;
     private Integer[] arr = new Integer[SIZE];
     private int i = 0;
+    private int k = 0;
 
     public void push(Integer t) {
         arr[i++] = t;
@@ -47,9 +41,7 @@ public class Stack {
         s.pop();
         s.pop();
         s.pop();
-        System.out.println(s);
-
-
+        System.out.println("Stack Contents: " + s);
     }
 
 }
