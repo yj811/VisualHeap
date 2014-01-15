@@ -17,10 +17,10 @@ public class Demo {
 
         System.out.println("Examples created");
 
-        foo(tree, cyclic, nullRef);
+        foo(tree, cyclic, nullRef, arr);
     }
 
-    public static void foo(BinaryTree tree, CyclicReference cyclic, NullReference nullRef) {
+    public static void foo(BinaryTree tree, CyclicReference cyclic, NullReference nullRef, SimpleReference[] arr) {
 
     }
 }
