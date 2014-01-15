@@ -679,7 +679,7 @@ public class RealGUI implements DebugListener {
 		panel.add(sedtDepth);
 
 		SpinnerModel depthModel =
-				new SpinnerNumberModel(3, //initial value
+				new SpinnerNumberModel(1, //initial value
 						0, //min
 						null, //max
 						1); //step

@@ -367,8 +367,6 @@ public class Debugger {
 		try {
     		objRefs = new ArrayList<ObjectReference>();
 			
-			System.out.println("Current location - " + sf.location().sourceName() + ": " + sf.location().lineNumber());
-			
 			for(LocalVariable lv : sf.visibleVariables()) {
 				Value val = sf.getValue(lv);
 				if(val instanceof ObjectReference) {
