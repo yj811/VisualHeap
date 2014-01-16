@@ -1,25 +1,26 @@
 package debugger.testprogs;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Anna
- * Date: 13/01/14
- * Time: 12:31
- * To change this template use File | Settings | File Templates.
- */
 public class Demo {
 
     public static void main(String args[]) {
-
-        TreeReference tree = new TreeReference(3);
-        CyclicReference cyclic = new CyclicReference();
-        NullReference nullRef = new NullReference();
-
-        func(tree, cyclic, nullRef);
+        func();
     }
 
-    public static void func(TreeReference tree, CyclicReference cyclic, NullReference nullRefs) {
+    public static void func() {
+        BinaryTree tree = new BinaryTree(3);
+        CyclicReference cyclic = new CyclicReference();
+        NullReference nullRef = new NullReference();
+        SimpleReference[] arr = new SimpleReference[10];
 
-        System.out.println("break here");
+        arr[0] = new SimpleReference(3);
+        arr[1] = new SimpleReference(3);
+
+        System.out.println("Examples created");
+
+        foo(tree, cyclic, nullRef, arr);
+    }
+
+    public static void foo(BinaryTree tree, CyclicReference cyclic, NullReference nullRef, SimpleReference[] arr) {
+
     }
 }

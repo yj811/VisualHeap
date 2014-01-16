@@ -99,3 +99,7 @@ checkstyleMain << {
 //     html.enabled = true
 //   }
 // }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.8'
+}

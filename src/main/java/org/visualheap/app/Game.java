@@ -109,8 +109,10 @@ public class Game extends SimpleApplication implements ActionListener {
     private Material oldMaterial;
     private Material selectedMaterial;
     
+    //DEMO configuration variables
     public LAYOUT layout;
     public boolean animate;
+    public Integer defaultDepth;
 
 	// start a new game.
 	/*
@@ -134,20 +136,23 @@ public class Game extends SimpleApplication implements ActionListener {
         System.out.println("G");
         layout = LAYOUT.ISOM;
         animate = false;
+        defaultDepth = 3;
     }
 				
-    public Game(LAYOUT l) {
+    public Game(Integer d, LAYOUT l) {
         super();
         running = false;
         animate = false;
         layout = l;
+        defaultDepth = d;
     }
     
-    public Game(LAYOUT l, boolean a) {
+    public Game(Integer d, LAYOUT l, boolean a) {
         super();
         running = false;
         animate = a;
         layout = l;
+        defaultDepth = d;
     }
 
     public void beginGame(final Collection<ObjectReference> initialSet, Debugger debugger) {
@@ -241,7 +246,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		
 		constructWorld();
 
-		layoutBuilder = LayoutBuilder.fromObjectReferences(referencesOnStack, this, 1);
+		layoutBuilder = LayoutBuilder.fromObjectReferences(referencesOnStack, this, defaultDepth);
 		
 		setupCrossHairs();
 		setupPlayer();
