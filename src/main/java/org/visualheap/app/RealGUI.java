@@ -720,6 +720,7 @@ public class RealGUI implements DebugListener {
 		});
 		buttonGroup.add(rbtnKK);
 		panel.add(rbtnKK);
+    rbtnKK.setVisible(false);
 
 
 
