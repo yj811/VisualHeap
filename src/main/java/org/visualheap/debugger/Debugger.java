@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2001, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- */
-
-/*
- * This source code is provided to illustrate the usage of a given feature
- * or technique and has been deliberately simplified. Additional steps
- * required for a production-quality application, such as security checks,
- * input validation and proper error handling, might not be present in
- * this sample code.
- */
-
-
 package org.visualheap.debugger;
 
 import com.sun.jdi.AbsentInformationException;
@@ -39,8 +23,11 @@ import java.io.InputStream;
 import java.io.IOException;
 
 /**
+ * 
+ * Based upon JDI "Debugger" example from tools.jar (provided in JDK)
+ * Extended by Oliver and Aviv.
  *
- * @author Robert Field
+ * @author Robert Field (original author of "Debugger" example.
  * @author oliver myerscough
  * @author aviv beeri
  */
