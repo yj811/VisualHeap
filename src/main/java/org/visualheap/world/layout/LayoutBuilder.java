@@ -11,6 +11,7 @@ import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import org.visualheap.app.Game;
 
 import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ArrayType;
 import com.sun.jdi.ObjectReference;
 import com.sun.jdi.Value;
 
@@ -106,7 +107,7 @@ public class LayoutBuilder {
 					
 					if(vert == null) {
 						// no pre-existing vertex, make a new one
-						if(child instanceof ArrayReference) {
+						if(child instanceof ArrayReference || child.type() instanceof ArrayType) {
 							vert = new ArrayVertex((ArrayReference)child, this);
 						} else {
 							vert = new ObjectReferenceVertex(childObjRef, this);

@@ -1,6 +1,7 @@
 package org.visualheap.debugger;
 
 import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ArrayType;
 import com.sun.jdi.Field;
 import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Location;

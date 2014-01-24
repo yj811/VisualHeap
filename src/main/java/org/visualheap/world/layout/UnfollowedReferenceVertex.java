@@ -12,6 +12,8 @@ import com.jme3.export.JmeImporter;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
+import com.sun.jdi.ArrayReference;
+import com.sun.jdi.ArrayType;
 import com.sun.jdi.ObjectReference;
 
 import edu.uci.ics.jung.algorithms.layout.Layout;
@@ -39,7 +41,12 @@ public class UnfollowedReferenceVertex extends ObjectReferenceVertex {
 	public void select(Game game) {
 		
 		// replace this vertex in the graph with an ObjectReferenceVertex
-		ObjectReferenceVertex newVert = new ObjectReferenceVertex(objRef, lb);
+	    ObjectReferenceVertex newVert;
+	    if (objRef.referenceType() instanceof ArrayType || objRef instanceof ArrayReference) {
+	        newVert = new ArrayVertex((ArrayReference)objRef, lb);
+	    } else {
+	        newVert = new ObjectReferenceVertex(objRef, lb);
+	    }
         newVert.select(game);
 
 		lb.replace(this, newVert);
