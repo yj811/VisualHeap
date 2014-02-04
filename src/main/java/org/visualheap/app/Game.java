@@ -35,6 +35,7 @@ import org.visualheap.world.layout.Edge;
 import org.visualheap.world.layout.LayoutBuilder;
 import org.visualheap.world.layout.Vertex;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
@@ -359,22 +360,24 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	public void setObjInfo(String info) {
 		objInfo = new BitmapText(guiFont, false);
-        objInfo.setBox(new Rectangle(0, 0, 250, 400));
+        objInfo.setBox(new Rectangle(0, 0, 400, 400));
 		objInfo.setSize(FONT_SIZE);
 		objInfo.setColor(ColorRGBA.Yellow);
 		objInfo.setText(info);
-        objInfo.setLocalTranslation(250, 580, 0);
+        //objInfo.setLocalTranslation(250, 580, 0);
+        objInfo.setLocalTranslation(10, 580, 0);
 		guiNode.attachChild(objInfo);
 	}
 
     public void setObjMethInfo(String info) {
-        objMethInfo = new BitmapText(guiFont, false);
+        /*objMethInfo = new BitmapText(guiFont, false);
         objMethInfo.setBox(new Rectangle(0, 0, 230, 400));
         objMethInfo.setSize(FONT_SIZE);
         objMethInfo.setColor(ColorRGBA.Yellow);
         objMethInfo.setText(info);
         objMethInfo.setLocalTranslation(10, 580, 0);
         guiNode.attachChild(objMethInfo);
+        */
     }
 
     public void setKeyInfo(String info, ColorRGBA color, int offset) {
