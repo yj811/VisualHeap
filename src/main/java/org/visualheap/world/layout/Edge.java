@@ -6,12 +6,16 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.jme3.material.Material;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import org.visualheap.app.Game;
 
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Line;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.scene.shape.Dome;
+import com.jme3.math.FastMath;
 
 /**
  * represents an edge (i.e. a reference) between two objects
@@ -29,7 +33,7 @@ public class Edge implements ChangeListener {
     private LayoutBuilder lb;
     private Geometry lineGeo;
     private Geometry ballGeo;
-    private Sphere ball;
+    private Dome ball;
 
 	public Edge(LayoutBuilder lb, Vertex start, Vertex end) {
 	    this.lb = lb;
@@ -59,8 +63,9 @@ public class Edge implements ChangeListener {
 		lineGeo.setMesh(line);
 		game.addNonCollidable(lineGeo); // non - collidable
 
-		float radius = end.getDimension() / 2;
-        ball = new Sphere(32, 32, radius);
+		float radius = 2.00f; //end.getDimension() / 2;
+        //ball = new Sphere(32, 32, radius);
+        ball = new Dome(Vector3f.ZERO, 2, 32, radius, false); // Cone
         ballGeo = new Geometry("ball", ball);
         ballGeo.setMaterial(game.getMagentaGlowMaterial());
         
@@ -83,12 +88,18 @@ public class Edge implements ChangeListener {
 
 		line.updatePoints(startVec, endVec);
 
-        Vector3f startToEnd = endVec.subtract(startVec); 
+        Vector3f startToEnd = endVec.subtract(startVec);
         int endDimension = end.getDimension();
         // not updating ball size, building a new sphere damages performance.
         
-        Vector3f ballPos = startVec.add(startToEnd.normalize().mult(endDimension));
+        Vector3f ballPos = startVec.add(startToEnd.divide(2.00f)); //startVec.add(startToEnd.normalize().mult(endDimension));
         ballGeo.setLocalTranslation(ballPos);
+
+        /* This quaternion stores a rolling rotation */
+        Quaternion rotation = new Quaternion();
+        rotation.fromAngleAxis( FastMath.PI / 2 , startToEnd.cross(new Vector3f(0, 1, 0)) );
+        ballGeo.setLocalRotation(rotation);
+        ballGeo.setLocalScale(1.00f, 3.00f, 1.00f);
     }
 
     void removeFromWorld(Game game) {
