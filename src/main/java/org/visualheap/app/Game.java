@@ -43,6 +43,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.jme3.light.DirectionalLight;
+import com.jme3.light.AmbientLight;
+
 /**
  *
  * See http://hub.jmonkeyengine.org/wiki/doku.php/jme3:beginner:hello_collision
@@ -72,7 +75,6 @@ public class Game extends SimpleApplication implements ActionListener {
     private final int FONT_SIZE = 13;
 	
 	private LayoutBuilder layoutBuilder;
-	private Material matBrick;
 	private BulletAppState bulletAppState;
 	private CharacterControl player;
 	private Node collidables = new Node();
@@ -201,29 +203,38 @@ public class Game extends SimpleApplication implements ActionListener {
 		// hide FPS/object statistics
 		setDisplayFps(false);
 		setDisplayStatView(false);
-		
-		matBrick = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	  	matBrick.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
 
-	    greenGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	    greenGlowMat.setColor("Color", ColorRGBA.Green);
-	    //greenGlowMat.setColor("GlowColor", ColorRGBA.Green);
-	    
+        greenGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        greenGlowMat.setBoolean("UseMaterialColors",true);
+        greenGlowMat.setColor("Diffuse",ColorRGBA.Green);
+        greenGlowMat.setColor("Ambient", ColorRGBA.Green);
+
 	    magentaGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    magentaGlowMat.setColor("Color", ColorRGBA.Magenta);
-	    //magentaGlowMat.setColor("GlowColor", ColorRGBA.Magenta);
-	    
-	    yellowGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-	    yellowGlowMat.setColor("Color", ColorRGBA.Yellow);
-	    //yellowGlowMat.setColor("GlowColor", ColorRGBA.Yellow);
-	    
-	    redGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        redGlowMat.setColor("Color", ColorRGBA.Red);
-	    //redGlowMat.setColor("GlowColor", ColorRGBA.Red);
 
-        blueGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        blueGlowMat.setColor("Color", ColorRGBA.Blue);
-        //blueGlowMat.setColor("GlowColor", ColorRGBA.Blue);
+        yellowGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        yellowGlowMat.setBoolean("UseMaterialColors",true);
+        yellowGlowMat.setColor("Diffuse",ColorRGBA.Yellow);
+        yellowGlowMat.setColor("Ambient", ColorRGBA.Yellow);
+
+        redGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        redGlowMat.setBoolean("UseMaterialColors",true);
+        redGlowMat.setColor("Diffuse",ColorRGBA.Red);
+        redGlowMat.setColor("Ambient", ColorRGBA.Red);
+
+        blueGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        blueGlowMat.setBoolean("UseMaterialColors",true);
+        blueGlowMat.setColor("Diffuse",ColorRGBA.Blue);
+        blueGlowMat.setColor("Ambient", ColorRGBA.Blue);
+
+        AmbientLight al = new AmbientLight();
+        al.setColor(ColorRGBA.Gray);
+        rootNode.addLight(al);
+
+        DirectionalLight dl = new DirectionalLight();
+        dl.setColor(ColorRGBA.White);
+        dl.setDirection(new Vector3f(1.8f, -2.8f, 1.0f).normalizeLocal());
+        rootNode.addLight(dl);
 
         typeColorHashMap = new HashMap<ReferenceType, ColorRGBA>();
 
@@ -457,14 +468,18 @@ public class Game extends SimpleApplication implements ActionListener {
         float b = rand.nextFloat();
         float a = 1;
 
-        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        Material material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        material.setBoolean("UseMaterialColors",true);
 
         // Could be improved to check for colours similar to used colours too
         while (isUsedColor(color)) {
             color = ColorRGBA.randomColor();
         }
 
-        material.setColor("Color", color);
+        material.setColor("Ambient", color);
+        material.setColor("Diffuse", color);
+
+        //material.setColor("Color", color);
         setKeyInfo(type.name(), color, (1 + typeColorHashMap.size() + NOKEYS) * LINEHEIGHT);
 
         typeColorHashMap.put(type, color);
@@ -478,8 +493,10 @@ public class Game extends SimpleApplication implements ActionListener {
     }
 
     public Material getMaterial(ColorRGBA color) {
-        Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        material.setColor("Color", color);
+        Material material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+        material.setBoolean("UseMaterialColors",true);
+        material.setColor("Ambient", color);
+        material.setColor("Diffuse", color);
 
         return material;
     }
@@ -503,7 +520,6 @@ public class Game extends SimpleApplication implements ActionListener {
         oldMaterial = v.getMaterial();
         selectedMaterial = oldMaterial.clone();
         selectedMaterial.setColor("GlowColor", color);
-        //selectedMaterial.setTexture("ColorMap", assetManager.loadTexture("textures/images.jpeg"));
 
         selectedVertex = v;
         selectedVertex.setMaterial(selectedMaterial);

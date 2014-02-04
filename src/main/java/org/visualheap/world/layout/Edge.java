@@ -60,7 +60,7 @@ public class Edge implements ChangeListener {
 		lineGeo.setMesh(line);
 		game.addNonCollidable(lineGeo);
 
-		float radius = 2.00f;
+		float radius = 2.50f;
         cone = new Dome(Vector3f.ZERO, 2, 32, radius, false); // Cone
         coneGeo = new Geometry("cone", cone);
         coneGeo.setMaterial(game.getMagentaGlowMaterial());
@@ -96,7 +96,7 @@ public class Edge implements ChangeListener {
         }
 
         // Moves cone and disk into position on reference line
-        Vector3f conePos = startVec.add(startToEnd.divide(2.00f)); //startVec.add(startToEnd.normalize().mult(endDimension));
+        Vector3f conePos = startVec.add(startToEnd.divide(2.00f));
         coneGeo.setLocalTranslation(conePos);
         diskGeo.setLocalTranslation(conePos);
 
@@ -104,7 +104,7 @@ public class Edge implements ChangeListener {
         Quaternion rotation = new Quaternion();
         rotation.fromAngleAxis(FastMath.PI / 2, startToEnd.cross(new Vector3f(0, 1, 0)));
         coneGeo.setLocalRotation(rotation);
-        coneGeo.setLocalScale(1.00f, 3.00f, 1.00f);
+        coneGeo.setLocalScale(1.00f, 4.00f, 1.00f);
 
         // Rotates disk around y-axis (up) by angle between z-axis and reference
         rotation.fromAngleAxis(angle, new Vector3f(0, 1, 0));
