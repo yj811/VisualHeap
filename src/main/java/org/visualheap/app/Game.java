@@ -259,7 +259,7 @@ public class Game extends SimpleApplication implements ActionListener {
         // some initial physics setup
 	    bulletAppState = new BulletAppState();
 	    stateManager.attach(bulletAppState);
-		
+
 		constructWorld();
 
 		layoutBuilder = LayoutBuilder.fromObjectReferences(referencesOnStack, this, defaultDepth);
@@ -297,7 +297,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		player = new CharacterControl(capsuleShape, 0.05f);
 		player.setJumpSpeed(0);
 		player.setFallSpeed(0);
-		cam.lookAt(new Vector3f(10f,0f,10f), camUp);
+		cam.lookAt(new Vector3f(10f, 0f, 10f), camUp);
 		player.setPhysicsLocation(new Vector3f(0, 4, 0));
 
 		// adding an object to the physics space makes it collidable

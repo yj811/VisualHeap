@@ -53,7 +53,7 @@ public class Edge implements ChangeListener {
         Vector3f endVec = convertTo3D(startPoint);
 
         line = new Line(endVec, startVec);
-		line.setLineWidth(5);
+		line.setLineWidth(3);
 		lineGeo = new Geometry("line", line);
 		
         lineGeo.setMaterial(game.getWhiteGlowMaterial());
