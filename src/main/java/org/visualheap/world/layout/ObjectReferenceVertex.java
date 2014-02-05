@@ -66,7 +66,7 @@ public class ObjectReferenceVertex extends Vertex {
 		for(Field f : type.allFields()) {
 			try {
 				if (f.type() instanceof PrimitiveType) {
-				
+					
 					result += f.name() + ": (" + f.type().toString() + ")   " + objRef.getValue(f) + "\n";
 				
 				} else {

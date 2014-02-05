@@ -20,7 +20,7 @@ import com.sun.jdi.Value;
 public class DummyVertex extends Vertex {
 
     private Material material;
-    private final int DUMMY = 2;
+    private final int DUMMY = 4;
 	private Collection<Value> children;
 
 	public DummyVertex(LayoutBuilder lb, Collection<? extends Value> children) {
@@ -51,7 +51,7 @@ public class DummyVertex extends Vertex {
 
     @Override
     protected Geometry createGeometry() {
-        Box box = new Box(DUMMY,DUMMY,DUMMY);
+        Box box = new Box(DUMMY,10*DUMMY,DUMMY);
         return new Geometry("Box", box );
     }
 
