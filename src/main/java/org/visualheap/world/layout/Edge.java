@@ -56,19 +56,19 @@ public class Edge implements ChangeListener {
 		line.setLineWidth(5);
 		lineGeo = new Geometry("line", line);
 		
-        lineGeo.setMaterial(game.getMagentaGlowMaterial());
+        lineGeo.setMaterial(game.getWhiteGlowMaterial());
 		lineGeo.setMesh(line);
 		game.addNonCollidable(lineGeo);
 
 		float radius = 2.50f;
         cone = new Dome(Vector3f.ZERO, 2, 32, radius, false); // Cone
         coneGeo = new Geometry("cone", cone);
-        coneGeo.setMaterial(game.getMagentaGlowMaterial());
+        coneGeo.setMaterial(game.getWhiteGlowMaterial());
         game.addCollidable(coneGeo);
 
         disk = new Cylinder(32, 32, radius, 0.10f, true); // Base of cone
         diskGeo = new Geometry("disk", disk);
-        diskGeo.setMaterial(game.getMagentaGlowMaterial());
+        diskGeo.setMaterial(game.getWhiteGlowMaterial());
         game.addCollidable(diskGeo);
         
         computePositions();

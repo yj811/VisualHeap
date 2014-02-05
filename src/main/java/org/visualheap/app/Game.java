@@ -100,6 +100,7 @@ public class Game extends SimpleApplication implements ActionListener {
 	private Debugger d;
     private Material greenGlowMat;
 	private Material magentaGlowMat;
+	private Material whiteGlowMat;
 	private Material yellowGlowMat;
 	private Material redGlowMat;
     private Material blueGlowMat;
@@ -211,6 +212,9 @@ public class Game extends SimpleApplication implements ActionListener {
 
 	    magentaGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 	    magentaGlowMat.setColor("Color", ColorRGBA.Magenta);
+	    
+	    whiteGlowMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+	    whiteGlowMat.setColor("Color", ColorRGBA.White);
 
         yellowGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
         yellowGlowMat.setBoolean("UseMaterialColors", true);
@@ -441,6 +445,10 @@ public class Game extends SimpleApplication implements ActionListener {
 	
 	public Material getMagentaGlowMaterial() {
 		return magentaGlowMat;
+	}
+	
+	public Material getWhiteGlowMaterial() {
+		return whiteGlowMat;
 	}
 
 	public Material getYellowGlowMaterial() {
