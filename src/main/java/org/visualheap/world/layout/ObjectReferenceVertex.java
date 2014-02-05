@@ -64,7 +64,17 @@ public class ObjectReferenceVertex extends Vertex {
 		String result = "Type: " + type.name() + "\n";
 
 		for(Field f : type.allFields()) {
-			result += f.name() + ":   " + objRef.getValue(f) + "\n";
+			try {
+				if (f.type() instanceof PrimitiveType) {
+				
+					result += f.name() + ": (" + f.type().toString() + ")   " + objRef.getValue(f) + "\n";
+				
+				} else {
+					result += f.name() + ": " + objRef.getValue(f) + "\n";
+				}
+			} catch (ClassNotLoadedException e) {
+				result += f.name() + ": (Unknown)  " + objRef.getValue(f) + "\n";
+			}
 		}
 		
 		return result;		
