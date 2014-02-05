@@ -269,7 +269,7 @@ public class Game extends SimpleApplication implements ActionListener {
         setupKeys();
 
         setKeyInfo("Key:", ColorRGBA.White, 0);
-        setKeyInfo("Root Node", ColorRGBA.Blue, LINEHEIGHT * 1);
+        setKeyInfo("Stack Frame", ColorRGBA.Blue, LINEHEIGHT * 1);
         setKeyInfo("Null Reference", ColorRGBA.Red, LINEHEIGHT * 2);
         //setKeyInfo("Static Reference", ColorRGBA.Green, LINEHEIGHT * 3);
         setKeyInfo("Unfollowed Reference", ColorRGBA.Yellow, LINEHEIGHT * 3);

@@ -35,7 +35,7 @@ public class DummyVertex extends Vertex {
 	public void createInWorld(Game game) {
         material = game.getBlueGlowMaterial();
         geo.setMaterial(material);
-        // make obj visible on scene and collidable
+        geo.setUserData("vertex", this);
         game.addCollidable(geo); 
 	}
 
@@ -44,10 +44,20 @@ public class DummyVertex extends Vertex {
 		return children;
 	}
 
-	@Override
-	public void select(Game game) {
-		// implementation not required
-	}
+    @Override
+    public void select(Game game) {
+        if (game.getSelectedVertex() == this) {
+            game.removeSelectedVertex();
+            game.setObjInfo("");
+        } else {
+            game.setSelectedVertex(this);
+            game.setObjInfo(createInformation());
+        }
+    }
+
+    public String createInformation() {
+        return "Stack Frame\n";
+    }
 
     @Override
     protected Geometry createGeometry() {

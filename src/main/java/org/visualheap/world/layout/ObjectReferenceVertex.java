@@ -1,6 +1,5 @@
 package org.visualheap.world.layout;
 
-
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
@@ -37,9 +36,6 @@ public class ObjectReferenceVertex extends Vertex {
         ReferenceType type = objRef.referenceType();
 
         // Set colour
-        //if (type.isStatic()) {
-        //    material = game.getGreenGlowMaterial();
-        //} else
         if (game.getTypeColorHashMap().containsKey(type)) {
             material = game.getMaterial((ColorRGBA)game.getTypeColorHashMap().get(type));
         } else {
