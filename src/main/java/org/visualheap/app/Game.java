@@ -205,7 +205,7 @@ public class Game extends SimpleApplication implements ActionListener {
 		setDisplayStatView(false);
 
         greenGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        greenGlowMat.setBoolean("UseMaterialColors",true);
+        greenGlowMat.setBoolean("UseMaterialColors", true);
         greenGlowMat.setColor("Diffuse",ColorRGBA.Green);
         greenGlowMat.setColor("Ambient", ColorRGBA.Green);
 
@@ -213,17 +213,17 @@ public class Game extends SimpleApplication implements ActionListener {
 	    magentaGlowMat.setColor("Color", ColorRGBA.Magenta);
 
         yellowGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        yellowGlowMat.setBoolean("UseMaterialColors",true);
+        yellowGlowMat.setBoolean("UseMaterialColors", true);
         yellowGlowMat.setColor("Diffuse",ColorRGBA.Yellow);
         yellowGlowMat.setColor("Ambient", ColorRGBA.Yellow);
 
         redGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        redGlowMat.setBoolean("UseMaterialColors",true);
+        redGlowMat.setBoolean("UseMaterialColors", true);
         redGlowMat.setColor("Diffuse",ColorRGBA.Red);
         redGlowMat.setColor("Ambient", ColorRGBA.Red);
 
         blueGlowMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-        blueGlowMat.setBoolean("UseMaterialColors",true);
+        blueGlowMat.setBoolean("UseMaterialColors", true);
         blueGlowMat.setColor("Diffuse",ColorRGBA.Blue);
         blueGlowMat.setColor("Ambient", ColorRGBA.Blue);
 

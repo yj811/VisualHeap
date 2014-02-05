@@ -113,8 +113,8 @@ public class Edge implements ChangeListener {
 
     void removeFromWorld(Game game) {
         game.removeNonCollidable(lineGeo);
-        game.addCollidable(coneGeo);
-        game.addCollidable(diskGeo);
+        game.removeCollidable(coneGeo);
+        game.removeCollidable(diskGeo);
     }
 
     Vector3f getUnitVector(Vector3f startToEnd) {
