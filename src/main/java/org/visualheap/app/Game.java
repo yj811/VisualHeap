@@ -70,7 +70,7 @@ public class Game extends SimpleApplication implements ActionListener {
 
     private static final int LINEHEIGHT = 15;
     private static final int NOKEYS = 3;
-	private static final float WALK_SPEED = 0.5f;
+	private static final float WALK_SPEED = 1f;
 
     private final int FONT_SIZE = 13;
 	
