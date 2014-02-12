@@ -74,11 +74,15 @@ public class ObjectReferenceVertex extends Vertex {
                     
                     ArrayReference array = (ArrayReference) objRef.getValue(f);
                     for (Value v : array.getValues()) {
-                      result += v.toString() + " , ";
+                    	if (v != null) {
+                          result += v.toString() + " , ";
+                    	} else {
+                    	  result +=  " null, ";
+                    	}
                     }
                     result += "]";
                 }
-				result += "]\n";
+				result += "\n";
 			} catch (ClassNotLoadedException e) {
 				result += f.name() + ": (Unknown)  " + objRef.getValue(f) + "\n";
 			}
