@@ -61,13 +61,24 @@ public class ObjectReferenceVertex extends Vertex {
 
 		for(Field f : type.allFields()) {
 			try {
+			    
 				if (f.type() instanceof PrimitiveType) {
 					
-					result += f.name() + ": (" + f.type().toString() + ")   " + objRef.getValue(f) + "\n";
+					result += f.name() + ": (" + f.type().toString() + ")   " + objRef.getValue(f);
 				
 				} else {
-					result += f.name() + ": " + objRef.getValue(f) + "\n";
+					result += f.name() + ": " + objRef.getValue(f);
 				}
+				if (f.type() instanceof ArrayType) {
+                    result += " [";
+                    
+                    ArrayReference array = (ArrayReference) objRef.getValue(f);
+                    for (Value v : array.getValues()) {
+                      result += v.toString() + " , ";
+                    }
+                    result += "]";
+                }
+				result += "]\n";
 			} catch (ClassNotLoadedException e) {
 				result += f.name() + ": (Unknown)  " + objRef.getValue(f) + "\n";
 			}
